@@ -1,0 +1,28 @@
+Biblioteki backend:
+  Mariadb - host bazy Mysql
+  Bodyparser - ułatwienie przetwarzania danych przesyłanych
+  Cors - Cross-Origin Resource Sharing, w skrócie obsuga danych przesyanych i ich dostépów
+Biblioteki forntend:
+  Axios - obsługa połączenia z bazą
+  Reacttable + Tanstack - formatowanie tabeli
+
+w zewnętrznym folderze (server-test):
+
+  pierwsze uruchomienie:
+    terminal 1:
+      cd user-service
+      npm i express nodemon cors mariadb body-parser
+      npm start
+    terminal 2:
+      cd user-web
+      npm install
+      npm i @tanstack/react-table axios bootstrap @popperjs/core
+      npm run dev
+
+  każde kolejne uruchomienie:
+    terminal 1:
+      cd user-service
+      npm start
+    terminal 2:
+      cd user-web
+      npm run dev
