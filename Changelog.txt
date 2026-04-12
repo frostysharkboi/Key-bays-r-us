@@ -1,0 +1,3 @@
+v 0.2 - 12.04.2026
+
+IK - dodałem obsługę routera.

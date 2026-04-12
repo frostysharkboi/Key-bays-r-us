@@ -1,0 +1,12 @@
+Krok 1.
+Zaimportuj plik jsx z folderu "routes" do main.jsx
+
+Krok 2. 
+W "createBrowserRouter" dodaj nowy obiekt. 
+Ma on w środku zawierać ścieżkę do podstrony jaka ma się wyświetlać w pasku wyszukiawnia, jak i zaimportowaną wcześniej podstronę.
+
+
+
+Krok 3.
+Aby przekierować użytkownika do podstrony, trzeba dodać znacznik <Link> z atrybutem "to={podstrona}".
+
