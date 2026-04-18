@@ -24,8 +24,8 @@ export default function SearchPage(){
 
   // Pobranie danych z tabeli
   const getAllGames = () => {
-    //axios.get("http://localhost:3000/games").then((res) => {
-    axios.get("http://localhost:3000/games/select", {params: { columns: "g.id `id`, g.title `title`, g.about `about`, g.cover_img `cover_img`", tablecon: "games g JOIN game_tags gt ON g.id = gt.game_id JOIN tags t ON gt.tag_id = t.id", where: "t.tag LIKE \"RPG\"" }}).then((res) => {
+    axios.get("http://localhost:3000/games").then((res) => {
+    //axios.get("http://localhost:3000/games/select", {params: { columns: "g.id `id`, g.title `title`, g.about `about`, g.cover_img `cover_img`", tablecon: "games g JOIN game_tags gt ON g.id = gt.game_id JOIN tags t ON gt.tag_id = t.id", where: "t.tag LIKE \"RPG\"" }}).then((res) => {
     //axios.get("http://localhost:3000/games/tagsort", {params: { name: "RPG" }}).then((res) => { by filtrować
       setGames(res.data);
     });
