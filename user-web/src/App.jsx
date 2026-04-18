@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import './App.css'
+//import './App.css'
 
 // NAJPIERW ZRÓB DZIAŁANIA Z config.txt
 // Ważny pliki do operacji na bazie: server.js (nazwa bazy danych) i db.js (tabela i jej używane kolumny)
