@@ -16,6 +16,7 @@ export default function SearchPage(){
   });
 
   const [games, setGames] = useState([]);               // Dane gier z bazy danych
+  const [tags, setTags] = useState([]);                 // Dane tagów z bazy danych
   const [gamesData, setGamesData] = useState({          // Dane obecnie wybranej gry
     title:"",
     about:""
@@ -24,10 +25,17 @@ export default function SearchPage(){
   // Pobranie danych z tabeli
   const getAllGames = () => {
     axios.get("http://localhost:3000/games").then((res) => {
+    //axios.get("http://localhost:3000/games/tagsort", {params: { name: "RPG" }}).then((res) => { by filtrować
       setGames(res.data);
     });
   };
+  const getAllTags = () => {
+    axios.get("http://localhost:3000/tags").then((res) => {
+      setTags(res.data);
+    });
+  };
   React.useEffect(() => {
+    getAllTags();
     getAllGames();
   }, []);
 
