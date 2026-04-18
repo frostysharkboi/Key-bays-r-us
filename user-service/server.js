@@ -69,6 +69,24 @@ app.get("/games/tagsort", async (req, res) => {
   }
 });
 
+app.get("/:table" + "/select", async (req, res) => {
+  const { columns, tablecon, where } = req.query;
+
+  try {
+    let sql = "SELECT ";
+
+    sql += (columns)? `${columns} FROM ` : "* FROM ";
+    sql += (tablecon)? `${tablecon}` : `${req.params.table}`;
+    if(where) sql += ` WHERE ${where}`;
+
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get("/:table", async (req,res) => {
   const table = req.params.table;
   if(!schema[table]){
