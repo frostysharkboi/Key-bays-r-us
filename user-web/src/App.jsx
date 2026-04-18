@@ -21,6 +21,7 @@ function App() {
   });
 
   const [games, setGames] = useState([]);               // Dane gier z bazy danych
+  const [tags, setTags] = useState([]);                 // Dane tagów z bazy danych
   const [gamesData, setGamesData] = useState({          // Dane obecnie wybranej gry
     title:"",
     about:""
@@ -29,10 +30,17 @@ function App() {
   // Pobranie danych z tabeli
   const getAllGames = () => {
     axios.get("http://localhost:3000/games").then((res) => {
+    //axios.get("http://localhost:3000/games/tagsort", {params: { name: "RPG" }}).then((res) => { by filtrować
       setGames(res.data);
     });
   };
+  const getAllTags = () => {
+    axios.get("http://localhost:3000/tags").then((res) => {
+      setTags(res.data);
+    });
+  };
   React.useEffect(() => {
+    getAllTags();
     getAllGames();
   }, []);
 
@@ -149,69 +157,18 @@ function App() {
       </div>
       <div className="row row-cols-4 justify-content-md-center m-3 p-3 text-center">
       {/* 
-      
       Ignacy----> Myślałem, żeby wrzucić tu pętle, która by przeszukiwała baze w poszukiwaniu gatunków gier i na podstawie znalezionych gatunków wypisywała je w kartach poniżej. 
       Dominik----> Zrobi się w dalszej części.
+      Jakub----> Zrobiłem =) ale chyba jeszcze przekierowania trzeba zrobić
       */}
-
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Przygodowa</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Akcji</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">City Builder</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Horror</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">FPS</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">RTS</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Visual Novel</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Fighting Game</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Arcade</p>
-            </div>
-        </div>
-
-      {/*
-      
-      {data.map((tags) => (
-          <div className="card col p-4 m-3" key={tags.id}>
-            <div className="card-body w-40">
-              <p className="card-text w-40">{tags.tag}</p>
-            </div>
+        {tags.map((row)=>(
+          <div className="card rounded-0 border border-3 font col p-4 m-3" key={row.id}>
+              <div className="card-body w-40">
+                {/*<img src={row.icon} alt={row.tag}/>*/}
+                <p className="card-text w-40 fw-bold">{row.tag}</p>
+              </div>
           </div>
-      ))}
-      
-      */}
-        
+        ))}
 
       </div>
 

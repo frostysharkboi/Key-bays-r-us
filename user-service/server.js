@@ -48,6 +48,27 @@ app.listen(port, async () => {
 // IMPLEMENTACJA OPERACJI CRUD
 
 // Read
+app.get("/games/tagsort", async (req, res) => {
+  const { name } = req.query;
+
+  try {
+    let sql = "SELECT ";
+    const params = [];
+
+    if (name) {
+      sql += "g.id `id`, g.title `title`, g.about `about`, g.cover_img `cover_img` FROM games g JOIN game_tags gt ON g.id = gt.game_id JOIN tags t ON gt.tag_id = t.id WHERE t.tag LIKE ?";
+      params.push(`%${name}%`);
+    }
+    else sql == `* FROM games`;
+
+    const result = await db.pool.query(sql, params);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get("/:table", async (req,res) => {
   const table = req.params.table;
   if(!schema[table]){
