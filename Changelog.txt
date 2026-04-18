@@ -1,3 +1,11 @@
 v 0.2 - 12.04.2026
 
 IK - dodałem obsługę routera.
+
+v 0.3
+
+IK:
+ - Przekierowywanie z głównej strony na wyszukiwarkę, a stamtąd na szablon podstrony z grą
+ - Zapisywanie i zapamiętywanie szukanego tytułu lub gatunku
+ - Error page dla podstron
+ - Dodano filtry (tylko w html, bez podpiętego skryptu)

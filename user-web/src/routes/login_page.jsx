@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import './root.css'
 
 export default function Root(){
@@ -75,13 +75,6 @@ export default function Root(){
   const rows = table.getRowModel().rows;
   const emptyRowCount = 5 - rows.length;
 
-  const [SearchThisTitle, changeTitle] = useState(null);
-  const navigate = useNavigate();
-
-  function RedirectToSeaching(e) {
-    navigate("Wyszukiwarka-Test", {state: {Title: SearchThisTitle, GenreId: e}});
-  }
-
     return (
     <>
     <div className="container-fluid">
@@ -90,13 +83,13 @@ export default function Root(){
 
         {/* Wyszukiwarka */}
         <div className='col-4'>
-          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
-          <button onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
+          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
+          <button>szukaj</button>
         </div>
 
         {/* Logo, wiadomo */}
         <div className='col-4 fw-bolder logo'>
-          <a href="/"><h1>Keys &apos;R&apos; Us</h1></a>
+          <h1>Keys &apos;R&apos; Us</h1>
         </div>
 
         {/* Dropdown menu konta */}
@@ -156,103 +149,52 @@ export default function Root(){
       Ignacy----> Myślałem, żeby wrzucić tu pętle, która by przeszukiwała baze w poszukiwaniu gatunków gier i na podstawie znalezionych gatunków wypisywała je w kartach poniżej. 
       Dominik----> Zrobi się w dalszej części.
       */}
-      
-        <a onClick={() => RedirectToSeaching("1")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-              <div className="card-body w-40">
-                <p className="card-text w-40 fw-bold">RPG</p>
-              </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("2")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-              <div className="card-body w-40">
-                <p className="card-text w-40 fw-bold">Action</p>
-              </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("3")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
+
+        <div className="card rounded-0 border border-3 font col p-4 m-3">
             <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Open World</p>
+              <p className="card-text w-40 fw-bold">Przygodowa</p>
             </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("4")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
+        </div>
+        <div className="card rounded-0 border border-3 font col p-4 m-3">
             <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">FPS</p>
+              <p className="card-text w-40 fw-bold">Akcji</p>
             </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("5")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
+        </div>
+        <div className="card rounded-0 border border-3 font col p-4 m-3">
             <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Adventure</p>
+              <p className="card-text w-40 fw-bold">City Builder</p>
             </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("6")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Multiplayer</p>
-            </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("7")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Strategy</p>
-            </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("8")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Simulation</p>
-            </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("9")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
+        </div>
+        <div className="card rounded-0 border border-3 font col p-4 m-3">
             <div className="card-body w-40">
               <p className="card-text w-40 fw-bold">Horror</p>
             </div>
-          </div>
-        </a>
-
-        <a onClick={() => RedirectToSeaching("10")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
+        </div>
+        <div className="card rounded-0 border border-3 font col p-4 m-3">
             <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Indie</p>
+              <p className="card-text w-40 fw-bold">FPS</p>
             </div>
-          </div>
-        </a>
-
-        <a onClick={() => RedirectToSeaching("11")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
+        </div>
+        <div className="card rounded-0 border border-3 font col p-4 m-3">
             <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Survival</p>
+              <p className="card-text w-40 fw-bold">RTS</p>
             </div>
-          </div>
-        </a>
-
-        <a onClick={() => RedirectToSeaching("12")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
+        </div>
+        <div className="card rounded-0 border border-3 font col p-4 m-3">
             <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Sandbox</p>
+              <p className="card-text w-40 fw-bold">Visual Novel</p>
             </div>
-          </div>
-        </a>
-        
+        </div>
+        <div className="card rounded-0 border border-3 font col p-4 m-3">
+            <div className="card-body w-40">
+              <p className="card-text w-40 fw-bold">Fighting Game</p>
+            </div>
+        </div>
+        <div className="card rounded-0 border border-3 font col p-4 m-3">
+            <div className="card-body w-40">
+              <p className="card-text w-40 fw-bold">Arcade</p>
+            </div>
+        </div>
 
       {/*
       

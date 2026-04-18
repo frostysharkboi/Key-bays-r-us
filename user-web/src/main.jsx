@@ -13,6 +13,8 @@ import {
 import Root from "./routes/root.jsx";
 import SearchPage from './routes/search_page.jsx';
 import ErrorPage from "./routes/error-page.jsx";
+import GamePage from "./routes/game_page.jsx";
+import LoginPage from "./routes/login_page.jsx";
 
 const router = createBrowserRouter([
   {
@@ -23,7 +25,18 @@ const router = createBrowserRouter([
   {
     path:"Wyszukiwarka-Test",
     element: <SearchPage />,
-  }
+    errorElement: <ErrorPage />,
+  },
+  {
+    path:"Wyszukiwarka-Test/GamePage-Test",
+    element: <GamePage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path:"LoginPage-Test",
+    element: <LoginPage />,
+    errorElement: <ErrorPage />,
+  },
 ])
 
 createRoot(document.getElementById('root')).render(
