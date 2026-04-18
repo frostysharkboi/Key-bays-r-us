@@ -135,21 +135,9 @@ export default function SearchPage(){
                         <h2>Tytuł</h2>
                         <input className='col p-2' type="text" name='search' id='search' value={globalFilter ?? ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder='Search...'/>
                       </div>
-                      <div className='addpaneldiv row p-2 pe-4'>
+                      <div className='addpaneldiv col p-2 pe-4'>
                         <h2>Gatunki</h2>
-                        {/* TODO: Zoptymalizować radiogroup, by tworzyło radio za pomocą .map() tabeli tag*/}
-                        <div><input type="Checkbox" name="Gat_1" id="Gat_1" value="1"/><label htmlFor="Gat_1" className='p-2 m-0'>RPG</label></div>
-                        <div><input type="Checkbox" name="Gat_2" id="Gat_2" value="2"/><label htmlFor="Gat_2" className='p-2 m-0'>Action</label></div>
-                        <div><input type="Checkbox" name="Gat_3" id="Gat_3" value="3"/><label htmlFor="Gat_3" className='p-2 m-0'>Open World</label></div>
-                        <div><input type="Checkbox" name="Gat_4" id="Gat_4" value="4"/><label htmlFor="Gat_4" className='p-2 m-0'>FPS</label></div>
-                        <div><input type="Checkbox" name="Gat_5" id="Gat_5" value="5"/><label htmlFor="Gat_5" className='p-2 m-0'>Adventure</label></div>
-                        <div><input type="Checkbox" name="Gat_6" id="Gat_6" value="6"/><label htmlFor="Gat_6" className='p-2 m-0'>Multiplayer</label></div>
-                        <div><input type="Checkbox" name="Gat_7" id="Gat_7" value="7"/><label htmlFor="Gat_7" className='p-2 m-0'>Strategy</label></div>
-                        <div><input type="Checkbox" name="Gat_8" id="Gat_8" value="8"/><label htmlFor="Gat_8" className='p-2 m-0'>Simulation</label></div>
-                        <div><input type="Checkbox" name="Gat_9" id="Gat_9" value="9"/><label htmlFor="Gat_9" className='p-2 m-0'>Horror</label></div>
-                        <div><input type="Checkbox" name="Gat_10" id="Gat_10" value="10"/><label htmlFor="Gat_10" className='p-2 m-0'>Indie</label></div>
-                        <div><input type="Checkbox" name="Gat_11" id="Gat_11" value="11"/><label htmlFor="Gat_11" className='p-2 m-0'>Survival</label></div>
-                        <div><input type="Checkbox" name="Gat_12" id="Gat_12" value="12"/><label htmlFor="Gat_12" className='p-2 m-0'>Sandbox</label></div>
+                        {tags.map((t) => (<div className='row' key={t.id}><input className='btn-check col' type="Checkbox" radioGroup='tags' name={`Gat_${t.id}`} id={`Gat_${t.id}`} value={`Gat_${t.id}`}/><label htmlFor={`Gat_${t.id}`} className='p-2 m-1 btn btn-danger'>{t.tag}</label></div>))}
                       </div>
                     </div>
                   </div>
