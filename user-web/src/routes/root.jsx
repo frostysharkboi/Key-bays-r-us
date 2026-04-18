@@ -164,117 +164,18 @@ export default function Root(){
       Ignacy----> Myślałem, żeby wrzucić tu pętle, która by przeszukiwała baze w poszukiwaniu gatunków gier i na podstawie znalezionych gatunków wypisywała je w kartach poniżej. 
       Dominik----> Zrobi się w dalszej części.
       */}
-      
-        <a onClick={() => RedirectToSeaching("1")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
+
+      {tags.map((row)=>(
+        <a onClick={() => RedirectToSeaching(parseInt(row.id) + 1)}>
+          <div className="card rounded-0 border border-3 font col p-4 m-3" key={row.id}>
               <div className="card-body w-40">
-                <p className="card-text w-40 fw-bold">RPG</p>
+                {/*<img src={row.icon} alt={row.tag}/>*/}
+                <p className="card-text w-40 fw-bold">{row.tag}</p>
               </div>
           </div>
         </a>
-        
-        <a onClick={() => RedirectToSeaching("2")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-              <div className="card-body w-40">
-                <p className="card-text w-40 fw-bold">Action</p>
-              </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("3")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Open World</p>
-            </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("4")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">FPS</p>
-            </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("5")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Adventure</p>
-            </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("6")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Multiplayer</p>
-            </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("7")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Strategy</p>
-            </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("8")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Simulation</p>
-            </div>
-          </div>
-        </a>
-        
-        <a onClick={() => RedirectToSeaching("9")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Horror</p>
-            </div>
-          </div>
-        </a>
-
-        <a onClick={() => RedirectToSeaching("10")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Indie</p>
-            </div>
-          </div>
-        </a>
-
-        <a onClick={() => RedirectToSeaching("11")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Survival</p>
-            </div>
-          </div>
-        </a>
-
-        <a onClick={() => RedirectToSeaching("12")}>
-          <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Sandbox</p>
-            </div>
-          </div>
-        </a>
-        
-
-      {/*
-      
-      {data.map((tags) => (
-          <div className="card col p-4 m-3" key={tags.id}>
-            <div className="card-body w-40">
-              <p className="card-text w-40">{tags.tag}</p>
-            </div>
-          </div>
-      ))}
-      
-      */}
-        
-
+        ))
+      }
       </div>
 
       {/* Stopka */}

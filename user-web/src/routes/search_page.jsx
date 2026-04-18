@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 're
 import './root.css'
 
 export default function SearchPage(){
-    // UseState do operacji na danych
+  // UseState do operacji na danych
   const [globalFilter, setGlobalFilter] = useState(""); // Filtry
   const [sorting, setSorting] = useState([]);           // Sortowanie
   const [pagination, setPagination] = useState({        // Wybrana strona:
@@ -24,7 +24,8 @@ export default function SearchPage(){
 
   // Pobranie danych z tabeli
   const getAllGames = () => {
-    axios.get("http://localhost:3000/games").then((res) => {
+    //axios.get("http://localhost:3000/games").then((res) => {
+    axios.get("http://localhost:3000/games/select", {params: { columns: "g.id `id`, g.title `title`, g.about `about`, g.cover_img `cover_img`", tablecon: "games g JOIN game_tags gt ON g.id = gt.game_id JOIN tags t ON gt.tag_id = t.id", where: "t.tag LIKE \"RPG\"" }}).then((res) => {
     //axios.get("http://localhost:3000/games/tagsort", {params: { name: "RPG" }}).then((res) => { by filtrować
       setGames(res.data);
     });
@@ -133,7 +134,6 @@ export default function SearchPage(){
                       <div className="addpaneldiv row p-2 pe-4">
                         <h2>Tytuł</h2>
                         <input className='col p-2' type="text" name='search' id='search' value={globalFilter ?? ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder='Search...'/>
-                        
                       </div>
                       <div className='addpaneldiv row p-2 pe-4'>
                         <h2>Gatunki</h2>
@@ -157,24 +157,24 @@ export default function SearchPage(){
                     <table className='table border border-3 table-sm table-striped table-hover ms-3'>
                       <thead>
                         {table.getHeaderGroups().map(hg => (
-                            <tr className='table-primary border border-3' key={hg.id}>
-                              {hg.headers.map(header => (
-                                <th key={header.id} onClick={header.column.getToggleSortingHandler()} style={{ cursor: header.column.getCanSort() ? "pointer" : "default" }}>
-                                  {header.column.getIsSorted() === "desc" ? "⬆️ " : (header.column.getIsSorted() === "asc" ? "⬇️ " : "")}
-                                  {flexRender(header.column.columnDef.header, header.getContext())}
-                                  {header.column.getIsSorted() === "desc" ? " ⬆️" : (header.column.getIsSorted() === "asc" ? " ⬇️" : "")}
-                                </th>
-                              ))}
-                            </tr>
+                          <tr className='table-primary border border-3' key={hg.id}>
+                            {hg.headers.map(header => (
+                              <th key={header.id} onClick={header.column.getToggleSortingHandler()} style={{ cursor: header.column.getCanSort() ? "pointer" : "default" }}>
+                                {header.column.getIsSorted() === "desc" ? "⬆️ " : (header.column.getIsSorted() === "asc" ? "⬇️ " : "")}
+                                {flexRender(header.column.columnDef.header, header.getContext())}
+                                {header.column.getIsSorted() === "desc" ? " ⬆️" : (header.column.getIsSorted() === "asc" ? " ⬇️" : "")}
+                              </th>
+                            ))}
+                          </tr>
                         ))}
                       </thead>
                       <tbody>
                         {rows.map((row) => (
                           <tr key={row.id} onClick={() => RedirectToStorefront(parseInt(row.id) + 1)}>
                             {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id}>
-                                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </td>
+                              <td key={cell.id}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </td>
                             ))}
                           </tr>
                         ))}
@@ -210,5 +210,5 @@ export default function SearchPage(){
                 
             </div>
     </>
-  )
-}
+    )
+  };
