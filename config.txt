@@ -26,3 +26,5 @@ w zewnętrznym folderze (server-test):
     terminal 2:
       cd user-web
       npm run dev
+
+by aktualizować git: git fetch --all
