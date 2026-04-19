@@ -50,6 +50,9 @@ app.listen(port, async () => {
 // Read
 
 //Wyswietlanie gier po kategoriach (by wyszukiwanie wciąż działało osobno);
+
+//    axios.get("http://localhost:3000/games/tagsort", { params: { tags: array[string] }, paramsSerializer: params => {return "tags=" + params.tags.join("&tags=");}}).then((res) => {setGames(res.data);});
+
 app.get("/games/tagsort", async (req, res) => {
 
   // Jakub DEBUG: był problem z formatowaniem przesłanych danych więc jest tu masa przetwarzana które pewnie nic nie robi - ale działa i boje się tego tykać
@@ -80,7 +83,27 @@ app.get("/games/tagsort", async (req, res) => {
   }
 });
 
+//pobieranie tagów do gry po id
+
+// axios.get("http://localhost:3000/games/tagnames", { params: { game_id: int }}).then((res) => {setGameTags(res.data);});
+
+app.get("/games/tagnames", async (req, res) => {
+  let game_id = req.query;
+
+  try {
+    const sql = `SELECT DISTINCT t.id "id", t.tag "tag" FROM games g JOIN game_tags gt ON g.id = gt.game_id JOIN tags t ON t.id = gt.tag_id WHERE g.id LIKE ${game_id}`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 //domyślny select * dowolnej tabeli
+
+// axios.get("http://localhost:3000/table").then((res) => {setTable(res.data)})
+
 app.get("/:table", async (req,res) => {
   const table = req.params.table;
   if(!schema[table]){
