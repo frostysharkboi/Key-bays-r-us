@@ -57,9 +57,11 @@ export default function SearchPage(){
       setFilterTags(mapped);
     });
   };
+  const anySelected = filterTags.some(t=>t.isSelected);
   React.useEffect(() => {
     getAllTags();
   }, []);
+  //inaczej by poczekało na wykonanie poprzedniego
   React.useEffect(() => {
     if (filterTags.length > 0) {
       getFilteredGames();
@@ -154,9 +156,13 @@ export default function SearchPage(){
                         {filterTags.map((t) => (
                           <div className='row' key={t.id}>
                             <input className='btn-check col' type="checkbox" name={`Gat_${t.id}`} id={`Gat_${t.id}`} checked={t.isSelected}
-                              onChange={(e) => { setFilterTags(prev => prev.map(tag => tag.id === t.id ? { ...tag, isSelected: e.target.checked } : tag));}}
+                              onChange={(e) => {setFilterTags(prev => prev.map(
+                                tag => tag.id === t.id ? { ...tag, isSelected: e.target.checked } : tag
+                              ));}}
                             />
-                            <label htmlFor={`Gat_${t.id}`} className='p-2 m-1 btn btn-danger'>{t.tag}</label>
+                            <label htmlFor={`Gat_${t.id}`}
+                              className={`p-2 m-1 btn ${ t.isSelected || !anySelected ? "btn-success" : "btn-danger" }`}
+                            >{t.tag}</label>
                           </div>
                         ))}
                       </div>
