@@ -48,20 +48,31 @@ app.listen(port, async () => {
 // IMPLEMENTACJA OPERACJI CRUD
 
 // Read
+
+//Wyswietlanie gier po kategoriach (by wyszukiwanie wciąż działało osobno);
 app.get("/games/tagsort", async (req, res) => {
-  const { name } = req.query;
+
+  // Jakub DEBUG: był problem z formatowaniem przesłanych danych więc jest tu masa przetwarzana które pewnie nic nie robi - ale działa i boje się tego tykać
+  console.log("RAW QUERY:", req.query);
+  console.log("TAGS:", req.query.tags);
+  let tags = req.query.tags;
+  if (!tags) {
+    const result = await db.pool.query("SELECT * FROM games");
+    return res.json(result);
+  }
+  tags = Array.isArray(tags) ? tags : [tags];
+  tags = tags.filter(Boolean);
+
+  if (tags.length === 0) {
+    const result = await db.pool.query("SELECT * FROM games");
+    return res.json(result);
+  }
 
   try {
-    let sql = "SELECT ";
-    const params = [];
-
-    if (name) {
-      sql += "g.id `id`, g.title `title`, g.about `about`, g.cover_img `cover_img` FROM games g JOIN game_tags gt ON g.id = gt.game_id JOIN tags t ON gt.tag_id = t.id WHERE t.tag LIKE ?";
-      params.push(`%${name}%`);
-    }
-    else sql == `* FROM games`;
-
-    const result = await db.pool.query(sql, params);
+    const placeholders = req.query.tags;
+    console.log(placeholders);
+    const sql = `SELECT DISTINCT * FROM games g JOIN game_tags t ON g.id = t.game_id WHERE t.tag_id IN (${placeholders}) ORDER BY g.id ASC`;
+    const result = await db.pool.query(sql);
     res.json(result);
   } catch (err) {
     console.error(err);
@@ -69,6 +80,7 @@ app.get("/games/tagsort", async (req, res) => {
   }
 });
 
+//domyślny select * dowolnej tabeli
 app.get("/:table", async (req,res) => {
   const table = req.params.table;
   if(!schema[table]){
@@ -84,6 +96,8 @@ app.get("/:table", async (req,res) => {
   }
 
 });
+
+// Reszta bardziej pod stronke admina
 
 // Create
 

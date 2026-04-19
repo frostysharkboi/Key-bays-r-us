@@ -12,33 +12,59 @@ export default function SearchPage(){
   const [sorting, setSorting] = useState([]);           // Sortowanie
   const [pagination, setPagination] = useState({        // Wybrana strona:
     pageIndex: 0,                                       //    aktualna strona
-    pageSize: 5,                                        //    ilośc rekordów na strone
+    pageSize: 8,                                        //    ilośc rekordów na strone
   });
 
   const [games, setGames] = useState([]);               // Dane gier z bazy danych
   const [tags, setTags] = useState([]);                 // Dane tagów z bazy danych
+  const [filterTags, setFilterTags] = useState([]);     // Dane tagów do filtrów z bazy danych
   const [gamesData, setGamesData] = useState({          // Dane obecnie wybranej gry
     title:"",
     about:""
   });
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  function RedirectToStorefront(e){
+    navigate('GamePage-Test',{state:{GameId: e}});
+  }
+  
+  //Tu jest wyszukiwanie gry z tego paska na górze.
+  var Title = location.state.Title;
+  var GenreId = location.state.GenreId;
+  
+  console.log(Title + "\n" + GenreId);
+
   // Pobranie danych z tabeli
-  const getAllGames = () => {
-    axios.get("http://localhost:3000/games").then((res) => {
-    //axios.get("http://localhost:3000/games/select", {params: { columns: "g.id `id`, g.title `title`, g.about `about`, g.cover_img `cover_img`", tablecon: "games g JOIN game_tags gt ON g.id = gt.game_id JOIN tags t ON gt.tag_id = t.id", where: "t.tag LIKE \"RPG\"" }}).then((res) => {
-    //axios.get("http://localhost:3000/games/tagsort", {params: { name: "RPG" }}).then((res) => { by filtrować
+  const getFilteredGames = () => {
+    const outputTags = filterTags.filter(tag => tag.isSelected).map(tag=>tag.id);
+    console.log(outputTags);
+    axios.get("http://localhost:3000/games/tagsort", { params: { tags: outputTags }, paramsSerializer: params => {return "tags=" + params.tags.join("&tags=");}}).then((res) => {
       setGames(res.data);
     });
-  };
+  }
   const getAllTags = () => {
     axios.get("http://localhost:3000/tags").then((res) => {
       setTags(res.data);
+
+      const mapped = res.data.map(e => ({
+        id: e.id,
+        tag: e.tag,
+        isSelected: e.id == GenreId,
+      }));
+
+      setFilterTags(mapped);
     });
   };
   React.useEffect(() => {
     getAllTags();
-    getAllGames();
   }, []);
+  React.useEffect(() => {
+    if (filterTags.length > 0) {
+      getFilteredGames();
+    }
+  }, [filterTags]);
 
 
 
@@ -72,6 +98,7 @@ export default function SearchPage(){
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel()
   });
+  /*
   // Czyszczenie danych po zatwierdzeniu 
   const clearAll=()=>{
     setGamesData({
@@ -80,22 +107,9 @@ export default function SearchPage(){
     });
     getAllGames();
   }
+  */
   const rows = table.getRowModel().rows;
-  const emptyRowCount = 5 - rows.length;
-
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  function RedirectToStorefront(e){
-    navigate('GamePage-Test',{state:{GameId: e}});
-  }
-
-  //Tu jest wyszukiwanie gry z tego paska na górze.
-  var Title = location.state.Title;
-  var GenreId = location.state.GenreId;
-  
-  console.log(Title + "\n" + GenreId);
-  
+  const emptyRowCount = pagination.pageSize - rows.length;
 
   return (
     <>
@@ -137,7 +151,14 @@ export default function SearchPage(){
                       </div>
                       <div className='addpaneldiv col p-2 pe-4'>
                         <h2>Gatunki</h2>
-                        {tags.map((t) => (<div className='row' key={t.id}><input className='btn-check col' type="Checkbox" radioGroup='tags' name={`Gat_${t.id}`} id={`Gat_${t.id}`} value={`Gat_${t.id}`}/><label htmlFor={`Gat_${t.id}`} className='p-2 m-1 btn btn-danger'>{t.tag}</label></div>))}
+                        {filterTags.map((t) => (
+                          <div className='row' key={t.id}>
+                            <input className='btn-check col' type="checkbox" name={`Gat_${t.id}`} id={`Gat_${t.id}`} checked={t.isSelected}
+                              onChange={(e) => { setFilterTags(prev => prev.map(tag => tag.id === t.id ? { ...tag, isSelected: e.target.checked } : tag));}}
+                            />
+                            <label htmlFor={`Gat_${t.id}`} className='p-2 m-1 btn btn-danger'>{t.tag}</label>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
