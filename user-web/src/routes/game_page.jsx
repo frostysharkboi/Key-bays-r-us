@@ -154,7 +154,7 @@ export default function Root(){
         {/* Wyszukiwarka */}
         <div className='col-4'>
           <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-          <button onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
+          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}
@@ -180,7 +180,7 @@ export default function Root(){
       {/* Tytuł Gry */}
       <div className='row m-3 p-3 text-center'>
         <div className='col'>
-          <h2>{(game[0])?  game[0].title : "Nie znaleziono"}</h2>
+          <h2 className='font'>{(game[0])?  game[0].title : "Nie znaleziono"}</h2>
         </div>
       </div>
 
@@ -190,17 +190,17 @@ export default function Root(){
         <div className='col-7'>
           <img src={(game[0])?  game[0].cover_img : "Nie znaleziono"}/>
         </div>
-        <div className='col-5'>
+        <div className='box-idk col-5'>
             {/* Recenzje - średnia w gwiazdkach */}
             <div>
-              <p>Recenzje</p>
+              <p className='font'>Recenzje</p>
               <p>{SredniaRecenzji()}</p>
               {/* Dodawnanie recenzji będzie działało na nested podstronie */}
             </div>
             <br/>
             {/* Tagi */}
             <div>
-              <p>Tagi</p>
+              <p className='font'>Tagi:</p>
               <p>|{WypiszTagi()}</p>
             </div>
             <br/>
@@ -215,14 +215,14 @@ export default function Root(){
       {/* Opis Gry i wymagania */}
       <div className='row m-3 p-3 text-center'>
         {/* Opis Gry */}
-        <div className='col-7'>
+        <div className='box-idk col-7'>
           <p>{(game[0])?  game[0].about : "Nie znaleziono"}</p>
         </div>
         {/* Div z obydwoma wymaganiami */}
         <div className='col-5 d-flex'>
           {/* Zalecane */}
-          <div className='m-4'>
-            <h3>Zalecane Wymagania</h3>
+          <div className='box-idk m-4'>
+            <h3 className='font'>Zalecane Wymagania:</h3>
             <p>
               System Operacyjny: {(game[0])?  game[0].opt_os : "Nie znaleziono"}<br/>
               Karta Graficzna: {(game[0])?  game[0].opt_gpu : "Nie znaleziono"}<br/>
@@ -235,8 +235,8 @@ export default function Root(){
           <br/>
 
           {/* Minimalne */}
-          <div className='m-4'>
-            <h3>Minimalne Wymagania</h3>
+          <div className='box-idk m-4'>
+            <h3 className='font'>Minimalne Wymagania:</h3>
             <p>
               System Operacyjny: {(game[0])?  game[0].min_os : "Nie znaleziono"}<br/>
               Karta Graficzna: {(game[0])?  game[0].min_gpu : "Nie znaleziono"}<br/>
@@ -249,13 +249,13 @@ export default function Root(){
       </div>
 
       {/* Oferty */}
-      <div className='row m-3 p-3 text-center'>
-        <p>Oferty</p>
-        <h3>TBD</h3>
+      <div className='row m-3 p-3 text-center border border-3 offer'>
+        <p className='font'>Oferty</p>
+        <h3 className='tbd'>TBD</h3>
       </div>
 
       {/* Recenzje - Szczegóły */}
-      <div className='row m-3 p-3 text-center'>
+      <div className='box-idk row m-3 p-3 text-center'>
         <p>Szcegółowe Recenzje</p>
         <p>{WypiszRecenzje()}</p>
       </div>
