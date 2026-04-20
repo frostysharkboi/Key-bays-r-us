@@ -9,25 +9,24 @@ import './root.css'
 export default function Root(){
 
   // UseState do operacji na danych
-  const [globalFilter, setGlobalFilter] = useState(""); // Filtry
-  const [sorting, setSorting] = useState([]);           // Sortowanie
-  const [pagination, setPagination] = useState({        // Wybrana strona:
-    pageIndex: 0,                                       //    aktualna strona
-    pageSize: 5,                                        //    ilośc rekordów na strone
-  });
 
   const [games, setGames] = useState([]);               // Dane gier z bazy danych
+  const [formatedGames, setFormatedGames] = useState([]);               // Dane gier z bazy danych
   const [tags, setTags] = useState([]);                 // Dane tagów z bazy danych
-  const [gamesData, setGamesData] = useState({          // Dane obecnie wybranej gry
-    title:"",
-    about:""
-  });
 
   // Pobranie danych z tabeli
-  const getAllGames = () => {
-    axios.get("http://localhost:3000/games").then((res) => {
-    //axios.get("http://localhost:3000/games/tagsort", {params: { name: "RPG" }}).then((res) => { by filtrować
+  const getGames = () => {
+    axios.get("http://localhost:3000/games/cover").then((res) => {
       setGames(res.data);
+
+      const mapped = res.data.map(e => ({
+        id: e.id,
+        title: e.title,
+        about: e.about,
+        cover_img: e.cover_img,
+      }));
+
+      setFormatedGames(mapped);
     });
   };
   const getAllTags = () => {
@@ -35,53 +34,15 @@ export default function Root(){
       setTags(res.data);
     });
   };
+
   React.useEffect(() => {
-    getAllTags();
-    getAllGames();
+    getGames();
   }, []);
-
-
-
-  // Wygenerowanie tabeli w html z danymi
-  const columns = React.useMemo(() => [
-    { header: "ID", accessorKey: "id", enableSorting: true,
-      cell: (info)=>{ return <b>{info.getValue()}</b> }
-     },
-    { header: "Title", accessorKey: "title", enableSorting: true},
-    { header: "About", accessorKey: "about", enableSorting: false},
-    { header: "Image", accessorKey: "cover_img", enableSorting: false,
-      cell: (info)=>{
-        var alt_text = "Cover Art of " + info.row.original.title;
-        return(<img src={info.getValue()} alt={alt_text} width={200} />)
-      }
+  React.useEffect(() => {
+    if (formatedGames.length > 0) {
+      getAllTags();
     }
-  ],[]);
-
-  
-
-  // Obsługa funkcji tabeli (tu większośc rzeczy po prostu wklejałem wdg zapotrzebowań innych funkcji np. wyszukiwanie, sortowanie i filtrowanie)
-  const table = useReactTable({
-    data: games,
-    columns,
-    state: { sorting, globalFilter, pagination },
-    onSortingChange: (newSorting) => {  setSorting(newSorting);},
-    onGlobalFilterChange: setGlobalFilter,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel()
-  });
-  // Czyszczenie danych po zatwierdzeniu 
-  const clearAll=()=>{
-    setGamesData({
-      title:"",
-      about:""
-    });
-    getAllGames();
-  }
-  const rows = table.getRowModel().rows;
-  const emptyRowCount = 5 - rows.length;
+  }, [formatedGames]);
 
   const [SearchThisTitle, changeTitle] = useState(null);
   const navigate = useNavigate();
@@ -92,6 +53,10 @@ export default function Root(){
     } else {
       navigate("Wyszukiwarka-Test", {state: {GenreId: e}});
     }
+  }
+
+  function RedirectToStorefront(e){
+    navigate('Wyszukiwarka-Test/GamePage-Test',{state:{GameId: e}});
   }
 
     return (
@@ -133,27 +98,19 @@ export default function Root(){
       <div className="row m-3 p-3 text-center">
         <div id="carouselExampleSlidesOnly" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-touch="false">
           <div className="carousel-inner">
-            <div className="carousel-item active" data-bs-interval="60">
-              <img src="https://store-images.s-microsoft.com/image/apps.5012.65806558541457305.a0ff0982-eced-4bfd-bb78-5ba7a73376c4.069fcd98-6d14-48a3-82a3-074b07fb3acb?q=90&w=480&h=270" className="mx-auto d-block w-25 h-25" alt="..."/>
-              <div className="carousel-caption d-none d-md-block">
-                <h5 className="font">TEMP GAME #1</h5>
-                <p className='discount'>Some representative placeholder content for the first slide.</p>
-              </div>
-            </div>
-            <div className="carousel-item" data-bs-interval="60">
-              <img src="https://store-images.s-microsoft.com/image/apps.5012.65806558541457305.a0ff0982-eced-4bfd-bb78-5ba7a73376c4.069fcd98-6d14-48a3-82a3-074b07fb3acb?q=90&w=480&h=270" className="mx-auto d-block w-25 h-25" alt="..."/>
-              <div className="carousel-caption d-none d-md-block ">
-                <h5 className="font">TEMP GAME #2</h5>
-                <p className='discount'>Some representative placeholder content for the first slide.</p>
-              </div>
-            </div>
-            <div className="carousel-item" data-bs-interval="60">
-              <img src="https://store-images.s-microsoft.com/image/apps.5012.65806558541457305.a0ff0982-eced-4bfd-bb78-5ba7a73376c4.069fcd98-6d14-48a3-82a3-074b07fb3acb?q=90&w=480&h=270" className="mx-auto d-block w-25 h-25" alt="..."/>
-              <div className="carousel-caption d-none d-md-block">
-                <h5 className="font">TEMP GAME #3</h5>
-                <p className='discount'>Some representative placeholder content for the first slide.</p>
-              </div>
-            </div>
+
+            {formatedGames.map(e=>{
+              return(
+                <div className={(e == formatedGames[0])? "carousel-item active":"carousel-item"} data-bs-interval="60" onClick={() => RedirectToStorefront(e.id)}>
+                  <img src={e.cover_img} className="mx-auto d-block w-25 h-25" alt="..."/>
+                  <div className="carousel-caption d-none d-md-block">
+                    <h5 className="font">{e.title}</h5>
+                    <p className='discount'>{e.about}</p>
+                  </div>
+                </div>
+              )
+            })}
+
           </div>
         </div>
       </div>
