@@ -1,87 +1,17 @@
 import { useState } from 'react';
+import { useEffect } from 'react';
 import axios from 'axios';
 import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
-import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import './root.css';
 
 export default function Root(){
 
-  // UseState do operacji na danych
-  const [globalFilter, setGlobalFilter] = useState(""); // Filtry
-  const [sorting, setSorting] = useState([]);           // Sortowanie
-  const [pagination, setPagination] = useState({        // Wybrana strona:
-    pageIndex: 0,                                       //    aktualna strona
-    pageSize: 5,                                        //    ilośc rekordów na strone
-  });
-
-  const [games, setGames] = useState([]);               // Dane gier z bazy danych
+  const [game, setGame] = useState([]);               // Dane gier z bazy danych
   const [tags, setTags] = useState([]);                 // Dane tagów z bazy danych
-  const [gamesData, setGamesData] = useState({          // Dane obecnie wybranej gry
-    title:"",
-    about:""
-  });
-
-  // Pobranie danych z tabeli
-  const getAllGames = () => {
-    axios.get("http://localhost:3000/games").then((res) => {
-    //axios.get("http://localhost:3000/games/tagsort", {params: { name: "RPG" }}).then((res) => { by filtrować
-      setGames(res.data);
-    });
-  };
-  const getAllTags = () => {
-    axios.get("http://localhost:3000/tags").then((res) => {
-      setTags(res.data);
-    });
-  };
-  React.useEffect(() => {
-    getAllTags();
-    getAllGames();
-  }, []);
-
-
-
-  // Wygenerowanie tabeli w html z danymi
-  const columns = React.useMemo(() => [
-    { header: "ID", accessorKey: "id", enableSorting: true,
-      cell: (info)=>{ return <b>{info.getValue()}</b> }
-     },
-    { header: "Title", accessorKey: "title", enableSorting: true},
-    { header: "About", accessorKey: "about", enableSorting: false},
-    { header: "Image", accessorKey: "cover_img", enableSorting: false,
-      cell: (info)=>{
-        var alt_text = "Cover Art of " + info.row.original.title;
-        return(<img src={info.getValue()} alt={alt_text} width={200} />)
-      }
-    }
-  ],[]);
-
-  
-
-  // Obsługa funkcji tabeli (tu większośc rzeczy po prostu wklejałem wdg zapotrzebowań innych funkcji np. wyszukiwanie, sortowanie i filtrowanie)
-  const table = useReactTable({
-    data: games,
-    columns,
-    state: { sorting, globalFilter, pagination },
-    onSortingChange: (newSorting) => {  setSorting(newSorting);},
-    onGlobalFilterChange: setGlobalFilter,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel()
-  });
-  // Czyszczenie danych po zatwierdzeniu 
-  const clearAll=()=>{
-    setGamesData({
-      title:"",
-      about:""
-    });
-    getAllGames();
-  }
-  const rows = table.getRowModel().rows;
-  const emptyRowCount = 5 - rows.length;
+  const [connectedTags, uptadeTags] = useState([]);   // Lista tagów gier.
+  const [reviews, updateReviews] = useState([]);      // Lista Recenzji
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -89,8 +19,127 @@ export default function Root(){
   var GameId = location.state.GameId;
   console.log(GameId);
 
+  // Pobranie danych z tabeli
+  const getGame = () => {
+    console.log("getgame 1");
+    axios.get("http://localhost:3000/games/alldata", { params: { game_id: GameId }}).then((res) => {
+      setGame(res.data);
+    });
+  };
+
+  const getAllTags = () => {
+    axios.get("http://localhost:3000/tags").then((res) => {
+      setTags(res.data);
+    });
+  };
+
+  const getSomeTags = () => {
+    axios.get("http://localhost:3000/game_tags").then((res) => {
+      uptadeTags(res.data);
+    });
+  };
+
+  const getAllReviews = () => {
+    axios.get("http://localhost:3000/ratings").then((res) => {
+      updateReviews(res.data);
+    });
+  };
+
+  function WypiszTagi(){
+    var powiązaneTagi = [];
+    if(connectedTags){
+      connectedTags.map(e => {
+        tags.map(f => {
+          if(e.game_id == GameId){
+            if(e.tag_id == f.id){
+              powiązaneTagi.push(f.tag);
+            }
+          }
+        })
+      })
+    }
+    console.log("Powiązane Tagi")
+    console.log(powiązaneTagi)
+
+    return (<>
+      {powiązaneTagi.map(e => (
+        <i> {e} | </i>
+      ))}
+    </>);
+  }
+
+  function WypiszRecenzje(){
+    var powiązaneRecenzje = [];
+    if(reviews){
+      reviews.map(e => {
+        if(e.game_id == GameId){
+          powiązaneRecenzje.push("Ocena: ", e.rating, " | Opis: ", e.other);
+        }
+      })
+    }
+    console.log("Powiązane Recenzje")
+    console.log(powiązaneRecenzje)
+
+    if(powiązaneRecenzje.length > 0){
+      return (<>
+        {powiązaneRecenzje.map(e => (
+          <i> {e} </i>
+        ))}
+      </>)
+    } else {
+      return (<>
+        <p>BRAK RECENZJI</p>
+      </>)
+    }
+  }
+
+  function SredniaRecenzji(){
+    var sumaRecenzji = 0;
+    var liczbaPetli = 0;
+
+    if(reviews){
+      reviews.map(e => {
+        if(e.game_id == GameId){
+          sumaRecenzji += e.rating;
+          liczbaPetli += 1;
+        }
+      })
+    }
+
+    if(liczbaPetli > 0){
+      sumaRecenzji /= liczbaPetli;
+      return (<>
+        <p>Oceny: {sumaRecenzji} / 5</p>
+      </>)
+    } else {
+      return(<>
+        <p>BRAK RECENZJI</p>
+      </>)
+    }
+  }
+
+  
+  React.useEffect(() => {
+    getGame();
+    getAllTags();
+    getSomeTags();
+    getAllReviews();
+  }, []);
+
+  const [SearchThisTitle, changeTitle] = useState(null);
+  function RedirectToSeaching(e) {
+    if(e == null){
+      navigate(-1, {state: {Title: SearchThisTitle}});
+    } else {
+      navigate(-1, {state: {GenreId: e}});
+    }
+  }
+
     return (
     <>
+    {console.log(tags)}
+    {console.log(connectedTags)}
+    {console.log(reviews)}
     <div className="container-fluid">
       {/*Nagłówek Strony*/}
       <div className="row m-3 p-3 text-center">
@@ -98,7 +147,7 @@ export default function Root(){
         {/* Wyszukiwarka */}
         <div className='col-4'>
           <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-          <button>szukaj</button>
+          <button onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}
@@ -124,7 +173,7 @@ export default function Root(){
       {/* Tytuł Gry */}
       <div className='row m-3 p-3 text-center'>
         <div className='col'>
-          <h2>Tytuł gry</h2>
+          <h2>{(game[0])?  game[0].title : "Nie znaleziono"}</h2>
         </div>
       </div>
 
@@ -132,23 +181,26 @@ export default function Root(){
       <div className='row m-3 p-3 text-center'>
         {/* Media */}
         <div className='col-7'>
-          <iframe src="https://youtu.be/DljZz8vWZW4?si=lK8YrEopzDY1OcnY" width="800px" heigth="600px"/>
+          <img src={(game[0])?  game[0].cover_img : "Nie znaleziono"}/>
         </div>
         <div className='col-5'>
             {/* Recenzje - średnia w gwiazdkach */}
             <div>
               <p>Recenzje</p>
+              <p>{SredniaRecenzji()}</p>
               {/* Dodawnanie recenzji będzie działało na nested podstronie */}
             </div>
             <br/>
             {/* Tagi */}
             <div>
               <p>Tagi</p>
+              <p>|{WypiszTagi()}</p>
             </div>
             <br/>
             {/* Producent */}
             <div>
-              <p>Producent</p>
+              <p>Data Wydania: {(game[0])?  game[0].release_date : "Nie znaleziono"}</p>
+              <p>Developer: {(game[0])?  game[0].publisher : "Nie znaleziono"}</p>
             </div>
         </div>
       </div>
@@ -157,20 +209,34 @@ export default function Root(){
       <div className='row m-3 p-3 text-center'>
         {/* Opis Gry */}
         <div className='col-7'>
-          <p>Opis gry</p>
+          <p>{(game[0])?  game[0].about : "Nie znaleziono"}</p>
         </div>
         {/* Div z obydwoma wymaganiami */}
-        <div className='col-5'>
+        <div className='col-5 d-flex'>
           {/* Zalecane */}
-          <div>
-            <p>Zalecane wymagania</p>
+          <div className='m-4'>
+            <h3>Zalecane Wymagania</h3>
+            <p>
+              System Operacyjny: {(game[0])?  game[0].opt_os : "Nie znaleziono"}<br/>
+              Karta Graficzna: {(game[0])?  game[0].opt_gpu : "Nie znaleziono"}<br/>
+              Procesor: {(game[0])?  game[0].opt_cpu : "Nie znaleziono"}<br/>
+              Pamięć ram: {(game[0])?  game[0].opt_ram : "Nie znaleziono"} GB<br/>
+              Potrzebne miejsce: {(game[0])?  game[0].opt_size : "Nie znaleziono"} GB
+            </p>
           </div>
 
           <br/>
 
           {/* Minimalne */}
-          <div>
-            <p>Minimalne wymagania</p>
+          <div className='m-4'>
+            <h3>Minimalne Wymagania</h3>
+            <p>
+              System Operacyjny: {(game[0])?  game[0].min_os : "Nie znaleziono"}<br/>
+              Karta Graficzna: {(game[0])?  game[0].min_gpu : "Nie znaleziono"}<br/>
+              Procesor: {(game[0])?  game[0].min_cpu : "Nie znaleziono"}<br/>
+              Pamięć ram: {(game[0])?  game[0].min_ram : "Nie znaleziono"} GB<br/>
+              Potrzebne miejsce: {(game[0])?  game[0].min_size : "Nie znaleziono"} GB
+            </p>
           </div>
         </div>
       </div>
@@ -178,11 +244,13 @@ export default function Root(){
       {/* Oferty */}
       <div className='row m-3 p-3 text-center'>
         <p>Oferty</p>
+        <h3>TBD</h3>
       </div>
 
       {/* Recenzje - Szczegóły */}
       <div className='row m-3 p-3 text-center'>
         <p>Szcegółowe Recenzje</p>
+        <p>{WypiszRecenzje()}</p>
       </div>
 
       {/* Stopka */}
