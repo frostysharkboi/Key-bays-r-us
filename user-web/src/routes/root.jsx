@@ -87,7 +87,11 @@ export default function Root(){
   const navigate = useNavigate();
 
   function RedirectToSeaching(e) {
-    navigate("Wyszukiwarka-Test", {state: {Title: SearchThisTitle, GenreId: e}});
+    if(e == null){
+      navigate("Wyszukiwarka-Test", {state: {Title: SearchThisTitle}});
+    } else {
+      navigate("Wyszukiwarka-Test", {state: {GenreId: e}});
+    }
   }
 
     return (
@@ -99,7 +103,7 @@ export default function Root(){
         {/* Wyszukiwarka */}
         <div className='col-4'>
           <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
-          <button onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
+          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}
@@ -166,7 +170,7 @@ export default function Root(){
       */}
 
       {tags.map((row)=>(
-        <a onClick={() => RedirectToSeaching(parseInt(row.id) + 1)}>
+        <a onClick={() => RedirectToSeaching(parseInt(row.id))}>
           <div className="card rounded-0 border border-3 font col p-4 m-3" key={row.id}>
               <div className="card-body w-40">
                 {/*<img src={row.icon} alt={row.tag}/>*/}

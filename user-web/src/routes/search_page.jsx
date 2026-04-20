@@ -25,16 +25,16 @@ export default function SearchPage(){
 
   const navigate = useNavigate();
   const location = useLocation();
-
-  function RedirectToStorefront(e){
-    navigate('GamePage-Test',{state:{GameId: e}});
-  }
   
   //Tu jest wyszukiwanie gry z tego paska na górze.
   var Title = location.state.Title;
   var GenreId = location.state.GenreId;
   
   console.log(Title + "\n" + GenreId);
+
+  function RedirectToStorefront(e){
+    navigate('GamePage-Test',{state:{GameId: e}});
+  }
 
   // Pobranie danych z tabeli
   const getFilteredGames = () => {
@@ -113,6 +113,15 @@ export default function SearchPage(){
   const rows = table.getRowModel().rows;
   const emptyRowCount = pagination.pageSize - rows.length;
 
+  const [SearchThisTitle, changeTitle] = useState(null);
+  function RedirectToSeaching(e) {
+    if(e == null){
+      navigate(0, {state: {Title: SearchThisTitle}});
+    } else {
+      navigate(0, {state: {GenreId: e}});
+    }
+  }
+
   return (
     <>
         <div className="container-fluid">
@@ -122,6 +131,7 @@ export default function SearchPage(){
                 {/* Wyszukiwarka */}
                 <div className='col-4'>
                   <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
+                  <button onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
                 </div>
         
                 {/* Logo, wiadomo */}
@@ -185,7 +195,7 @@ export default function SearchPage(){
                       </thead>
                       <tbody>
                         {rows.map((row) => (
-                          <tr key={row.id} onClick={() => RedirectToStorefront(parseInt(row.id) + 1)}>
+                          <tr key={row.id} onClick={() => RedirectToStorefront(parseInt(row.getVisibleCells()[0].getValue()))}>
                             {row.getVisibleCells().map((cell) => (
                               <td key={cell.id}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
