@@ -156,3 +156,12 @@ tbody{
 input:focus {
     outline: 3px solid #DDDDD5;
   }
+::selection {
+  color: #191009;
+  background: #DDDDD5;
+}
+/* Code for Firefox */
+  ::-moz-selection { 
+  color: #191009;
+  background: #DDDDD5;
+}
