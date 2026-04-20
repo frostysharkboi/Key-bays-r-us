@@ -67,6 +67,9 @@ a{
     background-color: #373327;
     font-family: akira;
 }
+.logo:hover{
+    background-color: #403B2D;
+}
 @font-face {
   font-family: akira;
   src: url(AODfont.otf);
