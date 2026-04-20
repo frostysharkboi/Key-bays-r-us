@@ -156,7 +156,7 @@ app.get("/games/reviews", async (req, res) => {
 // axios.get("http://localhost:3000/games/alldata", { params: { game_id: int }}).then((res) => {setGameData(res.data);});
 
 app.get("/games/alldata", async (req, res) => {
-  let game_id = req.params;
+  const { game_id } = req.query;
 
   try {
     const sql = `SELECT DISTINCT g.id "id", g.title "title", g.developer "developer", g.publisher "publisher", g.about "about", DATE_FORMAT(g.release_date, "%Y-%m-%d") "release_date", g.cover_img "cover_img", g.icon "icon", o.gpu "opt_gpu", o.cpu "opt_cpu", o.ram "opt_ram", o.size "opt_size", o.os "opt_os", o.other "opt_other", r.gpu "min_gpu", r.cpu "min_cpu", r.ram "min_ram", r.size "min_size", r.os "min_os", r.other "min_other" FROM opt_req o JOIN games g ON o.game_id = g.id JOIN min_req r ON r.game_id = g.id WHERE g.id LIKE ${game_id}`;

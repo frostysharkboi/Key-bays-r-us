@@ -1,93 +1,31 @@
 import { useState } from 'react';
+import { useEffect } from 'react';
 import axios from 'axios';
 import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
-import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import './root.css';
 
 export default function Root(){
 
-  // UseState do operacji na danych
-  const [globalFilter, setGlobalFilter] = useState(""); // Filtry
-  const [sorting, setSorting] = useState([]);           // Sortowanie
-  const [pagination, setPagination] = useState({        // Wybrana strona:
-    pageIndex: 0,                                       //    aktualna strona
-    pageSize: 5,                                        //    ilośc rekordów na strone
-  });
-
-  const [games, setGames] = useState([]);               // Dane gier z bazy danych
-  const [tags, setTags] = useState([]);                 // Dane tagów z bazy danych
-  const [gamesData, setGamesData] = useState({          // Dane obecnie wybranej gry
-    title:"",
-    about:""
-  });
-
-  // Pobranie danych z tabeli
-  const getAllGames = () => {
-    axios.get("http://localhost:3000/games").then((res) => {
-    //axios.get("http://localhost:3000/games/tagsort", {params: { name: "RPG" }}).then((res) => { by filtrować
-      setGames(res.data);
-    });
-  };
-  const getAllTags = () => {
-    axios.get("http://localhost:3000/tags").then((res) => {
-      setTags(res.data);
-    });
-  };
-  React.useEffect(() => {
-    getAllTags();
-    getAllGames();
-  }, []);
-
-
-
-  // Wygenerowanie tabeli w html z danymi
-  const columns = React.useMemo(() => [
-    { header: "ID", accessorKey: "id", enableSorting: true,
-      cell: (info)=>{ return <b>{info.getValue()}</b> }
-     },
-    { header: "Title", accessorKey: "title", enableSorting: true},
-    { header: "About", accessorKey: "about", enableSorting: false},
-    { header: "Image", accessorKey: "cover_img", enableSorting: false,
-      cell: (info)=>{
-        var alt_text = "Cover Art of " + info.row.original.title;
-        return(<img src={info.getValue()} alt={alt_text} width={200} />)
-      }
-    }
-  ],[]);
-
-  
-
-  // Obsługa funkcji tabeli (tu większośc rzeczy po prostu wklejałem wdg zapotrzebowań innych funkcji np. wyszukiwanie, sortowanie i filtrowanie)
-  const table = useReactTable({
-    data: games,
-    columns,
-    state: { sorting, globalFilter, pagination },
-    onSortingChange: (newSorting) => {  setSorting(newSorting);},
-    onGlobalFilterChange: setGlobalFilter,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel()
-  });
-  // Czyszczenie danych po zatwierdzeniu 
-  const clearAll=()=>{
-    setGamesData({
-      title:"",
-      about:""
-    });
-    getAllGames();
-  }
-  const rows = table.getRowModel().rows;
-  const emptyRowCount = 5 - rows.length;
+  const [game, setGame] = useState([]);               // Dane gier z bazy danych
 
   const navigate = useNavigate();
   const location = useLocation();
 
   var GameId = location.state.GameId;
   console.log(GameId);
+
+  // Pobranie danych z tabeli
+  const getGame = () => {
+    console.log("getgame 1");
+    axios.get("http://localhost:3000/games/alldata", { params: { game_id: GameId }}).then((res) => {
+      setGame(res.data);
+    });
+  };
+  React.useEffect(() => {
+    getGame();
+  }, []);
 
     return (
     <>
@@ -124,7 +62,7 @@ export default function Root(){
       {/* Tytuł Gry */}
       <div className='row m-3 p-3 text-center'>
         <div className='col'>
-          <h2>Tytuł gry</h2>
+          <h2>{(game[0])?  game[0].title : "Title"}</h2>
         </div>
       </div>
 

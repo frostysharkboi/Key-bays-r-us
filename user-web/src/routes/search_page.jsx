@@ -25,16 +25,16 @@ export default function SearchPage(){
 
   const navigate = useNavigate();
   const location = useLocation();
-
-  function RedirectToStorefront(e){
-    navigate('GamePage-Test',{state:{GameId: e}});
-  }
   
   //Tu jest wyszukiwanie gry z tego paska na górze.
   var Title = location.state.Title;
   var GenreId = location.state.GenreId;
   
   console.log(Title + "\n" + GenreId);
+
+  function RedirectToStorefront(e){
+    navigate('GamePage-Test',{state:{GameId: e}});
+  }
 
   // Pobranie danych z tabeli
   const getFilteredGames = () => {
