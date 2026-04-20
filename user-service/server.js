@@ -74,7 +74,7 @@ app.get("/games/tagsort", async (req, res) => {
   try {
     const placeholders = req.query.tags;
     console.log(placeholders);
-    const sql = `SELECT DISTINCT * FROM games g JOIN game_tags t ON g.id = t.game_id GROUP BY g.id HAVING t.tag_id IN (${placeholders}) ORDER BY g.id ASC`;
+    const sql = `SELECT DISTINCT g.id "id", g.title "title", g.about "about", g.cover_img "cover_img" FROM games g JOIN game_tags t ON g.id = t.game_id GROUP BY g.id, t.tag_id HAVING t.tag_id IN (${placeholders}) ORDER BY g.id ASC`;
     const result = await db.pool.query(sql);
     res.json(result);
   } catch (err) {
