@@ -99,7 +99,7 @@ export default function Root(){
         {/* Wyszukiwarka */}
         <div className='col-4'>
           <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
-          <button onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
+          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}

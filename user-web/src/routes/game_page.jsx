@@ -132,7 +132,7 @@ export default function Root(){
       <div className='row m-3 p-3 text-center'>
         {/* Media */}
         <div className='col-7'>
-          <iframe src="https://www.youtube.com/watch?v=Yr4Skj4Gc4E" width="800px" heigth="600px"/>
+          <iframe src="https://youtu.be/DljZz8vWZW4?si=lK8YrEopzDY1OcnY" width="800px" heigth="600px"/>
         </div>
         <div className='col-5'>
             {/* Recenzje - średnia w gwiazdkach */}
