@@ -112,13 +112,14 @@ export default function Root(){
       for(var i = 0; i < sumaRecenzji; i++){
         stringGwiazdki += "★";
       }
-      
 
-      console.log(typeof(stringGwiazdki), " ", stringGwiazdki);
+      //console.log(typeof(stringGwiazdki), " ", stringGwiazdki);
     }
+
     for(var j = stringGwiazdki.length; j < 5; j++){
         stringGwiazdki += "☆";
     }
+    
     return (<>
         <p> {stringGwiazdki} </p>
     </>)
