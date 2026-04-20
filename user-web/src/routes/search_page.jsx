@@ -185,7 +185,7 @@ export default function SearchPage(){
                       </thead>
                       <tbody>
                         {rows.map((row) => (
-                          <tr key={row.id} onClick={() => RedirectToStorefront(parseInt(row.id) + 1)}>
+                          <tr key={row.id} onClick={() => RedirectToStorefront(parseInt(row.getVisibleCells()[0].getValue()))}>
                             {row.getVisibleCells().map((cell) => (
                               <td key={cell.id}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
