@@ -87,7 +87,11 @@ export default function Root(){
   const navigate = useNavigate();
 
   function RedirectToSeaching(e) {
-    navigate("Wyszukiwarka-Test", {state: {Title: SearchThisTitle, GenreId: e}});
+    if(e == null){
+      navigate("Wyszukiwarka-Test", {state: {Title: SearchThisTitle}});
+    } else {
+      navigate("Wyszukiwarka-Test", {state: {GenreId: e}});
+    }
   }
 
     return (

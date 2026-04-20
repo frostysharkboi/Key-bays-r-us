@@ -19,9 +19,6 @@ export default function Root(){
   var GameId = location.state.GameId;
   console.log(GameId);
 
-  
-  
-
   // Pobranie danych z tabeli
   const getGame = () => {
     console.log("getgame 1");
@@ -129,6 +126,15 @@ export default function Root(){
     getAllReviews();
   }, []);
 
+  const [SearchThisTitle, changeTitle] = useState(null);
+  function RedirectToSeaching(e) {
+    if(e == null){
+      navigate(-1, {state: {Title: SearchThisTitle}});
+    } else {
+      navigate(-1, {state: {GenreId: e}});
+    }
+  }
+
     return (
     <>
     {console.log(tags)}
@@ -141,7 +147,7 @@ export default function Root(){
         {/* Wyszukiwarka */}
         <div className='col-4'>
           <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-          <button>szukaj</button>
+          <button onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}
