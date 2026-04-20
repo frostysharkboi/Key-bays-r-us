@@ -101,7 +101,7 @@ export default function Root(){
 
             {formatedGames.map(e=>{
               return(
-                <div className={(e == formatedGames[0])? "carousel-item active":"carousel-item"} data-bs-interval="60" onClick={() => RedirectToStorefront(e.id)}>
+                <div className={(e == formatedGames[0])? "carousel-item active":"carousel-item"} data-bs-interval="300" onClick={() => RedirectToStorefront(e.id)}>
                   <img src={e.cover_img} className="mx-auto d-block w-25 h-25" alt="..."/>
                   <div className="carousel-caption d-none d-md-block">
                     <h5 className="font">{e.title}</h5>
