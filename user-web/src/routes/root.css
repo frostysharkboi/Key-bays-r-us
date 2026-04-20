@@ -7,7 +7,10 @@ body{
     margin: 0;
     padding: 0;
 }
-
+a{
+    text-decoration: none;
+    color: #DDDDD5;
+}
 /* Dropdown Button */
 .dropbtn {
     background-color: #373327;
@@ -93,4 +96,17 @@ thead{
 }
 .discount{
     font-weight: normal;
+}
+thead{
+    background-color: #373327;
+}
+.table{
+    background-color: #373327;
+}
+.table:hover{
+    background-color: #403B2D;
+}
+.btnsrch{
+    margin-left: 10px;
+    border-width: 2px;
 }
