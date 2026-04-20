@@ -131,7 +131,7 @@ export default function SearchPage(){
                 {/* Wyszukiwarka */}
                 <div className='col-4'>
                   <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-                  <button onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
+                  <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
                 </div>
         
                 {/* Logo, wiadomo */}
@@ -155,14 +155,14 @@ export default function SearchPage(){
               <h3 className='mx-4 mt-4 p-4 font'>Wyniki Wyszukiwania</h3>
                 <div className="row px-4 pb-4">
                   <div className="col-12 col-lg-4 custom-border border-dark">
-                    <h3 className='mx-4 mt-4 p-3 text-center font'>Filtry</h3>
-                    <div className="addpanel">
+                    <h3 className='mx-4 mt-4 p-3 text-center font'>Filtry:</h3>
+                    <div className="addpanel box-idk">
                       <div className="addpaneldiv row p-2 pe-4">
-                        <h2>Tytuł</h2>
-                        <input className='col p-2' type="text" name='search' id='search' value={globalFilter ?? ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder='Search...'/>
+                        <h2 className='font'>Tytul</h2>
+                        <input className='col p-2 inp-srch' type="text" name='search' id='search' value={globalFilter ?? ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder='Search...'/>
                       </div>
                       <div className='addpaneldiv col p-2 pe-4'>
-                        <h2>Gatunki</h2>
+                        <h2 className='font'>Gatunki</h2>
                         {filterTags.map((t) => (
                           <div className='row' key={t.id}>
                             <input className='btn-check col' type="checkbox" name={`Gat_${t.id}`} id={`Gat_${t.id}`} checked={t.isSelected}
@@ -171,7 +171,7 @@ export default function SearchPage(){
                               ));}}
                             />
                             <label htmlFor={`Gat_${t.id}`}
-                              className={`p-2 m-1 btn ${ t.isSelected || !anySelected ? "btn-success" : "btn-danger" }`}
+                              className={`p-2 m-1 btn-kirk border border-6 ${ t.isSelected || !anySelected ? "btn-zaz" : "btn-odz" }`}
                             >{t.tag}</label>
                           </div>
                         ))}
@@ -182,12 +182,12 @@ export default function SearchPage(){
                     <table className='table border border-3 table-sm table-striped table-hover ms-3'>
                       <thead>
                         {table.getHeaderGroups().map(hg => (
-                          <tr className='table-primary border border-3' key={hg.id}>
+                          <tr className='table-part-top border border-3' key={hg.id}>
                             {hg.headers.map(header => (
                               <th key={header.id} onClick={header.column.getToggleSortingHandler()} style={{ cursor: header.column.getCanSort() ? "pointer" : "default" }}>
-                                {header.column.getIsSorted() === "desc" ? "⬆️ " : (header.column.getIsSorted() === "asc" ? "⬇️ " : "")}
+                                {header.column.getIsSorted() === "desc" ? "↑ " : (header.column.getIsSorted() === "asc" ? "↓ " : "")}
                                 {flexRender(header.column.columnDef.header, header.getContext())}
-                                {header.column.getIsSorted() === "desc" ? " ⬆️" : (header.column.getIsSorted() === "asc" ? " ⬇️" : "")}
+                                {header.column.getIsSorted() === "desc" ? " ↑" : (header.column.getIsSorted() === "asc" ? " ↓" : "")}
                               </th>
                             ))}
                           </tr>
@@ -195,7 +195,7 @@ export default function SearchPage(){
                       </thead>
                       <tbody>
                         {rows.map((row) => (
-                          <tr key={row.id} onClick={() => RedirectToStorefront(parseInt(row.getVisibleCells()[0].getValue()))}>
+                          <tr className='' key={row.id} onClick={() => RedirectToStorefront(parseInt(row.getVisibleCells()[0].getValue()))}>
                             {row.getVisibleCells().map((cell) => (
                               <td key={cell.id}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
