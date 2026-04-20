@@ -96,6 +96,7 @@ export default function Root(){
   function SredniaRecenzji(){
     var sumaRecenzji = 0;
     var liczbaPetli = 0;
+    var stringGwiazdki = "";
 
     if(reviews){
       reviews.map(e => {
@@ -108,14 +109,19 @@ export default function Root(){
 
     if(liczbaPetli > 0){
       sumaRecenzji /= liczbaPetli;
-      return (<>
-        <p>Oceny: {sumaRecenzji} / 5</p>
-      </>)
-    } else {
-      return(<>
-        <p>BRAK RECENZJI</p>
-      </>)
+      for(var i = 0; i < sumaRecenzji; i++){
+        stringGwiazdki += "★";
+      }
+      
+
+      console.log(typeof(stringGwiazdki), " ", stringGwiazdki);
     }
+    for(var j = stringGwiazdki.length; j < 5; j++){
+        stringGwiazdki += "☆";
+    }
+    return (<>
+        <p> {stringGwiazdki} </p>
+    </>)
   }
 
   
