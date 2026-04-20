@@ -88,10 +88,78 @@ app.get("/games/tagsort", async (req, res) => {
 // axios.get("http://localhost:3000/games/tagnames", { params: { game_id: int }}).then((res) => {setGameTags(res.data);});
 
 app.get("/games/tagnames", async (req, res) => {
-  let game_id = req.query;
+  let game_id = req.params;
 
   try {
     const sql = `SELECT DISTINCT t.id "id", t.tag "tag" FROM games g JOIN game_tags gt ON g.id = gt.game_id JOIN tags t ON t.id = gt.tag_id WHERE g.id LIKE ${game_id}`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+//pobieranie ofert do gier po id
+
+// axios.get("http://localhost:3000/games/activeoffers", { params: { game_id: int }}).then((res) => {setGameOffers(res.data);});
+
+app.get("/games/activeoffers", async (req, res) => {
+  let game_id = req.params;
+
+  try {
+    const sql = `SELECT DISTINCT o.id "id", s.login "seller", o.suggested_price "price", o.other "other", s.email "email" FROM key_offers o JOIN users s ON o.seller_id = s.id WHERE o.game_id LIKE ${game_id} AND o.status LIKE "Active";`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+//pobieranie mediów do gier po id
+
+// axios.get("http://localhost:3000/games/media", { params: { game_id: int }}).then((res) => {setGameMedia(res.data);});
+
+app.get("/games/media", async (req, res) => {
+  let game_id = req.params;
+
+  try {
+    const sql = `SELECT DISTINCT source FROM media WHERE game_id LIKE ${game_id}`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+//pobieranie recenzji do gry po id
+
+// axios.get("http://localhost:3000/games/reviews", { params: { game_id: int }}).then((res) => {setGameTags(res.data);});
+
+app.get("/games/reviews", async (req, res) => {
+  let game_id = req.params;
+
+  try {
+    const sql = `SELECT DISTINCT u.login "user", r.rating "rating", r.other "other" FROM ratings r JOIN users u ON u.id = r.user_id WHERE game_id LIKE ${game_id}`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+//pobieranie wszystkich pozostałych danych o grach
+
+// axios.get("http://localhost:3000/games/tagnames", { params: { game_id: int }}).then((res) => {setGameData(res.data);});
+
+app.get("/games/activeoffers", async (req, res) => {
+  let game_id = req.params;
+
+  try {
+    const sql = `SELECT DISTINCT g.id "id", g.title "title", g.developer "developer", g.publisher "publisher", g.about "about", g.release_date "release_date", g.cover_img "cover_img", g.icon "icon", o.gpu "opt_gpu", o.cpu "opt_cpu", o.ram "opt_ram", o.size "opt_size", o.os "opt_os", o.other "opt_other", r.gpu "min_gpu", r.cpu "min_cpu", r.ram "min_ram", r.size "min_size", r.os "min_os", r.other "min_other" FROM opt_req o JOIN games g ON o.game_id = g.id JOIN min_req r ON r.game_id = g.id WHERE g.id LIKE ${game_id}`;
     const result = await db.pool.query(sql);
     res.json(result);
   } catch (err) {
