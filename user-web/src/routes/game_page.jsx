@@ -9,13 +9,18 @@ import './root.css';
 export default function Root(){
 
   const [game, setGame] = useState([]);               // Dane gier z bazy danych
-  
+  const [tags, setTags] = useState([]);                 // Dane tagów z bazy danych
+  const [connectedTags, uptadeTags] = useState([]);   // Lista tagów gier.
+  const [reviews, updateReviews] = useState([]);      // Lista Recenzji
 
   const navigate = useNavigate();
   const location = useLocation();
 
   var GameId = location.state.GameId;
   console.log(GameId);
+
+  
+  
 
   // Pobranie danych z tabeli
   const getGame = () => {
@@ -25,13 +30,110 @@ export default function Root(){
     });
   };
 
+  const getAllTags = () => {
+    axios.get("http://localhost:3000/tags").then((res) => {
+      setTags(res.data);
+    });
+  };
+
+  const getSomeTags = () => {
+    axios.get("http://localhost:3000/game_tags").then((res) => {
+      uptadeTags(res.data);
+    });
+  };
+
+  const getAllReviews = () => {
+    axios.get("http://localhost:3000/ratings").then((res) => {
+      updateReviews(res.data);
+    });
+  };
+
+  function WypiszTagi(){
+    var powiązaneTagi = [];
+    if(connectedTags){
+      connectedTags.map(e => {
+        tags.map(f => {
+          if(e.game_id == GameId){
+            if(e.tag_id == f.id){
+              powiązaneTagi.push(f.tag);
+            }
+          }
+        })
+      })
+    }
+    console.log("Powiązane Tagi")
+    console.log(powiązaneTagi)
+
+    return (<>
+      {powiązaneTagi.map(e => (
+        <i> {e} | </i>
+      ))}
+    </>);
+  }
+
+  function WypiszRecenzje(){
+    var powiązaneRecenzje = [];
+    if(reviews){
+      reviews.map(e => {
+        if(e.game_id == GameId){
+          powiązaneRecenzje.push("Ocena: ", e.rating, " | Opis: ", e.other);
+        }
+      })
+    }
+    console.log("Powiązane Recenzje")
+    console.log(powiązaneRecenzje)
+
+    if(powiązaneRecenzje.length > 0){
+      return (<>
+        {powiązaneRecenzje.map(e => (
+          <i> {e} </i>
+        ))}
+      </>)
+    } else {
+      return (<>
+        <p>BRAK RECENZJI</p>
+      </>)
+    }
+  }
+
+  function SredniaRecenzji(){
+    var sumaRecenzji = 0;
+    var liczbaPetli = 0;
+
+    if(reviews){
+      reviews.map(e => {
+        if(e.game_id == GameId){
+          sumaRecenzji += e.rating;
+          liczbaPetli += 1;
+        }
+      })
+    }
+
+    if(liczbaPetli > 0){
+      sumaRecenzji /= liczbaPetli;
+      return (<>
+        <p>Oceny: {sumaRecenzji} / 5</p>
+      </>)
+    } else {
+      return(<>
+        <p>BRAK RECENZJI</p>
+      </>)
+    }
+  }
+
   
   React.useEffect(() => {
     getGame();
+    getAllTags();
+    getSomeTags();
+    getAllReviews();
   }, []);
 
     return (
     <>
+    {console.log(tags)}
+    {console.log(connectedTags)}
+    {console.log(reviews)}
     <div className="container-fluid">
       {/*Nagłówek Strony*/}
       <div className="row m-3 p-3 text-center">
@@ -79,12 +181,14 @@ export default function Root(){
             {/* Recenzje - średnia w gwiazdkach */}
             <div>
               <p>Recenzje</p>
+              <p>{SredniaRecenzji()}</p>
               {/* Dodawnanie recenzji będzie działało na nested podstronie */}
             </div>
             <br/>
             {/* Tagi */}
             <div>
               <p>Tagi</p>
+              <p>|{WypiszTagi()}</p>
             </div>
             <br/>
             {/* Producent */}
@@ -134,11 +238,13 @@ export default function Root(){
       {/* Oferty */}
       <div className='row m-3 p-3 text-center'>
         <p>Oferty</p>
+        <h3>TBD</h3>
       </div>
 
       {/* Recenzje - Szczegóły */}
       <div className='row m-3 p-3 text-center'>
         <p>Szcegółowe Recenzje</p>
+        <p>{WypiszRecenzje()}</p>
       </div>
 
       {/* Stopka */}
