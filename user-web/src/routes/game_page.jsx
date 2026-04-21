@@ -142,12 +142,16 @@ export default function Root(){
     }
   }
 
+  function RedirectToStorefront(e){
+    navigate('/');
+  }
+
     return (
     <>
     {console.log(tags)}
     {console.log(connectedTags)}
     {console.log(reviews)}
-    <div className="container-fluid">
+    <div className="container-fluid col">
       {/*Nagłówek Strony*/}
       <div className="row m-3 p-3 text-center">
 
@@ -159,7 +163,7 @@ export default function Root(){
 
         {/* Logo, wiadomo */}
         <div className='col-4 fw-bolder logo'>
-          <a href="/"><h1>Keys &apos;R&apos; Us</h1></a>
+          <h1 onClick={RedirectToStorefront}>Keys &apos;R&apos; Us</h1>
         </div>
 
         {/* Dropdown menu konta */}

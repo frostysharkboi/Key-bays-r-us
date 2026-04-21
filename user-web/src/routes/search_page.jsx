@@ -122,6 +122,10 @@ export default function SearchPage(){
     }
   }
 
+  function RedirectToStorefront(e){
+    navigate('/');
+  }
+
   return (
     <>
         <div className="container-fluid">
@@ -136,7 +140,7 @@ export default function SearchPage(){
         
                 {/* Logo, wiadomo */}
                 <div className='col-4 fw-bolder logo'>
-                  <a href="/"><h1>Keys &apos;R&apos; Us</h1></a>
+                  <h1 onClick={RedirectToStorefront}>Keys &apos;R&apos; Us</h1>
                 </div>
         
                 {/* Dropdown menu konta */}
