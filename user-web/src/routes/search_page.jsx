@@ -32,7 +32,7 @@ export default function SearchPage(){
   
   console.log(Title + "\n" + GenreId);
 
-  function RedirectToStorefront(e){
+  function RedirectToGamePage(e){
     navigate('GamePage-Test',{state:{GameId: e}});
   }
 
@@ -199,7 +199,7 @@ export default function SearchPage(){
                       </thead>
                       <tbody>
                         {rows.map((row) => (
-                          <tr className='' key={row.id} onClick={() => RedirectToStorefront(parseInt(row.getVisibleCells()[0].getValue()))}>
+                          <tr className='' key={row.id} onClick={() => RedirectToGamePage(parseInt(row.getVisibleCells()[0].getValue()))}>
                             {row.getVisibleCells().map((cell) => (
                               <td key={cell.id}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
