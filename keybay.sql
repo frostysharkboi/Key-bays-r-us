@@ -47,10 +47,11 @@ CREATE TABLE `applications` (
 
 CREATE TABLE `games` (
   `id` int(10) NOT NULL,
-  `title` varchar(50) NOT NULL,
-  `developer` varchar(30) NOT NULL,
-  `publisher` varchar(30) NOT NULL,
+  `title` VARCHAR(100) NOT NULL,
+  `developer` VARCHAR(100) NOT NULL,
+  `publisher` VARCHAR(100) NOT NULL,
   `about` mediumtext DEFAULT NULL,
+  `steam_rating` enum('5','4','3','2','1') NOT NULL,
   `release_date` date NOT NULL DEFAULT current_timestamp(),
   `cover_img` varchar(100) DEFAULT NULL,
   `icon` varchar(100) DEFAULT NULL
@@ -59,7 +60,7 @@ CREATE TABLE `games` (
 --
 -- Dumping data for table `games`
 --
-
+/** /
 INSERT INTO `games` (`id`, `title`, `developer`, `publisher`, `about`, `release_date`, `cover_img`, `icon`) VALUES
 (1, 'The Witcher 3: Wild Hunt', 'CD Projekt Red', 'CD Projekt', 'Open world RPG following monster hunter Geralt.', '2015-05-18', 'https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg', 'https://cdn.cloudflare.steamstatic.com/steam/apps/292030/capsule_184x69.jpg'),
 (2, 'Cyberpunk 2077', 'CD Projekt Red', 'CD Projekt', 'Futuristic RPG set in Night City.', '2020-12-10', 'https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/header.jpg', 'https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/capsule_184x69.jpg'),
@@ -81,7 +82,7 @@ INSERT INTO `games` (`id`, `title`, `developer`, `publisher`, `about`, `release_
 (18, 'No Mans Sky', 'Hello Games', 'Hello Games', 'Space exploration sandbox.', '2016-08-12', 'https://cdn.cloudflare.steamstatic.com/steam/apps/275850/header.jpg', 'https://cdn.cloudflare.steamstatic.com/steam/apps/275850/capsule_184x69.jpg'),
 (19, 'Dark Souls III', 'FromSoftware', 'Bandai Namco', 'Challenging action RPG.', '2016-04-12', 'https://cdn.cloudflare.steamstatic.com/steam/apps/374320/header.jpg', 'https://cdn.cloudflare.steamstatic.com/steam/apps/374320/capsule_184x69.jpg'),
 (20, 'Among Us', 'Innersloth', 'Innersloth', 'Social deduction multiplayer.', '2018-11-16', 'https://cdn.cloudflare.steamstatic.com/steam/apps/945360/header.jpg', 'https://cdn.cloudflare.steamstatic.com/steam/apps/945360/capsule_184x69.jpg');
-
+/ **/
 -- --------------------------------------------------------
 
 --
@@ -96,7 +97,7 @@ CREATE TABLE `game_tags` (
 --
 -- Dumping data for table `game_tags`
 --
-
+/** /
 INSERT INTO `game_tags` (`game_id`, `tag_id`) VALUES
 (1, 1),
 (1, 3),
@@ -139,7 +140,7 @@ INSERT INTO `game_tags` (`game_id`, `tag_id`) VALUES
 (19, 1),
 (19, 2),
 (20, 6);
-
+/ **/
 -- --------------------------------------------------------
 
 --
@@ -159,7 +160,7 @@ CREATE TABLE `key_offers` (
 --
 -- Dumping data for table `key_offers`
 --
-
+/** /
 INSERT INTO `key_offers` (`id`, `seller_id`, `game_id`, `game_key`, `other`, `status`, `suggested_price`) VALUES
 (1, 2, 1, 'WITCHER3-A1B2C-D3E4F', NULL, 'Active', 25),
 (2, 2, 2, 'CYBERPUNK-A1B2C-D3E4F', NULL, 'Active', 40),
@@ -171,7 +172,7 @@ INSERT INTO `key_offers` (`id`, `seller_id`, `game_id`, `game_key`, `other`, `st
 (8, 3, 12, 'HADES-A1B2C-D3E4F', NULL, 'Active', 18),
 (9, 2, 13, 'SUBNAUTICA-A1B2C', NULL, 'Active', 20),
 (10, 3, 15, 'PORTAL2-A1B2C', NULL, 'Active', 8);
-
+/ **/
 -- --------------------------------------------------------
 
 --
@@ -203,7 +204,7 @@ CREATE TABLE `min_req` (
 --
 -- Dumping data for table `min_req`
 --
-
+/** /
 INSERT INTO `min_req` (`game_id`, `gpu`, `cpu`, `ram`, `size`, `os`, `other`) VALUES
 (1, 'GTX 660', 'i5-2500K', 6, 9.99, 'Windows 7 64-bit', NULL),
 (2, 'GTX 780', 'i5-3570K', 8, 9.99, 'Windows 10 64-bit', NULL),
@@ -225,7 +226,7 @@ INSERT INTO `min_req` (`game_id`, `gpu`, `cpu`, `ram`, `size`, `os`, `other`) VA
 (18, 'GTX 480', 'i3', 8, 9.99, 'Windows 7', NULL),
 (19, 'GTX 750 Ti', 'i3-2100', 4, 9.99, 'Windows 7 SP1', NULL),
 (20, 'Intel HD', 'Dual Core', 4, 1.00, 'Windows 7', NULL);
-
+/ **/
 -- --------------------------------------------------------
 
 --
@@ -245,7 +246,7 @@ CREATE TABLE `opt_req` (
 --
 -- Dumping data for table `opt_req`
 --
-
+/** /
 INSERT INTO `opt_req` (`game_id`, `gpu`, `cpu`, `ram`, `size`, `os`, `other`) VALUES
 (1, 'GTX 1060', 'i7-3770', 8, 9.99, 'Windows 10 64-bit', NULL),
 (2, 'RTX 2060', 'i7-4790', 12, 9.99, 'Windows 10 64-bit', 'SSD recommended'),
@@ -267,7 +268,7 @@ INSERT INTO `opt_req` (`game_id`, `gpu`, `cpu`, `ram`, `size`, `os`, `other`) VA
 (18, 'GTX 1060', 'i5-8400', 16, 9.99, 'Windows 10', NULL),
 (19, 'GTX 1060', 'i5-4690K', 8, 9.99, 'Windows 10', NULL),
 (20, 'GTX 660', 'i5', 8, 1.00, 'Windows 10', NULL);
-
+/ **/
 -- --------------------------------------------------------
 
 --
@@ -284,7 +285,7 @@ CREATE TABLE `ratings` (
 --
 -- Dumping data for table `ratings`
 --
-
+/** /
 INSERT INTO `ratings` (`game_id`, `user_id`, `rating`, `other`) VALUES
 (1, 4, '5', 'Masterpiece'),
 (2, 4, '4', 'Good but buggy'),
@@ -292,7 +293,7 @@ INSERT INTO `ratings` (`game_id`, `user_id`, `rating`, `other`) VALUES
 (7, 5, '5', 'Incredible world'),
 (12, 7, '5', 'Great gameplay'),
 (15, 8, '5', 'Classic puzzle game');
-
+/ **/
 -- --------------------------------------------------------
 
 --
@@ -339,14 +340,14 @@ CREATE TABLE `transactions` (
 --
 -- Dumping data for table `transactions`
 --
-
+/** /
 INSERT INTO `transactions` (`id`, `offer_id`, `buyer_id`, `reciever-id`) VALUES
 (1, 1, 4, 4),
 (2, 3, 5, 5),
 (3, 5, 6, 6),
 (4, 8, 7, 7),
 (5, 9, 8, 8);
-
+/ **/
 -- --------------------------------------------------------
 
 --
@@ -394,7 +395,7 @@ CREATE TABLE `wishlist` (
 --
 -- Dumping data for table `wishlist`
 --
-
+/** /
 INSERT INTO `wishlist` (`user_id`, `game_id`) VALUES
 (4, 7),
 (4, 8),
@@ -405,7 +406,7 @@ INSERT INTO `wishlist` (`user_id`, `game_id`) VALUES
 (8, 10),
 (9, 19),
 (10, 18);
-
+/ **/
 --
 -- Indexes for dumped tables
 --
@@ -603,6 +604,14 @@ ALTER TABLE `transactions`
 ALTER TABLE `wishlist`
   ADD CONSTRAINT `wishlist_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `wishlist_ibfk_2` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`);
+
+--
+-- Constraints for table `media`
+--
+ALTER TABLE `applications`
+  ADD CONSTRAINT `applications_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `applications_ibfk_2` FOREIGN KEY (`handler_id`) REFERENCES `users` (`id`);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
