@@ -67,6 +67,9 @@ a{
     background-color: #373327;
     font-family: akira;
 }
+.logo:hover{
+    background-color: #403B2D;
+}
 @font-face {
   font-family: akira;
   src: url(AODfont.otf);
@@ -77,8 +80,8 @@ a{
 .border-4{
     border: #DDDDD5;
 }
-.border-3:hover {
-    background-color: #C51515;
+.offer:hover {
+    background-color: #d31717;
 }
 input{
     background-color: #373327;
@@ -100,6 +103,12 @@ thead{
 thead{
     background-color: #373327;
 }
+tbody{
+    background-color: #373327;
+}
+.table-part-top{
+    background-color: #373327;
+}
 .table{
     background-color: #373327;
 }
@@ -109,4 +118,50 @@ thead{
 .btnsrch{
     margin-left: 10px;
     border-width: 2px;
+    font-family: akira;
+}
+.border-1{
+    border: #DDDDD5;
+    background-color: #373327;
+    color: #DDDDD5;
+}
+.btn-zaz{
+    background-color: #C51515;
+}
+.btn-zaz:hover{
+    background-color: #d31717;
+}
+.btn-odz{
+    background-color: #373327;
+}
+.btn-odz:hover{ 
+    background-color: #403B2D;
+}
+.btn-kirk{
+    border-radius: 0%;
+}
+.border-6{
+    border: #DDDDD5;
+    border-width: 1px;
+}
+.box-idk{
+    background-color: #373327;
+}
+.inp-srch{
+    margin-left: 15px;
+}
+.tbd{
+    font-weight: bold;
+}
+input:focus {
+    outline: 3px solid #DDDDD5;
+  }
+::selection {
+  color: #191009;
+  background: #DDDDD5;
+}
+/* Code for Firefox */
+  ::-moz-selection { 
+  color: #191009;
+  background: #DDDDD5;
 }

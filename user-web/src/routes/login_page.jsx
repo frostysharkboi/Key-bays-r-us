@@ -22,6 +22,9 @@ export default function Root(){
     about:""
   });
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // Pobranie danych z tabeli
   const getAllGames = () => {
     axios.get("http://localhost:3000/games").then((res) => {
@@ -75,6 +78,10 @@ export default function Root(){
   const rows = table.getRowModel().rows;
   const emptyRowCount = 5 - rows.length;
 
+  function RedirectToStorefront(e){
+    navigate('/');
+  }
+
     return (
     <>
     <div className="container-fluid">
@@ -89,7 +96,7 @@ export default function Root(){
 
         {/* Logo, wiadomo */}
         <div className='col-4 fw-bolder logo'>
-          <h1>Keys &apos;R&apos; Us</h1>
+          <h1 onClick={RedirectToStorefront}>Keys &apos;R&apos; Us</h1>
         </div>
 
         {/* Dropdown menu konta */}

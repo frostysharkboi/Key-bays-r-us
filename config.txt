@@ -28,3 +28,11 @@ w zewnętrznym folderze (server-test):
       npm run dev
 
 by aktualizować git: git fetch --all
+
+By zaktualizować baze:
+  wykonajcie znowu import bazy, potem nowa konsola do wykonania kodu python:
+    cd steamdb-connection
+    pip install -r requirements.txt
+    python main.py
+
+NA RAZIE NIE DO KOŃCA DZIAŁA ALE ZAKTUALIZUJCIE BO FORMAT DANYCH RACZEJ JUŻ BĘDZIE TAKI JAK TU I STRONA Z TYMI DANYMI DZIAŁAJĄ
