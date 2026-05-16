@@ -1,17 +1,24 @@
 import re
 from datetime import datetime
 
+
 def clean_html(text):
+
     if not text:
         return ""
+
     return re.sub('<.*?>', '', text)
 
+
 def normalize_ram(text):
+
     if not text:
         return None
+
     text = text.lower()
 
     m = re.search(r'(\d+)', text)
+
     if not m:
         return None
 
@@ -19,17 +26,22 @@ def normalize_ram(text):
 
     if "gb" in text:
         return value * 1024
+
     if "mb" in text:
         return value
 
     return None
 
+
 def normalize_storage(text):
+
     if not text:
         return None
+
     text = text.lower()
 
     m = re.search(r'(\d+)', text)
+
     if not m:
         return None
 
@@ -37,12 +49,15 @@ def normalize_storage(text):
 
     if "gb" in text:
         return float(value)
+
     if "mb" in text:
         return round(value / 1024, 2)
 
     return None
 
+
 def parse_req(text):
+
     text = clean_html(text).lower()
 
     def ext(key):
@@ -58,8 +73,14 @@ def parse_req(text):
         "other": None
     }
 
+
 def parse_date(date_str):
+
     try:
-        return datetime.strptime(date_str, "%d %b, %Y").strftime("%Y-%m-%d")
+        return datetime.strptime(
+            date_str,
+            "%d %b, %Y"
+        ).strftime("%Y-%m-%d")
+
     except:
         return None

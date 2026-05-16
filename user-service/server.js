@@ -183,6 +183,23 @@ app.get("/games/cover", async (req, res) => {
   }
 });
 
+//pobieranie danych jednego użytkownika po id
+
+// axios.get("http://localhost:3000/users/byid", { params: { id: int }}).then((res) => {setUserData(res.data);});
+
+app.get("/users/byid", async (req, res) => {
+  const { id } = req.query;
+
+  try {
+    const sql = `SELECT * FROM users WHERE id LIKE ${id}`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 //domyślny select * dowolnej tabeli
 
 // axios.get("http://localhost:3000/table").then((res) => {setTable(res.data)})

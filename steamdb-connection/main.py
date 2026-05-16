@@ -1,94 +1,176 @@
 import time
+import traceback
 from collections import defaultdict
 
-from steam_api import get_games, get_details, get_rating, get_player_count
-from parser import parse_req, parse_date
+from config import (
+    TARGET_PER_TAG,
+    MAX_GAMES,
+    DELAY,
+    TAGS
+)
+
+from steam_api import (
+    get_most_played_games,
+    get_details,
+    convert_rating
+)
+
+from parser import (
+    parse_req,
+    parse_date
+)
+
 from selector import match_tags
+
 from media import extract_media
-from db import insert_game, insert_req, insert_game_tag, insert_media
-from config import TARGET_PER_TAG, MAX_GAMES, DELAY, TAGS
+
+from db import (
+    insert_game,
+    insert_req,
+    insert_game_tag,
+    insert_media
+)
+
 
 def run():
-    print("STARTING...\n")
 
-    games = get_games()
+    print("STARTING IMPORT...\n")
 
-    tag_count = defaultdict(int)
+    games = get_most_played_games()
+
     total = 0
 
-    for appid, g in games.items():
+    tag_count = defaultdict(int)
+
+    for game in games:
 
         if total >= MAX_GAMES:
             break
 
         try:
-            details = get_details(appid)
-            data = details[str(appid)]
 
-            if not data["success"]:
+            appid = game["appid"]
+
+            details = get_details(appid)
+
+            if str(appid) not in details:
                 continue
 
-            d = data["data"]
+            if not details[str(appid)]["success"]:
+                continue
+
+            d = details[str(appid)]["data"]
 
             if d.get("type") != "game":
                 continue
 
-            players = get_player_count(appid)
-            if players is not None and players < 500:
+            # pomiń niewydane gry
+            if d.get("release_date", {}).get("coming_soon", False):
+                print("⏩ SKIPPED unreleased:", d.get("name"))
                 continue
 
-            genres = [x["description"] for x in d.get("genres", [])]
-            categories = [x["description"] for x in d.get("categories", [])]
+            # pomiń darmowe dodatki/demo/tool
+            if d.get("is_free") and not d.get("genres"):
+                continue
+
+            genres = [
+                g["description"]
+                for g in d.get("genres", [])
+            ]
+
+            categories = [
+                c["description"]
+                for c in d.get("categories", [])
+            ]
 
             matched = match_tags(genres, categories)
 
             if not matched:
                 continue
 
-            if not any(tag_count[t] < TARGET_PER_TAG for t in matched):
+            if not any(
+                tag_count[t] < TARGET_PER_TAG
+                for t in matched
+            ):
                 continue
 
-            rating = get_rating(g["positive"], g["negative"])
+            print(f"\n➡ PROCESSING: {d.get('name')}")
 
-            min_req = parse_req(d.get("pc_requirements", {}).get("minimum", ""))
-            opt_req = parse_req(d.get("pc_requirements", {}).get("recommended", ""))
+            min_req = parse_req(
+                d.get("pc_requirements", {}).get("minimum", "")
+            )
 
-            name = (d.get("name") or "")[:100]
-            dev = ", ".join(d.get("developers", []))[:100]
-            pub = ", ".join(d.get("publishers", []))[:100]
-            date = parse_date(d.get("release_date", {}).get("date"))
+            opt_req = parse_req(
+                d.get("pc_requirements", {}).get("recommended", "")
+            )
 
-            print("➡", name)
+            rating_percent = d.get(
+                "metacritic",
+                {}
+            ).get("score", 75)
+
+            rating = convert_rating(rating_percent)
 
             game_id = insert_game((
-                name, dev, pub,
+                (d.get("name") or "")[:255],
+                ", ".join(d.get("developers", []))[:255],
+                ", ".join(d.get("publishers", []))[:255],
                 d.get("short_description"),
                 rating,
-                date,
+                parse_date(
+                    d.get("release_date", {}).get("date")
+                ),
                 d.get("header_image"),
                 d.get("capsule_image")
             ))
 
+            print("✔ game inserted")
+
             insert_req("min_req", game_id, min_req)
             insert_req("opt_req", game_id, opt_req)
 
-            insert_media(game_id, extract_media(d))
+            print("✔ requirements inserted")
+
+            media = extract_media(d)
+
+            insert_media(game_id, media)
+
+            print(f"✔ media inserted ({len(media)})")
 
             for t in matched:
+
                 if tag_count[t] < TARGET_PER_TAG:
-                    insert_game_tag(game_id, TAGS[t])
+
+                    insert_game_tag(
+                        game_id,
+                        TAGS[t]
+                    )
+
                     tag_count[t] += 1
+
+            print(f"✔ tags inserted {matched}")
 
             total += 1
 
-            print("✔ added\n")
+            print(f"✅ DONE: {d.get('name')}")
 
             time.sleep(DELAY)
 
         except Exception as e:
-            print("❌ ERROR:", appid, e)
 
-    print("DONE:", dict(tag_count))
+            print("\n========== ERROR ==========")
+
+            try:
+                print("GAME:", d.get("name"))
+            except:
+                pass
+
+            print("APPID:", appid)
+
+            print(traceback.format_exc())
+
+    print("\nDONE")
+    print(dict(tag_count))
 
 
 if __name__ == "__main__":
