@@ -112,110 +112,26 @@ export default function Root(){
         </div>
       </div>
     
-      {/* Baner */}
-      <div className="row m-3 p-3 text-center">
-        <img src="https://store-images.s-microsoft.com/image/apps.5012.65806558541457305.a0ff0982-eced-4bfd-bb78-5ba7a73376c4.069fcd98-6d14-48a3-82a3-074b07fb3acb?q=90&w=480&h=270" className='mx-auto w-25 h-25 rounded'/>
-      </div>
-
-      {/* Karulezela */}
-      <div className="row m-3 p-3 text-center">
-        <div id="carouselExampleSlidesOnly" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-touch="false">
-          <div className="carousel-inner">
-            <div className="carousel-item active" data-bs-interval="60">
-              <img src="https://store-images.s-microsoft.com/image/apps.5012.65806558541457305.a0ff0982-eced-4bfd-bb78-5ba7a73376c4.069fcd98-6d14-48a3-82a3-074b07fb3acb?q=90&w=480&h=270" className="mx-auto d-block w-25 h-25" alt="..."/>
-              <div className="carousel-caption d-none d-md-block">
-                <h5 className="font">TEMP GAME #1</h5>
-                <p className='discount'>Some representative placeholder content for the first slide.</p>
-              </div>
-            </div>
-            <div className="carousel-item" data-bs-interval="60">
-              <img src="https://store-images.s-microsoft.com/image/apps.5012.65806558541457305.a0ff0982-eced-4bfd-bb78-5ba7a73376c4.069fcd98-6d14-48a3-82a3-074b07fb3acb?q=90&w=480&h=270" className="mx-auto d-block w-25 h-25" alt="..."/>
-              <div className="carousel-caption d-none d-md-block ">
-                <h5 className="font">TEMP GAME #2</h5>
-                <p className='discount'>Some representative placeholder content for the first slide.</p>
-              </div>
-            </div>
-            <div className="carousel-item" data-bs-interval="60">
-              <img src="https://store-images.s-microsoft.com/image/apps.5012.65806558541457305.a0ff0982-eced-4bfd-bb78-5ba7a73376c4.069fcd98-6d14-48a3-82a3-074b07fb3acb?q=90&w=480&h=270" className="mx-auto d-block w-25 h-25" alt="..."/>
-              <div className="carousel-caption d-none d-md-block">
-                <h5 className="font">TEMP GAME #3</h5>
-                <p className='discount'>Some representative placeholder content for the first slide.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Gatunki */}
+      {/* Box z loginem */}
       <div className='row m-1 text-center font'>
-          <h2>GATUNKI</h2>
-      </div>
-      <div className="row row-cols-4 justify-content-md-center m-3 p-3 text-center">
-      {/* 
-      
-      Ignacy----> Myślałem, żeby wrzucić tu pętle, która by przeszukiwała baze w poszukiwaniu gatunków gier i na podstawie znalezionych gatunków wypisywała je w kartach poniżej. 
-      Dominik----> Zrobi się w dalszej części.
-      */}
-
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Przygodowa</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Akcji</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">City Builder</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Horror</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">FPS</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">RTS</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Visual Novel</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Fighting Game</p>
-            </div>
-        </div>
-        <div className="card rounded-0 border border-3 font col p-4 m-3">
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">Arcade</p>
-            </div>
-        </div>
-
-      {/*
-      
-      {data.map((tags) => (
-          <div className="card col p-4 m-3" key={tags.id}>
-            <div className="card-body w-40">
-              <p className="card-text w-40">{tags.tag}</p>
-            </div>
+          <h3>LOGOWANIE</h3>
+          <div>
+            <label>Login</label>
+            <br></br>
+            <input type="text" name='input_login' id="input_login" placeholder='. . .' onChange={(e) => changeInputLogin(e.target.value)}/>
+            <br></br>
+            <label></label>
           </div>
-      ))}
-      
-      */}
-        
-
+          <br></br>
+          <div>
+            <label>Hasło</label>
+            <br></br>
+            <input type="password" name='input_pass' id="input_pass" placeholder='. . .' onChange={(e) => changeInputPass(e.target.value)}/>
+            <br></br>
+            <label></label>
+          </div>
+          <button onClick={() => TryToLogIn()}>ZALOGUJ SIĘ</button>
+          <a href="">Nie mam konta</a>
       </div>
 
       {/* Stopka */}
