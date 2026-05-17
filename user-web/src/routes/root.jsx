@@ -81,12 +81,12 @@ export default function Root(){
           <h1 onClick={RedirectToStorefront}>Keys &apos;R&apos; Us</h1>
         </div>
 
-        {/* Dropdown menu konta */}
+         {/* Dropdown menu konta */}
         <div className='col-4'>
           <div className="dropdown">
           <button className="dropbtn font">Dropdown</button>
             <div className="dropdown-content fw-bold">
-              <a href="#">Link 1</a>
+              <a href="#" onClick={() => GoToLoginPage()}>Link 1</a>
               <a href="#">Link 2</a>
               <a href="#">Link 3</a>
             </div>
