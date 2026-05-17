@@ -63,6 +63,9 @@ export default function Root(){
     navigate('/');
   }
   
+  function GoToLoginPage(){
+    navigate("LoginPage-Test", {replace: true})
+  }
 
     return (
     <>
