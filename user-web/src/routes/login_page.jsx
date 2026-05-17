@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, replace, useNavigate, useLocation  } from 'react-router-dom';
 import './root.css'
 
 export default function Root(){
@@ -16,71 +16,60 @@ export default function Root(){
     pageSize: 5,                                        //    ilośc rekordów na strone
   });
 
-  const [games, setGames] = useState([]);               // Dane gier z bazy danych
-  const [gamesData, setGamesData] = useState({          // Dane obecnie wybranej gry
-    title:"",
-    about:""
-  });
+  const [Users, GetAllUsersData] = useState([]);
+  const [LoggedUser, ChangeLoggedUser] = useState([]);
 
+  var IsUserLogged = false;
+  
   const navigate = useNavigate();
-  const location = useLocation();
 
   // Pobranie danych z tabeli
-  const getAllGames = () => {
-    axios.get("http://localhost:3000/games").then((res) => {
-      setGames(res.data);
+  const LoadUsersData = () => {
+    axios.get("http://localhost:3000/users").then((res) => {
+      GetAllUsersData(res.data);
     });
   };
-  React.useEffect(() => {
-    getAllGames();
-  }, []);
 
-
-
-  // Wygenerowanie tabeli w html z danymi
-  const columns = React.useMemo(() => [
-    { header: "ID", accessorKey: "id", enableSorting: true,
-      cell: (info)=>{ return <b>{info.getValue()}</b> }
-     },
-    { header: "Title", accessorKey: "title", enableSorting: true},
-    { header: "About", accessorKey: "about", enableSorting: false},
-    { header: "Image", accessorKey: "cover_img", enableSorting: false,
-      cell: (info)=>{
-        var alt_text = "Cover Art of " + info.row.original.title;
-        return(<img src={info.getValue()} alt={alt_text} width={200} />)
+  function CheckIfLoginIsInDb(){
+    //Foreach nie wie, co to break, więc zajebałem to z StackOverflow
+    for (const temp of Users){
+      if(temp.email == Input_Login && temp.pass == Input_Pass){
+        document.getElementById("Error_box").innerHTML = "";
+        console.log("Zgadza się.");
+        IsUserLogged = true;
+        break;
+      } else {
+        console.log("Nie zgadza się.");
+        document.getElementById("Error_box").innerHTML = "Email lub hasło są nieprawidłowe.";
+        IsUserLogged = false;
       }
     }
-  ],[]);
-
+  }
   
 
-  // Obsługa funkcji tabeli (tu większośc rzeczy po prostu wklejałem wdg zapotrzebowań innych funkcji np. wyszukiwanie, sortowanie i filtrowanie)
-  const table = useReactTable({
-    data: games,
-    columns,
-    state: { sorting, globalFilter, pagination },
-    onSortingChange: (newSorting) => {  setSorting(newSorting);},
-    onGlobalFilterChange: setGlobalFilter,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel()
-  });
-  // Czyszczenie danych po zatwierdzeniu 
-  const clearAll=()=>{
-    setGamesData({
-      title:"",
-      about:""
-    });
-    getAllGames();
-  }
-  const rows = table.getRowModel().rows;
-  const emptyRowCount = 5 - rows.length;
+  function TryToLogIn(){
+    //Sprawdź, czy dane z form są git
+    CheckIfLoginIsInDb();
 
-  function RedirectToStorefront(e){
-    navigate('/');
+    if(IsUserLogged == true){
+      //Jeżeli się one zgadzają, to pobierz dane tego użytkownika i wyjeb spowrotem na strone główną.
+      axios.get("https://localhost:3000/users/byemail", {params: {email: Input_Login}}).then((res) => {
+        ChangeLoggedUser(res.data);
+      });
+      //navigate("/", {replace: true}, {state: {Login: LoggedUser.login, IsLogged: IsUserLogged, Discord: LoggedUser.discord_tag}})
+      console.log(LoggedUser.login);
+      
+    }
+
+    console.log(Users);
   }
+
+  React.useEffect(() => {
+    LoadUsersData();
+  }, []);
+
+  const [Input_Login, changeInputLogin] = useState(""); 
+  const [Input_Pass, changeInputPass] = useState(""); 
 
     return (
     <>
@@ -96,7 +85,7 @@ export default function Root(){
 
         {/* Logo, wiadomo */}
         <div className='col-4 fw-bolder logo'>
-          <h1 onClick={RedirectToStorefront}>Keys &apos;R&apos; Us</h1>
+          <h1>Keys &apos;R&apos; Us</h1>
         </div>
 
         {/* Dropdown menu konta */}
@@ -111,7 +100,7 @@ export default function Root(){
           </div> 
         </div>
       </div>
-    
+
       {/* Box z loginem */}
       <div className='row m-1 text-center font'>
           <h3>LOGOWANIE</h3>
@@ -128,7 +117,7 @@ export default function Root(){
             <br></br>
             <input type="password" name='input_pass' id="input_pass" placeholder='. . .' onChange={(e) => changeInputPass(e.target.value)}/>
             <br></br>
-            <label></label>
+            <p id="Error_box" className='text-center fs-3 text-danger'></p>
           </div>
           <button onClick={() => TryToLogIn()}>ZALOGUJ SIĘ</button>
           <a href="">Nie mam konta</a>
