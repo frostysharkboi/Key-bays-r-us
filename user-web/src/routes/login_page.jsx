@@ -19,7 +19,7 @@ export default function Root(){
   const [Users, GetAllUsersData] = useState([]);
   const [LoggedUser, ChangeLoggedUser] = useState([]);
 
-  var IsUserLogged = false;
+  const [IsUserLogged, setIsUserLogged] = useState(false);
   
   const navigate = useNavigate();
 
@@ -30,39 +30,48 @@ export default function Root(){
     });
   };
 
-  function CheckIfLoginIsInDb(){
-    //Foreach nie wie, co to break, więc zajebałem to z StackOverflow
-    for (const temp of Users){
-      if(temp.email == Input_Login && temp.pass == Input_Pass){
-        document.getElementById("Error_box").innerHTML = "";
-        console.log("Zgadza się.");
-        IsUserLogged = true;
-        break;
-      } else {
-        console.log("Nie zgadza się.");
-        document.getElementById("Error_box").innerHTML = "Email lub hasło są nieprawidłowe.";
-        IsUserLogged = false;
-      }
-    }
-  }
-  
+  function CheckIfLoginIsInDb() {
 
-  function TryToLogIn(){
-    //Sprawdź, czy dane z form są git
-    CheckIfLoginIsInDb();
+    const user = Users.find(
+      (temp) =>
+        temp.email === Input_Login &&
+        temp.pass === Input_Pass
+    );
 
-    if(IsUserLogged == true){
-      //Jeżeli się one zgadzają, to pobierz dane tego użytkownika i wyjeb spowrotem na strone główną.
-      axios.get("https://localhost:3000/users/byemail", {params: {email: Input_Login}}).then((res) => {
-        ChangeLoggedUser(res.data);
+    if(user){
+
+      document.getElementById("Error_box").innerHTML = "";
+
+      setIsUserLogged(true);
+
+      axios.get("http://localhost:3000/users/byemail", {
+        params: {
+          email: Input_Login
+        }
+      })
+      .then((res) => {
+        
+        navigate("/", {
+          replace: true,
+          state: {
+            login: res.data[0].login,
+            isLogged: true,
+            discordTag: res.data[0].discord_tag
+          }
+        });
+
+        //console.log(res.data);
+
       });
-      //navigate("/", {replace: true}, {state: {Login: LoggedUser.login, IsLogged: IsUserLogged, Discord: LoggedUser.discord_tag}})
-      console.log(LoggedUser.login);
-      
-    }
 
-    console.log(Users);
-  }
+    } else {
+
+      document.getElementById("Error_box").innerHTML =
+        "Email lub hasło są nieprawidłowe.";
+
+      setIsUserLogged(false);
+    }
+}
 
   React.useEffect(() => {
     LoadUsersData();
@@ -119,7 +128,7 @@ export default function Root(){
             <br></br>
             <p id="Error_box" className='text-center fs-3 text-danger'></p>
           </div>
-          <button onClick={() => TryToLogIn()}>ZALOGUJ SIĘ</button>
+          <button onClick={() => CheckIfLoginIsInDb()}>ZALOGUJ SIĘ</button>
           <a href="">Nie mam konta</a>
       </div>
 

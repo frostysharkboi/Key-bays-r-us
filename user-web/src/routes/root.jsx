@@ -46,6 +46,7 @@ export default function Root(){
 
   const [SearchThisTitle, changeTitle] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   function RedirectToSeaching(e) {
     if(e == null){
@@ -67,6 +68,46 @@ export default function Root(){
     navigate("LoginPage-Test", {replace: true})
   }
 
+  //Kod odpowiedzialny za logowanie.
+  
+  const [UserData, GetUserData] = useState(null);
+
+  React.useEffect(() => {
+
+    if(location.state != null){
+      console.log("Przed pobraniem danych z loginu");
+      if(location.state.isLogged == true){
+        console.log("Pobieranie danych z loginu");
+        GetUserData({
+        login: location.state.login,
+        isLogged: location.state.isLogged,
+        discordTag: location.state.discordTag
+      });
+      }
+    }
+
+  }, [location.state]);
+  
+  React.useEffect(() => {
+    if(UserData != null){
+      document.getElementById("nick").innerHTML = UserData["login"];
+    } else {
+      document.getElementById("nick").innerHTML = "Gość";
+    }
+  }, [UserData])
+
+  console.log("ROOT.JSX\nOTRZYMANE DANE:\n", location.state);
+  //console.log(UserData["login"]);
+
+  function LogOut(){
+    GetUserData(null);
+
+    navigate("/", {
+      replace: true,
+      state: null
+    });
+  }
+  
     return (
     <>
     <div className="container-fluid">
@@ -84,14 +125,25 @@ export default function Root(){
           <h1 onClick={RedirectToStorefront}>Keys &apos;R&apos; Us</h1>
         </div>
 
-         {/* Dropdown menu konta */}
+        {/* Dropdown menu konta */}
         <div className='col-4'>
           <div className="dropdown">
-          <button className="dropbtn font">Dropdown</button>
+          <button className="dropbtn font" id="nick"></button>
             <div className="dropdown-content fw-bold">
-              <a href="#" onClick={() => GoToLoginPage()}>Link 1</a>
-              <a href="#">Link 2</a>
-              <a href="#">Link 3</a>
+               {!UserData?.isLogged && (
+                  <a onClick={GoToLoginPage}>
+                    Zaloguj się
+                  </a>
+                )}
+              {UserData?.isLogged && (
+                <>
+                  <a>Zarządzaj kontem</a>
+
+                  <a onClick={LogOut}>
+                    Wyloguj się
+                  </a>
+                </>
+              )}
             </div>
           </div> 
         </div>

@@ -200,6 +200,21 @@ app.get("/users/byid", async (req, res) => {
   }
 });
 
+//Zapytanie wypluwające tabelę users
+
+app.get("/users/byemail", async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    const sql = `SELECT * FROM users WHERE email = "${email}"`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({error: err.message});
+  }
+});
+
 //domyślny select * dowolnej tabeli
 
 // axios.get("http://localhost:3000/table").then((res) => {setTable(res.data)})
