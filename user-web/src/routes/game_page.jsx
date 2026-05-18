@@ -146,7 +146,7 @@ export default function Root(){
   function RedirectToStorefront(){
     navigate('/', {state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
   }
-  
+
   function GoToLoginPage(){
     navigate("LoginPage-Test", {replace: true})
   }
@@ -174,14 +174,14 @@ export default function Root(){
     }, [location.state]);
   
     React.useEffect(() => {
-          if(UserData == null){
-            document.getElementById("nick").innerHTML = "Gość";
-          } else {
-            document.getElementById("nick").innerHTML = UserData["login"];
-          }
-    }, [UserData])
+            if(UserData.login == null){
+              document.getElementById("nick").innerHTML = "Gość";
+            } else {
+              document.getElementById("nick").innerHTML = UserData["login"];
+            }
+      }, [UserData])
   
-    console.log("ROOT.JSX\nOTRZYMANE DANE:\n", location.state);
+    console.log("GAME_PAGE.JSX\nOTRZYMANE DANE:\n", location.state);
     //console.log(UserData["login"]);
   
     function LogOut(){

@@ -156,14 +156,14 @@ export default function SearchPage(){
       }, [location.state]);
     
     React.useEffect(() => {
-      if(UserData == null){
-        document.getElementById("nick").innerHTML = "Gość";
-      } else {
-        document.getElementById("nick").innerHTML = UserData["login"];
-      }
-    }, [UserData])
+            if(UserData.login == null){
+              document.getElementById("nick").innerHTML = "Gość";
+            } else {
+              document.getElementById("nick").innerHTML = UserData["login"];
+            }
+      }, [UserData])
   
-    console.log("search_page.jsx\nOTRZYMANE DANE:\n", location.state);
+    console.log("SEARCH_PAGE.JSX\nOTRZYMANE DANE:\n", location.state);
     //console.log(UserData["login"]);
   
     function LogOut(){

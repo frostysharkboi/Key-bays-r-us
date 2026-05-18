@@ -72,6 +72,9 @@ export default function Root(){
       setIsUserLogged(false);
     }
 }
+  function RedirectToStorefront(){
+      navigate('/', {state: {login: null, isLogged: false, discordTag: null}});
+  }
 
   React.useEffect(() => {
     LoadUsersData();
@@ -94,7 +97,7 @@ export default function Root(){
 
         {/* Logo, wiadomo */}
         <div className='col-4 fw-bolder logo'>
-          <h1>Keys &apos;R&apos; Us</h1>
+          <h1 onClick={RedirectToStorefront}>Keys &apos;R&apos; Us</h1>
         </div>
       </div>
 

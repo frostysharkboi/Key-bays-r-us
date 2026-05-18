@@ -173,6 +173,10 @@ export default function Root(){
         "Formularz nie został wypełniony.";
     }
   }
+
+    function RedirectToStorefront(){
+      navigate('/', {state: {login: null, isLogged: false, discordTag: null}});
+    }
   
 
     return (
@@ -189,10 +193,8 @@ export default function Root(){
 
         {/* Logo, wiadomo */}
         <div className='col-4 fw-bolder logo'>
-          <h1>Keys &apos;R&apos; Us</h1>
+          <h1 onClick={RedirectToStorefront}>Keys &apos;R&apos; Us</h1>
         </div>
-
-        
       </div>
 
       {/* Box z loginem */}

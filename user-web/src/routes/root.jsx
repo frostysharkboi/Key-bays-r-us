@@ -93,7 +93,7 @@ export default function Root(){
   }, [location.state]);
 
   React.useEffect(() => {
-        if(UserData == null){
+        if(UserData.login == null){
           document.getElementById("nick").innerHTML = "Gość";
         } else {
           document.getElementById("nick").innerHTML = UserData["login"];
