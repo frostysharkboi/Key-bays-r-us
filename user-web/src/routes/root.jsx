@@ -50,14 +50,14 @@ export default function Root(){
 
   function RedirectToSeaching(e) {
     if(e == null){
-      navigate("Wyszukiwarka-Test", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
     } else {
-      navigate("Wyszukiwarka-Test", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
     }
   }
 
   function RedirectToGamePage(e){
-    navigate('Wyszukiwarka-Test/GamePage-Test',{state:{GameId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    navigate('/Game',{state:{GameId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
   }
 
   function RedirectToStorefront(){
@@ -65,7 +65,7 @@ export default function Root(){
   }
   
   function GoToLoginPage(){
-    navigate("LoginPage-Test", {replace: true})
+    navigate("Login", {replace: true})
   }
 
   //Kod odpowiedzialny za logowanie.
@@ -121,7 +121,7 @@ export default function Root(){
         {/* Wyszukiwarka */}
         <div className='col-4'>
           <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
-          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching()}>SZUKAJ</button>
+          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}

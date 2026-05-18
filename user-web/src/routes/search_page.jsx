@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
-import './root.css'
+import './root.css';
 
 export default function SearchPage(){
   // UseState do operacji na danych
@@ -23,8 +23,11 @@ export default function SearchPage(){
     about:""
   });
 
+  const [SearchThisTitle, changeTitle] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(()=>{if(location.state.Title != null)setGlobalFilter(location.state.Title)},[]);
   
   //Tu jest wyszukiwanie gry z tego paska na górze.
   var Title = location.state.Title;
@@ -33,7 +36,7 @@ export default function SearchPage(){
   console.log(Title + "\n" + GenreId);
 
   function RedirectToGamePage(e){
-    navigate('GamePage-Test',{state:{GameId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    navigate('/Game',{state:{GameId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
   }
 
   // Pobranie danych z tabeli
@@ -113,12 +116,12 @@ export default function SearchPage(){
   const rows = table.getRowModel().rows;
   const emptyRowCount = pagination.pageSize - rows.length;
 
-  const [SearchThisTitle, changeTitle] = useState(null);
-  function RedirectToSeaching(e) {
+  async function RedirectToSeaching(e) {
     if(e == null){
-      navigate(0, {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+      setGlobalFilter(SearchThisTitle);
+      navigate("/Search", {state: {Title: globalFilter, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
     } else {
-      navigate(0, {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
     }
   }
 
@@ -127,7 +130,7 @@ export default function SearchPage(){
   }
 
   function GoToLoginPage(){
-    navigate("LoginPage-Test", {replace: true , state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}})
+    navigate("Login", {replace: true , state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}})
   }
 
 
@@ -183,8 +186,8 @@ export default function SearchPage(){
         
                 {/* Wyszukiwarka */}
                 <div className='col-4'>
-                  <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-                  <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching()}>SZUKAJ</button>
+                  <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
+                  <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
                 </div>
         
                 {/* Logo, wiadomo */}

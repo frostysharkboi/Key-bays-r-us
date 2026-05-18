@@ -16,6 +16,7 @@ export default function Root(){
     pageSize: 5,                                        //    ilośc rekordów na strone
   });
 
+  const [SearchThisTitle, changeTitle] = useState(null);
   const [Users, GetAllUsersData] = useState([]);
   
   const navigate = useNavigate();
@@ -177,6 +178,14 @@ export default function Root(){
     function RedirectToStorefront(){
       navigate('/', {state: {login: null, isLogged: false, discordTag: null}});
     }
+    
+  function RedirectToSeaching(e) {
+    if(e == null){
+      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    } else {
+      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    }
+  }
   
 
     return (
@@ -187,8 +196,8 @@ export default function Root(){
 
         {/* Wyszukiwarka */}
         <div className='col-4'>
-          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-          <button>szukaj</button>
+          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
+          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}
