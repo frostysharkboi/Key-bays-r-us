@@ -200,6 +200,23 @@ app.get("/users/byid", async (req, res) => {
   }
 });
 
+//pobieranie danych jednego użytkownika po email
+
+// axios.get("http://localhost:3000/users/byemail", { params: { email: email }}).then((res) => {setUserData(res.data);});
+
+app.get("/users/byemail", async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    const sql = `SELECT * FROM users WHERE email = "${email}"`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 //domyślny select * dowolnej tabeli
 
 // axios.get("http://localhost:3000/table").then((res) => {setTable(res.data)})
@@ -223,6 +240,45 @@ app.get("/:table", async (req,res) => {
 // Reszta bardziej pod stronke admina
 
 // Create
+
+// dodanie użytkowników
+
+// await axios.post("http://localhost:3000/users/adduser",{ login: "", email: "", pass: "", phone: "", discord_tag: "" });
+
+app.post("/users/adduser", async (req, res) => {
+  const { login, email, pass, phone, discord_tag } = req.body;
+
+  try {
+    const columns = ["login", "email", "password"];
+    const values = [login, email, pass];
+    const placeholders = ["?", "?", "?"];
+
+    if (phone) {
+      columns.push("phone");
+      values.push(phone);
+      placeholders.push("?");
+    }
+
+    if (discord_tag) {
+      columns.push("discord_tag");
+      values.push(discord_tag);
+      placeholders.push("?");
+    }
+
+    const sql = `INSERT INTO users (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
+
+    const [result] = await db.pool.query(sql, values);
+    res.json(result);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Błąd serwera"
+    });
+  }
+});
+
+// standardowy do wszystkich kolumn tabeli
 
 app.post("/:table", async (req,res) => {
   const table = req.params.table;
