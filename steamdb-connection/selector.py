@@ -1,7 +1,7 @@
 TAG_ALIASES = {
     "RPG": ["rpg", "role-playing"],
     "Action": ["action"],
-    "Open World": ["open world"],
+    "Open World": ["open-world"],
     "FPS": ["fps", "shooter", "first-person"],
     "Adventure": ["adventure"],
     "Multiplayer": ["multiplayer", "co-op", "online"],
@@ -16,7 +16,9 @@ TAG_ALIASES = {
 
 def match_tags(genres, categories):
 
-    text = " ".join(genres + categories).lower()
+    text = " ".join(
+        genres + categories
+    ).lower()
 
     matched = []
 

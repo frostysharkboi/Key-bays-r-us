@@ -1,10 +1,13 @@
 import mysql.connector
 from config import DB_CONFIG
 
-conn = mysql.connector.connect(**DB_CONFIG)
+conn = mysql.connector.connect(
+    **DB_CONFIG
+)
+
 conn.autocommit = True
 
-cursor = conn.cursor()
+cursor = conn.cursor(buffered=True)
 
 
 def insert_game(data):
@@ -20,7 +23,6 @@ def insert_game(data):
         icon
     ) = data
 
-    # jeśli brak daty -> użyj DEFAULT z MySQL
     if release_date is None:
 
         cursor.execute("""

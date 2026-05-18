@@ -61,7 +61,12 @@ def parse_req(text):
     text = clean_html(text).lower()
 
     def ext(key):
-        m = re.search(rf"{key}:\s*([^\n]+)", text)
+
+        m = re.search(
+            rf"{key}:\s*([^\n]+)",
+            text
+        )
+
         return m.group(1).strip() if m else None
 
     return {
@@ -77,6 +82,7 @@ def parse_req(text):
 def parse_date(date_str):
 
     try:
+
         return datetime.strptime(
             date_str,
             "%d %b, %Y"

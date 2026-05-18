@@ -4,15 +4,31 @@ from config import STEAM_API_KEY
 
 def get_most_played_games():
 
-    url = (
-        "https://api.steampowered.com/"
-        "ISteamChartsService/GetMostPlayedGames/v1/"
-        f"?key={STEAM_API_KEY}"
-    )
+    all_games = []
 
-    data = requests.get(url).json()
+    for page in range(0, 5):
 
-    return data["response"]["ranks"]
+        url = (
+            "https://api.steampowered.com/"
+            "ISteamChartsService/GetGamesByConcurrentPlayers/v1/"
+            f"?key={STEAM_API_KEY}"
+            f"&start={page * 100}"
+            "&count=100"
+        )
+
+        data = requests.get(url).json()
+
+        ranks = data.get(
+            "response",
+            {}
+        ).get(
+            "ranks",
+            []
+        )
+
+        all_games.extend(ranks)
+
+    return all_games
 
 
 def get_details(appid):
@@ -29,11 +45,15 @@ def convert_rating(percent):
 
     if percent >= 90:
         return "5"
+
     elif percent >= 75:
         return "4"
+
     elif percent >= 60:
         return "3"
+
     elif percent >= 40:
         return "2"
+
     else:
         return "1"
