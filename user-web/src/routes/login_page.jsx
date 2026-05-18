@@ -102,9 +102,9 @@ export default function Root(){
           <div className="dropdown">
           <button className="dropbtn font">Dropdown</button>
             <div className="dropdown-content fw-bold">
-              <a href="#">Link 1</a>
-              <a href="#">Link 2</a>
-              <a href="#">Link 3</a>
+              <a>Link 1</a>
+              <a>Link 2</a>
+              <a>Link 3</a>
             </div>
           </div> 
         </div>
@@ -126,10 +126,13 @@ export default function Root(){
             <br></br>
             <input type="password" name='input_pass' id="input_pass" placeholder='. . .' onChange={(e) => changeInputPass(e.target.value)}/>
             <br></br>
+          </div>
+          <div>
             <p id="Error_box" className='text-center fs-3 text-danger'></p>
           </div>
+          <br></br>
           <button onClick={() => CheckIfLoginIsInDb()}>ZALOGUJ SIĘ</button>
-          <a href="">Nie mam konta</a>
+          <a onClick={() => navigate("/Rejestracja-Test", {replace: true})}>Nie mam konta</a>
       </div>
 
       {/* Stopka */}

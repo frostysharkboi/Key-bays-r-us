@@ -237,6 +237,50 @@ app.get("/:table", async (req,res) => {
 
 // Reszta bardziej pod stronke admina
 
+// Dodawanie do Rejestracji
+app.post("/users/adduser", async (req, res) => {
+  const {
+    login,
+    email,
+    pass,
+    phone,
+    discord_tag
+  } = req.body;
+
+  try {
+    const columns = ["login", "email", "pass"];
+    const values = [login, email, pass];
+    const placeholders = ["?", "?", "?"];
+
+    if (phone) {
+      columns.push("phone");
+      values.push(phone);
+      placeholders.push("?");
+    }
+
+    if (discord_tag) {
+      columns.push("discord_tag");
+      values.push(discord_tag);
+      placeholders.push("?");
+    }
+
+    const sql = `
+      INSERT INTO users (${columns.join(", ")})
+      VALUES (${placeholders.join(", ")})
+    `;
+
+    const [result] = await db.pool.query(sql, values);
+
+    res.json(result);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Błąd serwera"
+    });
+  }
+});
+
 // Create
 
 app.post("/:table", async (req,res) => {
