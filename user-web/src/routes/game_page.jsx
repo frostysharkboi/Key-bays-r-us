@@ -93,46 +93,7 @@ export default function Root(){
     }
   }
 
-  //Kod odpowiedzialny za logowanie.
-    
-    const [UserData, GetUserData] = useState(null);
   
-    React.useEffect(() => {
-  
-      if(location.state != null){
-        console.log("Przed pobraniem danych z loginu");
-        if(location.state.isLogged == true){
-          console.log("Pobieranie danych z loginu");
-          GetUserData({
-          login: location.state.login,
-          isLogged: location.state.isLogged,
-          discordTag: location.state.discordTag
-        });
-        }
-      }
-  
-    }, [location.state]);
-    
-    React.useEffect(() => {
-      if(UserData != null){
-        document.getElementById("nick").innerHTML = UserData["login"];
-      } else {
-        document.getElementById("nick").innerHTML = "Gość";
-      }
-    }, [UserData])
-  
-    console.log("ROOT.JSX\nOTRZYMANE DANE:\n", location.state);
-    //console.log(UserData["login"]);
-  
-    function LogOut(){
-      GetUserData(null);
-  
-      navigate("/", {
-        replace: true,
-        state: null
-      });
-    }
-
   function SredniaRecenzji(){
     var sumaRecenzji = 0;
     var liczbaPetli = 0;
@@ -176,15 +137,61 @@ export default function Root(){
   const [SearchThisTitle, changeTitle] = useState(null);
   function RedirectToSeaching(e) {
     if(e == null){
-      navigate(-1, {state: {Title: SearchThisTitle}});
+      navigate(-1, {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
     } else {
-      navigate(-1, {state: {GenreId: e}});
+      navigate(-1, {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
     }
   }
 
-  function RedirectToStorefront(e){
-    navigate('/');
+  function RedirectToStorefront(){
+    navigate('/', {state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
   }
+  
+  function GoToLoginPage(){
+    navigate("LoginPage-Test", {replace: true})
+  }
+
+  const [UserData, GetUserData] = useState({
+      login: null,
+      isLogged: false,
+      discordTag: null
+    });
+  
+    React.useEffect(() => {
+  
+      if(location.state != null){
+        console.log("Przed pobraniem danych z loginu");
+        if(location.state.isLogged == true){
+          console.log("Pobieranie danych z loginu");
+          GetUserData({
+          login: location.state.login,
+          isLogged: location.state.isLogged,
+          discordTag: location.state.discordTag
+        });
+        }
+      }
+  
+    }, [location.state]);
+  
+    React.useEffect(() => {
+          if(UserData == null){
+            document.getElementById("nick").innerHTML = "Gość";
+          } else {
+            document.getElementById("nick").innerHTML = UserData["login"];
+          }
+    }, [UserData])
+  
+    console.log("ROOT.JSX\nOTRZYMANE DANE:\n", location.state);
+    //console.log(UserData["login"]);
+  
+    function LogOut(){
+      GetUserData(null);
+  
+      navigate("/", {
+        replace: true,
+        state: null
+      });
+    }
 
     return (
     <>
@@ -198,7 +205,7 @@ export default function Root(){
         {/* Wyszukiwarka */}
         <div className='col-4'>
           <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
+          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching()}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}

@@ -33,7 +33,7 @@ export default function SearchPage(){
   console.log(Title + "\n" + GenreId);
 
   function RedirectToGamePage(e){
-    navigate('GamePage-Test',{state:{GameId: e}});
+    navigate('GamePage-Test',{state:{GameId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
   }
 
   // Pobranie danych z tabeli
@@ -116,45 +116,54 @@ export default function SearchPage(){
   const [SearchThisTitle, changeTitle] = useState(null);
   function RedirectToSeaching(e) {
     if(e == null){
-      navigate(0, {state: {Title: SearchThisTitle}});
+      navigate(0, {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
     } else {
-      navigate(0, {state: {GenreId: e}});
+      navigate(0, {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
     }
   }
 
-  function RedirectToStorefront(e){
-    navigate('/');
+  function RedirectToStorefront(){
+    navigate('/', {state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
   }
+
+  function GoToLoginPage(){
+    navigate("LoginPage-Test", {replace: true , state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}})
+  }
+
 
   //Kod odpowiedzialny za logowanie.
     
-    const [UserData, GetUserData] = useState(null);
-  
-    React.useEffect(() => {
-  
-      if(location.state != null){
-        console.log("Przed pobraniem danych z loginu");
-        if(location.state.isLogged == true){
-          console.log("Pobieranie danych z loginu");
-          GetUserData({
-          login: location.state.login,
-          isLogged: location.state.isLogged,
-          discordTag: location.state.discordTag
-        });
+    const [UserData, GetUserData] = useState({
+        login: null,
+        isLogged: false,
+        discordTag: null
+      });
+    
+      React.useEffect(() => {
+    
+        if(location.state != null){
+          console.log("Przed pobraniem danych z loginu");
+          if(location.state.isLogged == true){
+            console.log("Pobieranie danych z loginu");
+            GetUserData({
+            login: location.state.login,
+            isLogged: location.state.isLogged,
+            discordTag: location.state.discordTag
+          });
+          }
         }
-      }
-  
-    }, [location.state]);
+    
+      }, [location.state]);
     
     React.useEffect(() => {
-      if(UserData != null){
-        document.getElementById("nick").innerHTML = UserData["login"];
-      } else {
+      if(UserData == null){
         document.getElementById("nick").innerHTML = "Gość";
+      } else {
+        document.getElementById("nick").innerHTML = UserData["login"];
       }
     }, [UserData])
   
-    console.log("ROOT.JSX\nOTRZYMANE DANE:\n", location.state);
+    console.log("search_page.jsx\nOTRZYMANE DANE:\n", location.state);
     //console.log(UserData["login"]);
   
     function LogOut(){
@@ -175,7 +184,7 @@ export default function SearchPage(){
                 {/* Wyszukiwarka */}
                 <div className='col-4'>
                   <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-                  <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
+                  <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching()}>SZUKAJ</button>
                 </div>
         
                 {/* Logo, wiadomo */}

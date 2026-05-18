@@ -50,18 +50,18 @@ export default function Root(){
 
   function RedirectToSeaching(e) {
     if(e == null){
-      navigate("Wyszukiwarka-Test", {state: {Title: SearchThisTitle}});
+      navigate("Wyszukiwarka-Test", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
     } else {
-      navigate("Wyszukiwarka-Test", {state: {GenreId: e}});
+      navigate("Wyszukiwarka-Test", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
     }
   }
 
   function RedirectToGamePage(e){
-    navigate('Wyszukiwarka-Test/GamePage-Test',{state:{GameId: e}});
+    navigate('Wyszukiwarka-Test/GamePage-Test',{state:{GameId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
   }
 
-  function RedirectToStorefront(e){
-    navigate('/');
+  function RedirectToStorefront(){
+    navigate('/', {state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
   }
   
   function GoToLoginPage(){
@@ -70,7 +70,11 @@ export default function Root(){
 
   //Kod odpowiedzialny za logowanie.
   
-  const [UserData, GetUserData] = useState(null);
+  const [UserData, GetUserData] = useState({
+    login: null,
+    isLogged: false,
+    discordTag: null
+  });
 
   React.useEffect(() => {
 
@@ -87,13 +91,13 @@ export default function Root(){
     }
 
   }, [location.state]);
-  
+
   React.useEffect(() => {
-    if(UserData != null){
-      document.getElementById("nick").innerHTML = UserData["login"];
-    } else {
-      document.getElementById("nick").innerHTML = "Gość";
-    }
+        if(UserData == null){
+          document.getElementById("nick").innerHTML = "Gość";
+        } else {
+          document.getElementById("nick").innerHTML = UserData["login"];
+        }
   }, [UserData])
 
   console.log("ROOT.JSX\nOTRZYMANE DANE:\n", location.state);
@@ -117,7 +121,7 @@ export default function Root(){
         {/* Wyszukiwarka */}
         <div className='col-4'>
           <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
-          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
+          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching()}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}

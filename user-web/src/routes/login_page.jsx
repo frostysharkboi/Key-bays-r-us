@@ -102,7 +102,7 @@ export default function Root(){
       <div className='row m-1 text-center font'>
           <h3>LOGOWANIE</h3>
           <div>
-            <label>Login</label>
+            <label>Email</label>
             <br></br>
             <input type="text" name='input_login' id="input_login" placeholder='. . .' onChange={(e) => changeInputLogin(e.target.value)}/>
             <br></br>
