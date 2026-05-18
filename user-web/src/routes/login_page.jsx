@@ -96,18 +96,6 @@ export default function Root(){
         <div className='col-4 fw-bolder logo'>
           <h1>Keys &apos;R&apos; Us</h1>
         </div>
-
-        {/* Dropdown menu konta */}
-        <div className='col-4'>
-          <div className="dropdown">
-          <button className="dropbtn font">Dropdown</button>
-            <div className="dropdown-content fw-bold">
-              <a>Link 1</a>
-              <a>Link 2</a>
-              <a>Link 3</a>
-            </div>
-          </div> 
-        </div>
       </div>
 
       {/* Box z loginem */}

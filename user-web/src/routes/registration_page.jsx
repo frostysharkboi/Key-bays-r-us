@@ -47,6 +47,8 @@ export default function Root(){
     discord: null
   });
 
+  let isDataGood = false;
+
   React.useEffect(() => {
     changeUserData({
     mail: inputMail,
@@ -55,14 +57,12 @@ export default function Root(){
     phone: inputPhone,
     discord: inputDiscord
   });
-
-  console.log(newUser);
   }, [inputMail, inputPass, inputLogin, inputPhone, inputDiscord]);
 
   const [ifRegistrationWasSuccseful, CreateNewUser] = useState(null);
 
   function AddUserToService(){
-    document.getElementById("Error_box").innerHTML = "";
+    CheckIfDataIsGood();
     let duplicate = false;
 
     Users.forEach(user => {
@@ -71,22 +71,107 @@ export default function Root(){
         }
     });
 
-    if(duplicate == false){
-        if(newUser.login != null && newUser.login.length > 0 && newUser.pass != null  && newUser.pass.length > 0 && newUser.mail != null && newUser.mail.length > 0){
+    if(isDataGood == true){
+        console.log("Czy weryfikacja przeszła: ", isDataGood);
+        if(duplicate == false){
+            console.log("Dane się nie powtarzają w bazie");
             axios.post("http://localhost:3000/users/adduser",{ login: newUser.login, email: newUser.mail, pass: newUser.pass, phone: newUser.phone, discord_tag: newUser.discord });
             console.log("Udało się?");
+            navigate("/", {
+                      replace: true,
+                      state: {
+                        login: newUser.login,
+                        isLogged: true,
+                        discordTag: newUser.discord
+                      }
+                    });
         } else {
             document.getElementById("Error_box").innerHTML =
-            "Email lub hasło są nieprawidłowe.\nFormularz nie został wypełniony.";
+            "Użytkownik o istniejącym mailu bądź nicku już istnieje.";
         }
-    } else {
-        document.getElementById("Error_box").innerHTML =
-        "Email lub hasło są nieprawidłowe.\nDane się powtarzają.";
     }
   }
 
   function CheckIfDataIsGood(){
-    
+    document.getElementById("Error_box").innerHTML = "";
+    if(newUser.mail != null && newUser.pass != null && newUser.login != null){
+        console.log("Dane nie są puste");
+        const mailArr = newUser.mail.split("");
+        let ifMailIsGood = {
+            itHasAt: false,
+            itHasCom: false,
+            isItEmail: false
+        };
+        mailArr.forEach(char => {
+            if(char === "@"){
+                ifMailIsGood.itHasAt = true;
+            }
+
+            if(char === "."){
+                ifMailIsGood.itHasCom = true;
+            }
+        });
+        if(ifMailIsGood.itHasAt == true && ifMailIsGood.itHasCom == true){
+            ifMailIsGood.isItEmail = true;
+        }
+
+
+        let passwordStrenght = {
+            uppercase: false,
+            lowercase: false,
+            number: false,
+            otherChar: false,
+            isLongEnought: false,
+            isPasswordStrongEnought: false
+        };
+        const passArr = newUser.pass.split("");
+        passArr.forEach(char => {
+            if(/[A-Z]/.test(char)){
+                passwordStrenght.uppercase = true;
+            }
+
+            if(/[a-z]/.test(char)){
+                passwordStrenght.lowercase = true;
+            }
+
+            if(char.charCodeAt(0) > 47 && char.charCodeAt(0) < 58){
+                passwordStrenght.number = true;
+            }
+
+            if(char.charCodeAt(0) > 32 && char.charCodeAt(0) < 44){
+                passwordStrenght.otherChar = true;
+            }
+        });
+        if(newUser.pass.length >= 8){
+            passwordStrenght.isLongEnought = true;
+        }
+
+        if(ifMailIsGood.isItEmail == false){
+            document.getElementById("Error_box").innerHTML =
+            "Email jest nieprawidłowy";
+        }
+
+        if(newUser.login.length < 5){
+            document.getElementById("Error_box").innerHTML =
+            "Nick musi mieć conajmniej osiem znaków.";
+        }
+
+        if(passwordStrenght.isLongEnought == true && passwordStrenght.otherChar == true && passwordStrenght.number == true 
+            && passwordStrenght.lowercase == true && passwordStrenght.uppercase == true
+        ){
+            passwordStrenght.isPasswordStrongEnought = true;
+        } else {
+            document.getElementById("Error_box").innerHTML =
+            "Hasło musi mieć conajmniej osiem znaków, zawierać jedną dużą i małą literę, cyfrę oraz znak specjalny.";
+        }
+
+        if(ifMailIsGood.isItEmail == true && newUser.login.length >= 5 && passwordStrenght.isPasswordStrongEnought == true){
+            isDataGood = true;
+        }
+    } else {
+        document.getElementById("Error_box").innerHTML =
+        "Formularz nie został wypełniony.";
+    }
   }
   
 
@@ -107,17 +192,7 @@ export default function Root(){
           <h1>Keys &apos;R&apos; Us</h1>
         </div>
 
-        {/* Dropdown menu konta */}
-        <div className='col-4'>
-          <div className="dropdown">
-          <button className="dropbtn font">Dropdown</button>
-            <div className="dropdown-content fw-bold">
-              <a href="#">Link 1</a>
-              <a href="#">Link 2</a>
-              <a href="#">Link 3</a>
-            </div>
-          </div> 
-        </div>
+        
       </div>
 
       {/* Box z loginem */}
@@ -132,18 +207,18 @@ export default function Root(){
           </div>
           <br></br>
           <div>
-            <label>Hasło</label>
-            <br></br>
-            <input type="password" placeholder='. . .' onChange={(e) => changeInputPass(e.target.value)}/>
-            <br></br>
-          </div>
-          <br></br>
-          <div>
             <label>Nick</label>
             <br></br>
             <input type="text" placeholder='. . .' onChange={(e) => changeInputLogin(e.target.value)}/>
             <br></br>
             <label></label>
+          </div>
+          <br></br>
+          <div>
+            <label>Hasło</label>
+            <br></br>
+            <input type="password" placeholder='. . .' onChange={(e) => changeInputPass(e.target.value)}/>
+            <br></br>
           </div>
           <br></br>
           <div>
