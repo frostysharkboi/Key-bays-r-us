@@ -57,7 +57,7 @@ export default function Root(){
   }
 
   function RedirectToGamePage(e){
-    navigate('/Game',{state:{GameId: e, userId: UserData.id, isLogged: UserIsLogged.isLogged}});
+    navigate('/Game',{state:{GameId: e, userId: UserData.id, isLogged: UserData.isLogged}});
   }
 
   function RedirectToStorefront(){
