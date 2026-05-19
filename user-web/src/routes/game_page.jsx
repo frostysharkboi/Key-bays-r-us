@@ -175,7 +175,7 @@ export default function Root(){
   
     React.useEffect(() => {
             if(UserData.login == null){
-              document.getElementById("nick").innerHTML = "Gość";
+              document.getElementById("nick").innerHTML = "Gosc";
             } else {
               document.getElementById("nick").innerHTML = UserData["login"];
             }
@@ -220,15 +220,15 @@ export default function Root(){
             <div className="dropdown-content fw-bold">
                {!UserData?.isLogged && (
                   <a onClick={GoToLoginPage}>
-                    Zaloguj się
+                    Zaloguj sie
                   </a>
                 )}
               {UserData?.isLogged && (
                 <>
-                  <a>Zarządzaj kontem</a>
+                  <a>Zarzadzaj kontem</a>
 
                   <a onClick={LogOut}>
-                    Wyloguj się
+                    Wyloguj sie
                   </a>
                 </>
               )}
@@ -277,19 +277,19 @@ export default function Root(){
       {/* Opis Gry i wymagania */}
       <div className='row m-3 p-3 text-center'>
         {/* Opis Gry */}
-        <div className='box-idk col-7'>
+        <div className='box-idk col-5'>
           <p>{(game[0])?  game[0].about : "Nie znaleziono"}</p>
         </div>
         {/* Div z obydwoma wymaganiami */}
-        <div className='col-5 d-flex'>
+        <div className='col-7 d-flex'>
           {/* Zalecane */}
           <div className='box-idk m-4'>
             <h3 className='font'>Zalecane Wymagania:</h3>
             <p>
-              System Operacyjny: {(game[0])?  game[0].opt_os : "Nie znaleziono"}<br/>
-              Karta Graficzna: {(game[0])?  game[0].opt_gpu : "Nie znaleziono"}<br/>
-              Procesor: {(game[0])?  game[0].opt_cpu : "Nie znaleziono"}<br/>
-              Pamięć ram: {(game[0])?  game[0].opt_ram : "Nie znaleziono"} GB<br/>
+              System Operacyjny: {(game[0])?  game[0].opt_os : "Nie znaleziono"}<br/><br/>
+              Karta Graficzna: {(game[0])?  game[0].opt_gpu : "Nie znaleziono"}<br/><br/>
+              Procesor: {(game[0])?  game[0].opt_cpu : "Nie znaleziono"}<br/><br/>
+              Pamięć ram: {(game[0])?  game[0].opt_ram : "Nie znaleziono"} GB<br/><br/>
               Potrzebne miejsce: {(game[0])?  game[0].opt_size : "Nie znaleziono"} GB
             </p>
           </div>
@@ -318,7 +318,7 @@ export default function Root(){
 
       {/* Recenzje - Szczegóły */}
       <div className='box-idk row m-3 p-3 text-center'>
-        <p>Szcegółowe Recenzje</p>
+        <p>Szcegołowe Recenzje</p>
         <p>{WypiszRecenzje()}</p>
       </div>
 

@@ -157,7 +157,7 @@ export default function SearchPage(){
     
     React.useEffect(() => {
             if(UserData.login == null){
-              document.getElementById("nick").innerHTML = "Gość";
+              document.getElementById("nick").innerHTML = "Gosc";
             } else {
               document.getElementById("nick").innerHTML = UserData["login"];
             }
@@ -199,15 +199,15 @@ export default function SearchPage(){
                     <div className="dropdown-content fw-bold">
                       {!UserData?.isLogged && (
                           <a onClick={GoToLoginPage}>
-                            Zaloguj się
+                            Zaloguj sie
                           </a>
                         )}
                       {UserData?.isLogged && (
                         <>
-                          <a>Zarządzaj kontem</a>
+                          <a>Zarzadzaj kontem</a>
 
                           <a onClick={LogOut}>
-                            Wyloguj się
+                            Wyloguj sie
                           </a>
                         </>
                       )}

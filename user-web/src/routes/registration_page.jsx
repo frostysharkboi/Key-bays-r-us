@@ -188,7 +188,7 @@ export default function Root(){
         {/* Wyszukiwarka */}
         <div className='col-4'>
           <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-          <button>szukaj</button>
+          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching()}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}
@@ -217,7 +217,7 @@ export default function Root(){
           </div>
           <br></br>
           <div>
-            <label>Hasło</label>
+            <label>Haslo</label>
             <br></br>
             <input type="password" placeholder='. . .' onChange={(e) => changeInputPass(e.target.value)}/>
             <br></br>
@@ -243,7 +243,7 @@ export default function Root(){
             <p id="Error_box" className='text-center fs-3 text-danger'></p>
           </div>
           <br></br>
-          <button onClick={() => AddUserToService()}>ZAREJESTRUJ SIĘ</button>
+          <button className='border border-3 btnsrch' onClick={() => AddUserToService()}>ZAREJESTRUJ SIE</button>
       </div>
 
       {/* Stopka */}

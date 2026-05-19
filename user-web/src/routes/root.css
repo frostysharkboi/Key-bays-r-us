@@ -164,3 +164,25 @@ input:focus {
   color: #191009;
   background: #DDDDD5;
 }
+#Error_box{
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: #DDDDD5;
+}
+.btnsrch:hover{
+    background-color: #d31717;
+}
+.noaccount{
+    color: #C51515;
+    text-shadow:
+                -2px -2px 0 #DDDDD5,
+                2px -2px 0 #DDDDD5,
+                -2px 2px 0 #DDDDD5,
+                2px 2px 0 #DDDDD5,
+                -3px 0px 0 #DDDDD5,
+                3px 0px 0 #DDDDD5,
+                0px -3px 0 #DDDDD5,
+                0px 3px 0 #DDDDD5;
+}
+.noaccount:hover{
+    color: #d31717;
+}

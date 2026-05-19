@@ -92,7 +92,7 @@ export default function Root(){
         {/* Wyszukiwarka */}
         <div className='col-4'>
           <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-          <button>szukaj</button>
+          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching()}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}
@@ -113,7 +113,7 @@ export default function Root(){
           </div>
           <br></br>
           <div>
-            <label>Hasło</label>
+            <label>Haslo</label>
             <br></br>
             <input type="password" name='input_pass' id="input_pass" placeholder='. . .' onChange={(e) => changeInputPass(e.target.value)}/>
             <br></br>
@@ -122,8 +122,8 @@ export default function Root(){
             <p id="Error_box" className='text-center fs-3 text-danger'></p>
           </div>
           <br></br>
-          <button onClick={() => CheckIfLoginIsInDb()}>ZALOGUJ SIĘ</button>
-          <a onClick={() => navigate("/Rejestracja-Test", {replace: true})}>Nie mam konta</a>
+          <button className='border border-3 btnsrch' onClick={() => CheckIfLoginIsInDb()}>ZALOGUJ SIE</button>
+          <a className='noaccount' onClick={() => navigate("/Rejestracja-Test", {replace: true})}>Nie mam konta</a>
       </div>
 
       {/* Stopka */}
