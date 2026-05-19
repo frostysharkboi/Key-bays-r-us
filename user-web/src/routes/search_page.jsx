@@ -29,8 +29,6 @@ export default function SearchPage(){
   const location = useLocation();
 
   useEffect(()=>{if(location.state.Title != null)setGlobalFilter(location.state.Title)},[]);
-
-  useEffect(()=>{if(location.state.Title != null)setGlobalFilter(location.state.Title)},[]);
   
   //Tu jest wyszukiwanie gry z tego paska na górze.
   var Title = location.state.Title;
@@ -308,4 +306,4 @@ export default function SearchPage(){
             </div>
     </>
     )
-  };}
+  };
