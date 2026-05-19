@@ -36,7 +36,7 @@ a{
 }
 
 /* Links inside the dropdown */
-.dropdown-content a {
+.dropdown-content h5 {
     color: #DDDDD5;
     padding: 12px 16px;
     text-decoration: none;

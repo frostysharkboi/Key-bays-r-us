@@ -16,6 +16,7 @@ export default function Root(){
     pageSize: 5,                                        //    ilośc rekordów na strone
   });
 
+  const [SearchThisTitle, changeTitle] = useState(null);
   const [Users, GetAllUsersData] = useState([]);
   
   const navigate = useNavigate();
@@ -48,6 +49,12 @@ export default function Root(){
   });
 
   let isDataGood = false;
+
+  const [UserData, GetUserData] = useState({
+      login: null,
+      isLogged: false,
+      discordTag: null
+    });
 
   React.useEffect(() => {
     changeUserData({
@@ -175,8 +182,16 @@ export default function Root(){
   }
 
     function RedirectToStorefront(){
-      navigate('/', {state: {login: null, isLogged: false, discordTag: null}});
+      navigate('/', {state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
     }
+
+    function RedirectToSeaching(e) {
+    if(e == null){
+      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    } else {
+      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    }
+  }
   
 
     return (
@@ -187,8 +202,8 @@ export default function Root(){
 
         {/* Wyszukiwarka */}
         <div className='col-4'>
-          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-          <button>szukaj</button>
+          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
+          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching()}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}

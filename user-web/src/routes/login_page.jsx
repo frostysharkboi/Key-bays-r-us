@@ -20,6 +20,13 @@ export default function Root(){
   const [LoggedUser, ChangeLoggedUser] = useState([]);
 
   const [IsUserLogged, setIsUserLogged] = useState(false);
+  const [SearchThisTitle, changeTitle] = useState(null);
+
+  const [UserData, GetUserData] = useState({
+      login: null,
+      isLogged: false,
+      discordTag: null
+    });
   
   const navigate = useNavigate();
 
@@ -73,7 +80,24 @@ export default function Root(){
     }
 }
   function RedirectToStorefront(){
-      navigate('/', {state: {login: null, isLogged: false, discordTag: null}});
+    navigate('/', {state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+  }
+
+  function RedirectToSeaching(e) {
+    if(e == null){
+      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    } else {
+      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    }
+  }
+
+  const [SearchThisTitle, changeTitle] = useState(null);
+  function RedirectToSeaching(e) {
+    if(e == null){
+      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    } else {
+      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    }
   }
 
   React.useEffect(() => {
@@ -91,8 +115,8 @@ export default function Root(){
 
         {/* Wyszukiwarka */}
         <div className='col-4'>
-          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-          <button>szukaj</button>
+          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
+          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}
@@ -123,7 +147,7 @@ export default function Root(){
           </div>
           <br></br>
           <button onClick={() => CheckIfLoginIsInDb()}>ZALOGUJ SIĘ</button>
-          <a onClick={() => navigate("/Rejestracja-Test", {replace: true})}>Nie mam konta</a>
+          <h5 onClick={() => navigate("/Register", {replace: true})}>Nie mam konta</h5>
       </div>
 
       {/* Stopka */}
