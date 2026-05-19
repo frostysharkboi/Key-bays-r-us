@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
-import './root.css'
+import './root.css';
 
 export default function SearchPage(){
   // UseState do operacji na danych
@@ -23,8 +23,18 @@ export default function SearchPage(){
     about:""
   });
 
+  const [SearchThisTitle, changeTitle] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [UserData, GetUserData] = useState({
+      id: null,
+      login: null,
+      isLogged: false,
+      discordTag: null
+    });
+
+  useEffect(()=>{if(location.state.Title != null)setGlobalFilter(location.state.Title)},[]);
   
   //Tu jest wyszukiwanie gry z tego paska na górze.
   var Title = location.state.Title;
@@ -33,7 +43,7 @@ export default function SearchPage(){
   console.log(Title + "\n" + GenreId);
 
   function RedirectToGamePage(e){
-    navigate('GamePage-Test',{state:{GameId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    navigate('/Game',{state:{GameId: e, userId: UserData.id}});
   }
 
   // Pobranie danych z tabeli
@@ -113,47 +123,40 @@ export default function SearchPage(){
   const rows = table.getRowModel().rows;
   const emptyRowCount = pagination.pageSize - rows.length;
 
-  const [SearchThisTitle, changeTitle] = useState(null);
-  function RedirectToSeaching(e) {
+  async function RedirectToSeaching(e) {
     if(e == null){
-      navigate(0, {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+      setGlobalFilter(SearchThisTitle);
+      navigate("/Search", {state: {Title: globalFilter, userId: userData.id, isLogged: UserData.isLogged}});
     } else {
-      navigate(0, {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+      navigate("/Search", {state: {GenreId: e, userId: userData.id, isLogged: UserData.isLogged}});
     }
   }
 
   function RedirectToStorefront(){
-    navigate('/', {state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    navigate('/', {state: {userId: userData.id, isLogged: UserData.isLogged}});
   }
 
   function GoToLoginPage(){
-    navigate("LoginPage-Test", {replace: true , state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}})
+    navigate("Login", {replace: true , state: {userId: userData.id, isLogged: UserData.isLogged}})
   }
 
 
   //Kod odpowiedzialny za logowanie.
-    
-    const [UserData, GetUserData] = useState({
-        login: null,
-        isLogged: false,
-        discordTag: null
+    React.useEffect(() => {
+    if(location.state != null){
+      console.log("Przed pobraniem danych z loginu");
+      axios.get("http://localhost:3000/users/byid", {params: {id: location.state.userId}}).then((res) => {
+        console.log(res.data);
+        GetUserData({
+          id: res.data[0].id,
+          login: res.data[0].login,
+          isLogged: true,
+          discordTag: res.data[0].discord_tag
+        })
       });
-    
-      React.useEffect(() => {
-    
-        if(location.state != null){
-          console.log("Przed pobraniem danych z loginu");
-          if(location.state.isLogged == true){
-            console.log("Pobieranie danych z loginu");
-            GetUserData({
-            login: location.state.login,
-            isLogged: location.state.isLogged,
-            discordTag: location.state.discordTag
-          });
-          }
-        }
-    
-      }, [location.state]);
+    }
+    console.log("UseEffect miał już miejsce");
+  }, [location.state]);
     
     React.useEffect(() => {
             if(UserData.login == null){
@@ -183,8 +186,8 @@ export default function SearchPage(){
         
                 {/* Wyszukiwarka */}
                 <div className='col-4'>
-                  <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-                  <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching()}>SZUKAJ</button>
+                  <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
+                  <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
                 </div>
         
                 {/* Logo, wiadomo */}
@@ -198,19 +201,19 @@ export default function SearchPage(){
                   <button className="dropbtn font" id="nick"></button>
                     <div className="dropdown-content fw-bold">
                       {!UserData?.isLogged && (
-                          <a onClick={GoToLoginPage}>
-                            Zaloguj sie
-                          </a>
-                        )}
-                      {UserData?.isLogged && (
-                        <>
-                          <a>Zarzadzaj kontem</a>
-
-                          <a onClick={LogOut}>
-                            Wyloguj sie
-                          </a>
-                        </>
+                        <h5 onClick={GoToLoginPage}>
+                          Zaloguj się
+                        </h5>
                       )}
+                    {UserData?.isLogged && (
+                      <>
+                        <h5>Zarządzaj kontem</h5>
+
+                        <h5 onClick={LogOut}>
+                          Wyloguj się
+                        </h5>
+                      </>
+                    )}
                     </div>
                   </div> 
                 </div>

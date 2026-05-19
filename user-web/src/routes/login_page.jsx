@@ -20,6 +20,13 @@ export default function Root(){
   const [LoggedUser, ChangeLoggedUser] = useState([]);
 
   const [IsUserLogged, setIsUserLogged] = useState(false);
+  const [SearchThisTitle, changeTitle] = useState(null);
+
+  const [UserData, GetUserData] = useState({
+      login: null,
+      isLogged: false,
+      discordTag: null
+    });
   
   const navigate = useNavigate();
 
@@ -50,13 +57,10 @@ export default function Root(){
         }
       })
       .then((res) => {
-        
         navigate("/", {
           replace: true,
           state: {
-            login: res.data[0].login,
-            isLogged: true,
-            discordTag: res.data[0].discord_tag
+            userId: res.data[0].id
           }
         });
 
@@ -73,7 +77,23 @@ export default function Root(){
     }
 }
   function RedirectToStorefront(){
-      navigate('/', {state: {login: null, isLogged: false, discordTag: null}});
+    navigate('/', {state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+  }
+
+  function RedirectToSeaching(e) {
+    if(e == null){
+      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    } else {
+      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    }
+  }
+
+  function RedirectToSeaching(e) {
+    if(e == null){
+      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    } else {
+      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    }
   }
 
   React.useEffect(() => {
@@ -91,8 +111,8 @@ export default function Root(){
 
         {/* Wyszukiwarka */}
         <div className='col-4'>
-          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching()}>SZUKAJ</button>
+          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
+          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}
@@ -122,8 +142,8 @@ export default function Root(){
             <p id="Error_box" className='text-center fs-3 text-danger'></p>
           </div>
           <br></br>
-          <button className='border border-3 btnsrch' onClick={() => CheckIfLoginIsInDb()}>ZALOGUJ SIE</button>
-          <a className='noaccount' onClick={() => navigate("/Rejestracja-Test", {replace: true})}>Nie mam konta</a>
+          <button onClick={() => CheckIfLoginIsInDb()}>ZALOGUJ SIĘ</button>
+          <h5 onClick={() => navigate("/Register", {replace: true})}>Nie mam konta</h5>
       </div>
 
       {/* Stopka */}

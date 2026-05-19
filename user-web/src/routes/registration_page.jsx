@@ -16,6 +16,7 @@ export default function Root(){
     pageSize: 5,                                        //    ilośc rekordów na strone
   });
 
+  const [SearchThisTitle, changeTitle] = useState(null);
   const [Users, GetAllUsersData] = useState([]);
   
   const navigate = useNavigate();
@@ -49,6 +50,10 @@ export default function Root(){
 
   let isDataGood = false;
 
+  const [UserData, GetUserData] = useState({
+      id: null
+    });
+
   React.useEffect(() => {
     changeUserData({
     mail: inputMail,
@@ -77,14 +82,19 @@ export default function Root(){
             console.log("Dane się nie powtarzają w bazie");
             axios.post("http://localhost:3000/users/adduser",{ login: newUser.login, email: newUser.mail, pass: newUser.pass, phone: newUser.phone, discord_tag: newUser.discord });
             console.log("Udało się?");
-            navigate("/", {
-                      replace: true,
-                      state: {
-                        login: newUser.login,
-                        isLogged: true,
-                        discordTag: newUser.discord
-                      }
-                    });
+            axios.get("http://localhost:3000/users/byemail", {
+              params: {
+                email: newUser.mail
+              }
+            })
+            .then((res) => {
+              navigate("/", {
+                replace: true,
+                state: {
+                  userId: res.data[0].id
+                }
+              });
+            });
         } else {
             document.getElementById("Error_box").innerHTML =
             "Użytkownik o istniejącym mailu bądź nicku już istnieje.";
@@ -177,6 +187,14 @@ export default function Root(){
     function RedirectToStorefront(){
       navigate('/', {state: {login: null, isLogged: false, discordTag: null}});
     }
+    
+  function RedirectToSeaching(e) {
+    if(e == null){
+      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    } else {
+      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    }
+  }
   
 
     return (
@@ -187,8 +205,8 @@ export default function Root(){
 
         {/* Wyszukiwarka */}
         <div className='col-4'>
-          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
-          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching()}>SZUKAJ</button>
+          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
+          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}
