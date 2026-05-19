@@ -142,8 +142,8 @@ export default function Root(){
             <p id="Error_box" className='text-center fs-3 text-danger'></p>
           </div>
           <br></br>
-          <button onClick={() => CheckIfLoginIsInDb()}>ZALOGUJ SIĘ</button>
-          <h5 onClick={() => navigate("/Register", {replace: true})}>Nie mam konta</h5>
+          <button className='border border-3' onClick={() => CheckIfLoginIsInDb()}>ZALOGUJ SIE</button>
+          <h5 className='noaccount' onClick={() => navigate("/Register", {replace: true})}>Nie mam konta</h5>
       </div>
 
       {/* Stopka */}
