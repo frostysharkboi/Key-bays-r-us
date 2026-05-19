@@ -5,7 +5,6 @@ import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel,
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import './root.css';
-import './root.css';
 
 export default function SearchPage(){
   // UseState do operacji na danych
@@ -131,7 +130,7 @@ export default function SearchPage(){
   }
 
   function GoToLoginPage(){
-    navigate("/Login", {replace: true , state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}})
+    navigate("Login", {replace: true , state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}})
   }
 
 
@@ -187,8 +186,6 @@ export default function SearchPage(){
         
                 {/* Wyszukiwarka */}
                 <div className='col-4'>
-                  <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
-                  <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
                   <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
                   <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
                 </div>

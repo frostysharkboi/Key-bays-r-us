@@ -182,10 +182,10 @@ export default function Root(){
   }
 
     function RedirectToStorefront(){
-      navigate('/', {state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+      navigate('/', {state: {login: null, isLogged: false, discordTag: null}});
     }
-
-    function RedirectToSeaching(e) {
+    
+  function RedirectToSeaching(e) {
     if(e == null){
       navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
     } else {
@@ -203,7 +203,7 @@ export default function Root(){
         {/* Wyszukiwarka */}
         <div className='col-4'>
           <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
-          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching()}>SZUKAJ</button>
+          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
         </div>
 
         {/* Logo, wiadomo */}

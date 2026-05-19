@@ -100,6 +100,15 @@ export default function Root(){
     }
   }
 
+  const [SearchThisTitle, changeTitle] = useState(null);
+  function RedirectToSeaching(e) {
+    if(e == null){
+      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    } else {
+      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    }
+  }
+
   React.useEffect(() => {
     LoadUsersData();
   }, []);
