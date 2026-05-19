@@ -16,6 +16,13 @@ export default function Root(){
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [UserData, GetUserData] = useState({
+      id: null,
+      login: null,
+      isLogged: false,
+      discordTag: null
+  });
+
   var GameId = location.state.GameId;
   console.log(GameId);
 
@@ -135,7 +142,7 @@ export default function Root(){
   }, []);
 
   function RedirectToStorefront(){
-    navigate('/', {state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    navigate('/', {state: {userId: UserData.id, isLogged: UserData.isLogged}});
   }
 
   function GoToLoginPage(){
@@ -145,33 +152,28 @@ export default function Root(){
   const [SearchThisTitle, changeTitle] = useState(null);
   function RedirectToSeaching(e) {
     if(e == null){
-      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+      navigate("/Search", {state: {Title: SearchThisTitle, userId: UserData.id, isLogged: UserData.isLogged}});
     } else {
-      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+      navigate("/Search", {state: {GenreId: e, userId: UserData.id, isLogged: UserData.isLogged}});
     }
   }
-
-  const [UserData, GetUserData] = useState({
-      login: null,
-      isLogged: false,
-      discordTag: null
-    });
   
+    //Kod odpowiedzialny za logowanie.
     React.useEffect(() => {
-  
-      if(location.state != null){
-        console.log("Przed pobraniem danych z loginu");
-        if(location.state.isLogged == true){
-          console.log("Pobieranie danych z loginu");
-          GetUserData({
-          login: location.state.login,
-          isLogged: location.state.isLogged,
-          discordTag: location.state.discordTag
-        });
-        }
-      }
-  
-    }, [location.state]);
+    if(location.state != null){
+      console.log("Przed pobraniem danych z loginu");
+      axios.get("http://localhost:3000/users/byid", {params: {id: location.state.userId}}).then((res) => {
+        console.log(res.data);
+        GetUserData({
+          id: res.data[0].id,
+          login: res.data[0].login,
+          isLogged: true,
+          discordTag: res.data[0].discord_tag
+        })
+      });
+    }
+    console.log("UseEffect miał już miejsce");
+  }, [location.state]);
   
     React.useEffect(() => {
             if(UserData.login == null){

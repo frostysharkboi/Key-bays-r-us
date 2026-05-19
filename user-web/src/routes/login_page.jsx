@@ -57,13 +57,10 @@ export default function Root(){
         }
       })
       .then((res) => {
-        
         navigate("/", {
           replace: true,
           state: {
-            login: res.data[0].login,
-            isLogged: true,
-            discordTag: res.data[0].discord_tag
+            userId: res.data[0].id
           }
         });
 
@@ -91,16 +88,6 @@ export default function Root(){
     }
   }
 
-  const [SearchThisTitle, changeTitle] = useState(null);
-  function RedirectToSeaching(e) {
-    if(e == null){
-      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
-    } else {
-      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
-    }
-  }
-
-  const [SearchThisTitle, changeTitle] = useState(null);
   function RedirectToSeaching(e) {
     if(e == null){
       navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});

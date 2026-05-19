@@ -50,18 +50,18 @@ export default function Root(){
 
   function RedirectToSeaching(e) {
     if(e == null){
-      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+      navigate("/Search", {state: {Title: SearchThisTitle, userId: UserData.id, isLogged: UserData.isLogged}});
     } else {
-      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+      navigate("/Search", {state: {GenreId: e, userId: UserData.id, isLogged: UserData.isLogged}});
     }
   }
 
   function RedirectToGamePage(e){
-    navigate('/Game',{state:{GameId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    navigate('/Game',{state:{GameId: e, userId: UserData.id, isLogged: UserIsLogged.isLogged}});
   }
 
   function RedirectToStorefront(){
-    navigate('/', {state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
+    navigate('/', {state: {userId: UserData.id, isLogged: UserData.isLogged}});
   }
   
   function GoToLoginPage(){
@@ -71,28 +71,30 @@ export default function Root(){
   //Kod odpowiedzialny za logowanie.
   
   const [UserData, GetUserData] = useState({
+    id: null,
     login: null,
     isLogged: false,
     discordTag: null
   });
 
   React.useEffect(() => {
-
     if(location.state != null){
       console.log("Przed pobraniem danych z loginu");
-      if(location.state.isLogged == true){
-        console.log("Pobieranie danych z loginu");
+      axios.get("http://localhost:3000/users/byid", {params: {id: location.state.userId}}).then((res) => {
+        console.log(res.data);
         GetUserData({
-        login: location.state.login,
-        isLogged: location.state.isLogged,
-        discordTag: location.state.discordTag
+          id: res.data[0].id,
+          login: res.data[0].login,
+          isLogged: true,
+          discordTag: res.data[0].discord_tag
+        })
       });
-      }
     }
-
+    console.log("UseEffect miał już miejsce");
   }, [location.state]);
 
   React.useEffect(() => {
+    console.log("ROOT.JSX\nOTRZYMANE DANE:\n", UserData);
         if(UserData.login == null){
           document.getElementById("nick").innerHTML = "Gość";
         } else {
@@ -100,7 +102,7 @@ export default function Root(){
         }
   }, [UserData])
 
-  console.log("ROOT.JSX\nOTRZYMANE DANE:\n", location.state);
+  
   //console.log(UserData["login"]);
 
   function LogOut(){

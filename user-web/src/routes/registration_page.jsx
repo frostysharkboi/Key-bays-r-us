@@ -51,9 +51,7 @@ export default function Root(){
   let isDataGood = false;
 
   const [UserData, GetUserData] = useState({
-      login: null,
-      isLogged: false,
-      discordTag: null
+      id: null
     });
 
   React.useEffect(() => {
@@ -84,14 +82,19 @@ export default function Root(){
             console.log("Dane się nie powtarzają w bazie");
             axios.post("http://localhost:3000/users/adduser",{ login: newUser.login, email: newUser.mail, pass: newUser.pass, phone: newUser.phone, discord_tag: newUser.discord });
             console.log("Udało się?");
-            navigate("/", {
-                      replace: true,
-                      state: {
-                        login: newUser.login,
-                        isLogged: true,
-                        discordTag: newUser.discord
-                      }
-                    });
+            axios.get("http://localhost:3000/users/byemail", {
+              params: {
+                email: newUser.mail
+              }
+            })
+            .then((res) => {
+              navigate("/", {
+                replace: true,
+                state: {
+                  userId: res.data[0].id
+                }
+              });
+            });
         } else {
             document.getElementById("Error_box").innerHTML =
             "Użytkownik o istniejącym mailu bądź nicku już istnieje.";

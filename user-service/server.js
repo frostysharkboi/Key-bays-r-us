@@ -191,7 +191,7 @@ app.get("/users/byid", async (req, res) => {
   const { id } = req.query;
 
   try {
-    const sql = `SELECT * FROM users WHERE id LIKE ${id}`;
+    const sql = `SELECT * FROM users WHERE id = "${id}"`;
     const result = await db.pool.query(sql);
     res.json(result);
   } catch (err) {
