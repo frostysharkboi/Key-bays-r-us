@@ -113,6 +113,8 @@ export default function Root(){
       state: null
     });
   }
+
+
   
     return (
     <>
@@ -143,6 +145,8 @@ export default function Root(){
                 )}
               {UserData?.isLogged && (
                 <>
+                  <h5 onClick={() => navigate('Wishlist', {state: {userId: UserData.id, isLogged: UserData.isLogged}})}>Lista życzeń</h5>
+
                   <h5>Zarządzaj kontem</h5>
 
                   <h5 onClick={LogOut}>

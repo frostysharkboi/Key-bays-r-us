@@ -16,6 +16,7 @@ import ErrorPage from "./routes/error-page.jsx";
 import GamePage from "./routes/game_page.jsx";
 import LoginPage from "./routes/login_page.jsx";
 import RegistrationPage from "./routes/registration_page.jsx";
+import WishlistPage from "./routes/Wishlist_page.jsx";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,11 @@ const router = createBrowserRouter([
   {
     path: "Register",
     element: <RegistrationPage />,
+    errorElement: <ErrorPage />
+  },
+  {
+    path: "Wishlist",
+    element: <WishlistPage />,
     errorElement: <ErrorPage />
   }
 ])
