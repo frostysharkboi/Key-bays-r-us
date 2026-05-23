@@ -221,7 +221,7 @@ app.get("/users/byemail", async (req, res) => {
 app.get("/wishlist/wishlistData", async (req, res) => {
   
   try {
-    const userId = 1;
+    const userId = req.query.id;
     const sql = `SELECT g.id "id", title, cover_img, developer, about FROM wishlist w JOIN games g ON game_id = g.id WHERE user_id LIKE ${userId};`;
     const result = await db.pool.query(sql);
     res.json(result);
