@@ -57,7 +57,7 @@ export default function Root(){
   }
 
   function RedirectToGamePage(e){
-    navigate('/Game',{state:{GameId: e, userId: UserData.id, isLogged: UserIsLogged.isLogged}});
+    navigate('/Game',{state:{GameId: e, userId: UserData.id, isLogged: UserData.isLogged}});
   }
 
   function RedirectToStorefront(){
@@ -113,6 +113,8 @@ export default function Root(){
       state: null
     });
   }
+
+
   
     return (
     <>
@@ -143,7 +145,9 @@ export default function Root(){
                 )}
               {UserData?.isLogged && (
                 <>
-                  <h5>Zarzadzaj kontem</h5>
+                  <h5 onClick={() => navigate('Wishlist', {state: {userId: UserData.id, isLogged: UserData.isLogged}})}>Lista życzeń</h5>
+
+                  <h5>Zarządzaj kontem</h5>
 
                   <h5 onClick={LogOut}>
                     Wyloguj sie
