@@ -46,40 +46,6 @@ export default function SearchPage(){
     navigate('/Game',{state:{GameId: e, userId: UserData.id}});
   }
 
-  // Pobranie danych z tabeli
-  const getFilteredGames = () => {
-    const outputTags = filterTags.filter(tag => tag.isSelected).map(tag=>tag.id);
-    console.log(outputTags);
-    axios.get("http://localhost:3000/games/tagsort", { params: { tags: outputTags }, paramsSerializer: params => {return "tags=" + params.tags.join("&tags=");}}).then((res) => {
-      setGames(res.data);
-    });
-  }
-  const getAllTags = () => {
-    axios.get("http://localhost:3000/tags").then((res) => {
-      setTags(res.data);
-
-      const mapped = res.data.map(e => ({
-        id: e.id,
-        tag: e.tag,
-        isSelected: e.id == GenreId,
-      }));
-
-      setFilterTags(mapped);
-    });
-  };
-  const anySelected = filterTags.some(t=>t.isSelected);
-  React.useEffect(() => {
-    getAllTags();
-  }, []);
-  //inaczej by poczekało na wykonanie poprzedniego
-  React.useEffect(() => {
-    if (filterTags.length > 0) {
-      getFilteredGames();
-    }
-  }, [filterTags]);
-
-
-
   // Wygenerowanie tabeli w html z danymi
   const columns = React.useMemo(() => [
     { header: "ID", accessorKey: "id", enableSorting: true,
@@ -140,6 +106,7 @@ export default function SearchPage(){
     navigate("Login", {replace: true , state: {userId: UserData.id, isLogged: UserData.isLogged}})
   }
 
+  // Pobranie danych z tabeli
 
   //Pobieranie info o użytkowniku i o jego liście życzeń.
     React.useEffect(() => {
@@ -156,35 +123,21 @@ export default function SearchPage(){
       });
     }
   }, [location.state]);
-    
-    React.useEffect(() => {
-            if(UserData.login == null){
-              document.getElementById("nick").innerHTML = "Gość";
-            } else {
-              document.getElementById("nick").innerHTML = UserData["login"];
-            }
-
-            if(UserData.id != null){
-              console.log("Pobieranie danych z wishlisty");
-              axios.get("http://localhost:3000/wishlist/wishlistData", {params: {id: UserData.id}}).then((res) => {
-                console.log(res.data);
-                console.log("Sprawdzanie czy dane są.", JSON.stringify(res.data, null, 0));
-                GetGameData(
-                  res.data.map(game => ({
-                  gameId: game.game_id,
-                  title: game.title,
-                  gameCover: game.cover_img,
-                  gameDev: game.developer
-                }))
-              );
-            });
-            }
-      }, [UserData])
+  const getGames = () => {
+    const outputTags = filterTags.filter(tag => tag.isSelected).map(tag=>tag.id);
+    console.log(outputTags);
+    axios.get("http://localhost:3000/wishlist/wishlistData", {params: {id: UserData.id}}).then((res) => {
+      setGames(res.data);
+    });
+  }
+  React.useEffect(() => {
+    getGames();
+    console.log("Pobrane gry: ", games);
+  }, [UserData]);
   
     console.log("SEARCH_PAGE.JSX\nOTRZYMANE DANE:\n", location.state);
     //console.log(UserData["login"]);
   
-    console.log("CONSOLE LOGI", UserData, "\n", wishlistGamesData, "\n", `Tytuł: ${wishlistGamesData[0].title} | Dev: ${wishlistGamesData[0].gameDev}`);
     function LogOut(){
       GetUserData(null);
   
@@ -214,31 +167,85 @@ export default function SearchPage(){
                 {/* Dropdown menu konta */}
                 <div className='col-4'>
                   <div className="dropdown">
-                  <button className="dropbtn font" id="nick"></button>
-                    <div className="dropdown-content fw-bold">
-                      {!UserData?.isLogged && (
-                        <h5 onClick={GoToLoginPage}>
-                          Zaloguj się
-                        </h5>
-                      )}
-                    {UserData?.isLogged && (
-                      <>
-                        <h5>Zarządzaj kontem</h5>
+                    <button className="dropbtn font" id="nick"></button>
+                      <div className="dropdown-content fw-bold">
+                        {!UserData?.isLogged && (
+                          <h5 onClick={GoToLoginPage}>
+                            Zaloguj się
+                          </h5>
+                        )}
+                      {UserData?.isLogged && (
+                        <>
+                          <h5>Zarządzaj kontem</h5>
 
-                        <h5 onClick={LogOut}>
-                          Wyloguj się
-                        </h5>
-                      </>
-                    )}
+                          <h5 onClick={LogOut}>
+                            Wyloguj się
+                          </h5>
+                        </>
+                      )}
                     </div>
                   </div> 
                 </div>
               </div>
 
               {/* Box z tabelą i filtrami */}
-              <div>
-
-              </div>
+              <h3 className='mx-4 mt-4 p-4 font'>Wyniki Wyszukiwania</h3>
+                <div className="row px-4 pb-4">
+                  <div className="col-12 col-lg-4 custom-border border-dark">
+                    <h3 className='mx-4 mt-4 p-3 text-center font'>Filtry:</h3>
+                    <div className="addpanel box-idk">
+                      <div className="addpaneldiv row p-2 pe-4">
+                        <h2 className='font'>Tytul</h2>
+                        <input className='col p-2 inp-srch' type="text" name='search' id='search' value={globalFilter ?? ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder='Search...'/>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col">
+                    <table className='table border border-3 table-sm table-striped table-hover ms-3'>
+                      <thead>
+                        {table.getHeaderGroups().map(hg => (
+                          <tr className='table-part-top border border-3' key={hg.id}>
+                            {hg.headers.map(header => (
+                              <th key={header.id} onClick={header.column.getToggleSortingHandler()} style={{ cursor: header.column.getCanSort() ? "pointer" : "default" }}>
+                                {header.column.getIsSorted() === "desc" ? "↑ " : (header.column.getIsSorted() === "asc" ? "↓ " : "")}
+                                {flexRender(header.column.columnDef.header, header.getContext())}
+                                {header.column.getIsSorted() === "desc" ? " ↑" : (header.column.getIsSorted() === "asc" ? " ↓" : "")}
+                              </th>
+                            ))}
+                          </tr>
+                        ))}
+                      </thead>
+                      <tbody>
+                        {rows.map((row) => (
+                          <tr className='' key={row.id} onClick={() => RedirectToGamePage(parseInt(row.getVisibleCells()[0].getValue()))}>
+                            {row.getVisibleCells().map((cell) => (
+                              <td key={cell.id}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                        {Array.from({ length: emptyRowCount }).map((_, idx) => (
+                          <tr key={`empty-${idx}`} className="empty-row">
+                            <td colSpan={columns.length} style={{ height: "48px", opacity: 0 }}>
+                            </td>
+                          </tr>
+                        ))}
+                        <tr>
+                          <td colSpan={columns.length}>
+                            <div className="d-flex justify-content-between align-items-center">
+                              <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.firstPage()} disabled={!table.getCanPreviousPage()}> First </button>
+                              <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}> Previous </button>
+                              <span>Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}</span>
+                              <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>Next</button>
+                              <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.lastPage()} disabled={!table.getCanNextPage()}>Last</button>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
             
         
               {/* Stopka */}

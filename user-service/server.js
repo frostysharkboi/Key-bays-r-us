@@ -215,6 +215,22 @@ app.get("/users/byemail", async (req, res) => {
   }
 });
 
+//POLECENIA DOTYCZĄCE WISHLISTY
+//Wybierz dane z tabeli, gdzie id usera jest podobne do podanego id.
+
+app.get("/wishlist/wishlistData", async (req, res) => {
+  
+  try {
+    const userId = 1;
+    const sql = `SELECT g.id "id", title, cover_img, developer, about FROM wishlist w JOIN games g ON game_id = g.id WHERE user_id LIKE ${userId};`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 //domyślny select * dowolnej tabeli
 
 // axios.get("http://localhost:3000/table").then((res) => {setTable(res.data)})
@@ -233,22 +249,6 @@ app.get("/:table", async (req,res) => {
     res.status(500).send(err);
   }
 
-});
-
-//POLECENIA DOTYCZĄCE WISHLISTY
-//Wybierz dane z tabeli, gdzie id usera jest podobne do podanego id.
-
-app.get("/wishlist/wishlistData", async (req, res) => {
-  
-  try {
-    const userId = 6;
-    const sql = `SELECT g.id "id", title, cover_img, developer FROM wishlist w JOIN games g ON game_id = g.id WHERE user_id LIKE ${userId};`;
-    const result = await db.pool.query(sql);
-    res.json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
 });
 
 
