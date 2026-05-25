@@ -291,7 +291,7 @@ export default function Root(){
               System Operacyjny: {(game[0])?  game[0].opt_os : "Nie znaleziono"}<br/><br/>
               Karta Graficzna: {(game[0])?  game[0].opt_gpu : "Nie znaleziono"}<br/><br/>
               Procesor: {(game[0])?  game[0].opt_cpu : "Nie znaleziono"}<br/><br/>
-              Pamięć ram: {(game[0])?  game[0].opt_ram : "Nie znaleziono"} GB<br/><br/>
+              Pamięć ram: {(game[0])?  (game[0].opt_ram / 1024) : "Nie znaleziono"} GB<br/><br/>
               Potrzebne miejsce: {(game[0])?  game[0].opt_size : "Nie znaleziono"} GB
             </p>
           </div>
@@ -302,10 +302,10 @@ export default function Root(){
           <div className='box-idk m-4'>
             <h3 className='font'>Minimalne Wymagania:</h3>
             <p>
-              System Operacyjny: {(game[0])?  game[0].min_os : "Nie znaleziono"}<br/>
-              Karta Graficzna: {(game[0])?  game[0].min_gpu : "Nie znaleziono"}<br/>
-              Procesor: {(game[0])?  game[0].min_cpu : "Nie znaleziono"}<br/>
-              Pamięć ram: {(game[0])?  game[0].min_ram : "Nie znaleziono"} GB<br/>
+              System Operacyjny: {(game[0])?  game[0].min_os : "Nie znaleziono"}<br/><br/>
+              Karta Graficzna: {(game[0])?  game[0].min_gpu : "Nie znaleziono"}<br/><br/>
+              Procesor: {(game[0])?  game[0].min_cpu : "Nie znaleziono"}<br/><br/>
+              Pamięć ram: {(game[0])?  (game[0].min_ram / 1024) : "Nie znaleziono"} GB<br/><br/>
               Potrzebne miejsce: {(game[0])?  game[0].min_size : "Nie znaleziono"} GB
             </p>
           </div>
@@ -320,7 +320,7 @@ export default function Root(){
 
       {/* Recenzje - Szczegóły */}
       <div className='box-idk row m-3 p-3 text-center'>
-        <p>Szcegołowe Recenzje</p>
+        <p className='font'>Szcegołowe Recenzje</p>
         <p>{WypiszRecenzje()}</p>
       </div>
 

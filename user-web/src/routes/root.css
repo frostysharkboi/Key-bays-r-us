@@ -44,7 +44,7 @@ a{
 }
 
 /* Change color of dropdown links on hover */
-.dropdown-content a:hover {
+.dropdown-content h5:hover {
     background-color: #1C120A;
 }
 
@@ -185,4 +185,7 @@ input:focus {
 }
 .noaccount:hover{
     color: #d31717;
+}
+.tag:hover{
+    background-color: #d31717;
 }

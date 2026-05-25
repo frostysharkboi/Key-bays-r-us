@@ -171,15 +171,15 @@ export default function SearchPage(){
                       <div className="dropdown-content fw-bold">
                         {!UserData?.isLogged && (
                           <h5 onClick={GoToLoginPage}>
-                            Zaloguj się
+                            Zaloguj sie
                           </h5>
                         )}
                       {UserData?.isLogged && (
                         <>
-                          <h5>Zarządzaj kontem</h5>
+                          <h5>Zarzadzaj kontem</h5>
 
                           <h5 onClick={LogOut}>
-                            Wyloguj się
+                            Wyloguj sie
                           </h5>
                         </>
                       )}
