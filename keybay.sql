@@ -51,7 +51,7 @@ CREATE TABLE `games` (
   `developer` varchar(30) NOT NULL,
   `publisher` varchar(30) NOT NULL,
   `about` mediumtext DEFAULT NULL,
-  `release_date` date NOT NULL DEFAULT current_timestamp(),
+  `release_date` date NOT NULL,
   `cover_img` TEXT DEFAULT NULL,
   `icon` TEXT DEFAULT NULL,
   `steam_rating` varchar(100) DEFAULT NULL

@@ -219,6 +219,38 @@ app.get("/users/byemail", async (req, res) => {
 //Wybierz dane z tabeli, gdzie id usera jest podobne do podanego id.
 
 app.get("/wishlist/wishlistData", async (req, res) => {
+  const { id } = req.query;
+  
+  try {
+    const sql = `SELECT g.id "id", title, cover_img, developer, about FROM wishlist w JOIN games g ON game_id = g.id WHERE user_id LIKE ${id};`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+//POLECENIA DOTYCZĄCE OFERT
+//Wybierz dane z tabeli, gdzie id gry jest podobne do podanego id.
+
+app.get("/key_offers/offersForGame", async (req, res) => {
+  const { id } = req.query;
+  
+  try {
+    const sql = `SELECT * FROM key_offers WHERE game_id LIKE ${id};`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+//POLECENIA DOTYCZĄCE TRANSAKCJI
+//Wybierz dane z tabeli, gdzie id kupującego jest podobne do podanego id.
+
+app.get("/transactions/transactionsByBuyer", async (req, res) => {
+  const { id } = req.query;
   
   try {
     const userId = req.query.id;
@@ -299,6 +331,45 @@ app.post("/users/adduser", async (req, res) => {
 });
 
 // Create
+
+// dodanie użytkowników
+
+// await axios.post("http://localhost:3000/users/adduser",{ login: "", email: "", pass: "", phone: "", discord_tag: "" });
+
+app.post("/users/adduser", async (req, res) => {
+  const { login, email, pass, phone, discord_tag } = req.body;
+
+  try {
+    const columns = ["login", "email", "password"];
+    const values = [login, email, pass];
+    const placeholders = ["?", "?", "?"];
+
+    if (phone) {
+      columns.push("phone");
+      values.push(phone);
+      placeholders.push("?");
+    }
+
+    if (discord_tag) {
+      columns.push("discord_tag");
+      values.push(discord_tag);
+      placeholders.push("?");
+    }
+
+    const sql = `INSERT INTO users (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
+
+    const [result] = await db.pool.query(sql, values);
+    res.json(result);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Błąd serwera"
+    });
+  }
+});
+
+// standardowy do wszystkich kolumn tabeli
 
 app.post("/:table", async (req,res) => {
   const table = req.params.table;
