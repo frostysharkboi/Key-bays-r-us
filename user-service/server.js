@@ -253,52 +253,8 @@ app.get("/transactions/transactionsByBuyer", async (req, res) => {
   const { id } = req.query;
   
   try {
-    const sql = `SELECT * FROM transactions WHERE buyer_id LIKE ${id};`;
-    const result = await db.pool.query(sql);
-    res.json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-});
-//Wybierz dane z tabeli, gdzie id sprzedawcy jest podobne do podanego id.
-
-app.get("/transactions/transactionsBySeller", async (req, res) => {
-  const { id } = req.query;
-  
-  try {
-    const sql = `SELECT * FROM transactions WHERE seller_id LIKE ${id};`;
-    const result = await db.pool.query(sql);
-    res.json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-});
-//Wybierz dane z tabeli, gdzie id sprzedawcy i gry jest podobne do podanych id.
-
-app.get("/transactions/transactionsBySeller", async (req, res) => {
-  const { sid, gid } = req.query;
-  
-  try {
-    const sql = `SELECT * FROM transactions WHERE seller_id LIKE ${sid} AND game_id LIKE ${gid};`;
-    const result = await db.pool.query(sql);
-    res.json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-//pobieranie danych jednego użytkownika po email
-
-// axios.get("http://localhost:3000/users/byemail", { params: { email: email }}).then((res) => {setUserData(res.data);});
-
-app.get("/users/byemail", async (req, res) => {
-  const { email } = req.query;
-
-  try {
-    const sql = `SELECT * FROM users WHERE email = "${email}"`;
+    const userId = req.query.id;
+    const sql = `SELECT g.id "id", title, cover_img, developer, about FROM wishlist w JOIN games g ON game_id = g.id WHERE user_id LIKE ${userId};`;
     const result = await db.pool.query(sql);
     res.json(result);
   } catch (err) {

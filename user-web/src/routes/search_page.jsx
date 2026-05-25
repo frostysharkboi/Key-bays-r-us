@@ -136,8 +136,8 @@ export default function SearchPage(){
     navigate('/', {state: {userId: UserData.id, isLogged: UserData.isLogged}});
   }
 
-  function GoToLoginPage(){
-    navigate("Login", {replace: true , state: {userId: userData.id, isLogged: UserData.isLogged}})
+ function GoToLoginPage(){
+    navigate("/Login", {replace: true})
   }
 
 
