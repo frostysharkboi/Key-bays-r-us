@@ -46,24 +46,76 @@ export default function Root(){
 
   const [SearchThisTitle, changeTitle] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   function RedirectToSeaching(e) {
     if(e == null){
-      navigate("Wyszukiwarka-Test", {state: {Title: SearchThisTitle}});
+      navigate("/Search", {state: {Title: SearchThisTitle, userId: UserData.id, isLogged: UserData.isLogged}});
     } else {
-      navigate("Wyszukiwarka-Test", {state: {GenreId: e}});
+      navigate("/Search", {state: {GenreId: e, userId: UserData.id, isLogged: UserData.isLogged}});
     }
   }
 
   function RedirectToGamePage(e){
-    navigate('Wyszukiwarka-Test/GamePage-Test',{state:{GameId: e}});
+    navigate('/Game',{state:{GameId: e, userId: UserData.id, isLogged: UserData.isLogged}});
   }
 
-  function RedirectToStorefront(e){
-    navigate('/');
+  function RedirectToStorefront(){
+    navigate('/', {state: {userId: UserData.id, isLogged: UserData.isLogged}});
   }
   
+  function GoToLoginPage(){
+    navigate("Login", {replace: true})
+  }
 
+  //Kod odpowiedzialny za logowanie.
+  
+  const [UserData, GetUserData] = useState({
+    id: null,
+    login: null,
+    isLogged: false,
+    discordTag: null
+  });
+
+  React.useEffect(() => {
+    if(location.state != null){
+      console.log("Przed pobraniem danych z loginu");
+      axios.get("http://localhost:3000/users/byid", {params: {id: location.state.userId}}).then((res) => {
+        console.log(res.data);
+        GetUserData({
+          id: res.data[0].id,
+          login: res.data[0].login,
+          isLogged: true,
+          discordTag: res.data[0].discord_tag
+        })
+      });
+    }
+    console.log("UseEffect miał już miejsce");
+  }, [location.state]);
+
+  React.useEffect(() => {
+    console.log("ROOT.JSX\nOTRZYMANE DANE:\n", UserData);
+        if(UserData.login == null){
+          document.getElementById("nick").innerHTML = "Gosc";
+        } else {
+          document.getElementById("nick").innerHTML = UserData["login"];
+        }
+  }, [UserData])
+
+  
+  //console.log(UserData["login"]);
+
+  function LogOut(){
+    GetUserData(null);
+
+    navigate("/", {
+      replace: true,
+      state: null
+    });
+  }
+
+//Test
+  
     return (
     <>
     <div className="container-fluid">
@@ -84,11 +136,24 @@ export default function Root(){
         {/* Dropdown menu konta */}
         <div className='col-4'>
           <div className="dropdown">
-          <button className="dropbtn font">Dropdown</button>
+          <button className="dropbtn font" id="nick"></button>
             <div className="dropdown-content fw-bold">
-              <a href="#">Link 1</a>
-              <a href="#">Link 2</a>
-              <a href="#">Link 3</a>
+               {!UserData?.isLogged && (
+                  <h5 onClick={GoToLoginPage}>
+                    Zaloguj sie
+                  </h5>
+                )}
+              {UserData?.isLogged && (
+                <>
+                  <h5 onClick={() => navigate('Wishlist', {state: {userId: UserData.id, isLogged: UserData.isLogged}})}>Lista życzeń</h5>
+
+                  <h5>Zarządzaj kontem</h5>
+
+                  <h5 onClick={LogOut}>
+                    Wyloguj sie
+                  </h5>
+                </>
+              )}
             </div>
           </div> 
         </div>

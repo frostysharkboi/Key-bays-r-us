@@ -16,6 +16,13 @@ export default function Root(){
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [UserData, GetUserData] = useState({
+      id: null,
+      login: null,
+      isLogged: false,
+      discordTag: null
+  });
+
   var GameId = location.state.GameId;
   console.log(GameId);
 
@@ -93,6 +100,7 @@ export default function Root(){
     }
   }
 
+  
   function SredniaRecenzji(){
     var sumaRecenzji = 0;
     var liczbaPetli = 0;
@@ -133,18 +141,59 @@ export default function Root(){
     getAllReviews();
   }, []);
 
+  function RedirectToStorefront(){
+    navigate('/', {state: {userId: UserData.id, isLogged: UserData.isLogged}});
+  }
+
+  function GoToLoginPage(){
+    navigate("/Login", {replace: true})
+  }
+  
   const [SearchThisTitle, changeTitle] = useState(null);
   function RedirectToSeaching(e) {
     if(e == null){
-      navigate(-1, {state: {Title: SearchThisTitle}});
+      navigate("/Search", {state: {Title: SearchThisTitle, userId: UserData.id, isLogged: UserData.isLogged}});
     } else {
-      navigate(-1, {state: {GenreId: e}});
+      navigate("/Search", {state: {GenreId: e, userId: UserData.id, isLogged: UserData.isLogged}});
     }
   }
-
-  function RedirectToStorefront(e){
-    navigate('/');
-  }
+  
+    //Kod odpowiedzialny za logowanie.
+    React.useEffect(() => {
+    if(location.state != null){
+      console.log("Przed pobraniem danych z loginu");
+      axios.get("http://localhost:3000/users/byid", {params: {id: location.state.userId}}).then((res) => {
+        console.log(res.data);
+        GetUserData({
+          id: res.data[0].id,
+          login: res.data[0].login,
+          isLogged: true,
+          discordTag: res.data[0].discord_tag
+        })
+      });
+    }
+    console.log("UseEffect miał już miejsce");
+  }, [location.state]);
+  
+    React.useEffect(() => {
+            if(UserData.login == null){
+              document.getElementById("nick").innerHTML = "Gosc";
+            } else {
+              document.getElementById("nick").innerHTML = UserData["login"];
+            }
+      }, [UserData])
+  
+    console.log("GAME_PAGE.JSX\nOTRZYMANE DANE:\n", location.state);
+    //console.log(UserData["login"]);
+  
+    function LogOut(){
+      GetUserData(null);
+  
+      navigate("/", {
+        replace: true,
+        state: null
+      });
+    }
 
     return (
     <>
@@ -157,7 +206,7 @@ export default function Root(){
 
         {/* Wyszukiwarka */}
         <div className='col-4'>
-          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...'/>
+          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
           <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
         </div>
 
@@ -166,14 +215,25 @@ export default function Root(){
           <h1 onClick={RedirectToStorefront}>Keys &apos;R&apos; Us</h1>
         </div>
 
-        {/* Dropdown menu konta */}
+      {/* Dropdown menu konta */}
         <div className='col-4'>
           <div className="dropdown">
-          <button className="dropbtn font">Dropdown</button>
+          <button className="dropbtn font" id="nick"></button>
             <div className="dropdown-content fw-bold">
-              <a href="#">Link 1</a>
-              <a href="#">Link 2</a>
-              <a href="#">Link 3</a>
+               {!UserData?.isLogged && (
+                  <h5 onClick={GoToLoginPage}>
+                    Zaloguj sie
+                  </h5>
+                )}
+              {UserData?.isLogged && (
+                <>
+                  <h5>Zarzadzaj kontem</h5>
+
+                  <h5 onClick={LogOut}>
+                    Wyloguj sie
+                  </h5>
+                </>
+              )}
             </div>
           </div> 
         </div>
@@ -219,19 +279,19 @@ export default function Root(){
       {/* Opis Gry i wymagania */}
       <div className='row m-3 p-3 text-center'>
         {/* Opis Gry */}
-        <div className='box-idk col-7'>
+        <div className='box-idk col-5'>
           <p>{(game[0])?  game[0].about : "Nie znaleziono"}</p>
         </div>
         {/* Div z obydwoma wymaganiami */}
-        <div className='col-5 d-flex'>
+        <div className='col-7 d-flex'>
           {/* Zalecane */}
           <div className='box-idk m-4'>
             <h3 className='font'>Zalecane Wymagania:</h3>
             <p>
-              System Operacyjny: {(game[0])?  game[0].opt_os : "Nie znaleziono"}<br/>
-              Karta Graficzna: {(game[0])?  game[0].opt_gpu : "Nie znaleziono"}<br/>
-              Procesor: {(game[0])?  game[0].opt_cpu : "Nie znaleziono"}<br/>
-              Pamięć ram: {(game[0])?  game[0].opt_ram : "Nie znaleziono"} GB<br/>
+              System Operacyjny: {(game[0])?  game[0].opt_os : "Nie znaleziono"}<br/><br/>
+              Karta Graficzna: {(game[0])?  game[0].opt_gpu : "Nie znaleziono"}<br/><br/>
+              Procesor: {(game[0])?  game[0].opt_cpu : "Nie znaleziono"}<br/><br/>
+              Pamięć ram: {(game[0])?  game[0].opt_ram : "Nie znaleziono"} GB<br/><br/>
               Potrzebne miejsce: {(game[0])?  game[0].opt_size : "Nie znaleziono"} GB
             </p>
           </div>
@@ -260,7 +320,7 @@ export default function Root(){
 
       {/* Recenzje - Szczegóły */}
       <div className='box-idk row m-3 p-3 text-center'>
-        <p>Szcegółowe Recenzje</p>
+        <p>Szcegołowe Recenzje</p>
         <p>{WypiszRecenzje()}</p>
       </div>
 

@@ -191,7 +191,97 @@ app.get("/users/byid", async (req, res) => {
   const { id } = req.query;
 
   try {
-    const sql = `SELECT * FROM users WHERE id LIKE ${id}`;
+    const sql = `SELECT * FROM users WHERE id = "${id}"`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+//Zapytanie wypluwające tabelę users
+
+app.get("/users/byemail", async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    const sql = `SELECT * FROM users WHERE email = "${email}"`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({error: err.message});
+  }
+});
+
+//POLECENIA DOTYCZĄCE WISHLISTY
+//Wybierz dane z tabeli, gdzie id usera jest podobne do podanego id.
+
+app.get("/wishlist/wishlistData", async (req, res) => {
+  const { id } = req.query;
+  
+  try {
+    const sql = `SELECT g.id "id", title, cover_img, developer, about FROM wishlist w JOIN games g ON game_id = g.id WHERE user_id LIKE ${id};`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+//POLECENIA DOTYCZĄCE OFERT
+//Wybierz dane z tabeli, gdzie id gry jest podobne do podanego id.
+
+app.get("/key_offers/offersForGame", async (req, res) => {
+  const { id } = req.query;
+  
+  try {
+    const sql = `SELECT * FROM key_offers WHERE game_id LIKE ${id};`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+//POLECENIA DOTYCZĄCE TRANSAKCJI
+//Wybierz dane z tabeli, gdzie id kupującego jest podobne do podanego id.
+
+app.get("/transactions/transactionsByBuyer", async (req, res) => {
+  const { id } = req.query;
+  
+  try {
+    const sql = `SELECT * FROM transactions WHERE buyer_id LIKE ${id};`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+//Wybierz dane z tabeli, gdzie id sprzedawcy jest podobne do podanego id.
+
+app.get("/transactions/transactionsBySeller", async (req, res) => {
+  const { id } = req.query;
+  
+  try {
+    const sql = `SELECT * FROM transactions WHERE seller_id LIKE ${id};`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+//Wybierz dane z tabeli, gdzie id sprzedawcy i gry jest podobne do podanych id.
+
+app.get("/transactions/transactionsBySeller", async (req, res) => {
+  const { sid, gid } = req.query;
+  
+  try {
+    const sql = `SELECT * FROM transactions WHERE seller_id LIKE ${sid} AND game_id LIKE ${gid};`;
     const result = await db.pool.query(sql);
     res.json(result);
   } catch (err) {
@@ -237,7 +327,52 @@ app.get("/:table", async (req,res) => {
 
 });
 
+
 // Reszta bardziej pod stronke admina
+
+// Dodawanie do Rejestracji
+app.post("/users/adduser", async (req, res) => {
+  const {
+    login,
+    email,
+    pass,
+    phone,
+    discord_tag
+  } = req.body;
+
+  try {
+    const columns = ["login", "email", "pass"];
+    const values = [login, email, pass];
+    const placeholders = ["?", "?", "?"];
+
+    if (phone) {
+      columns.push("phone");
+      values.push(phone);
+      placeholders.push("?");
+    }
+
+    if (discord_tag) {
+      columns.push("discord_tag");
+      values.push(discord_tag);
+      placeholders.push("?");
+    }
+
+    const sql = `
+      INSERT INTO users (${columns.join(", ")})
+      VALUES (${placeholders.join(", ")})
+    `;
+
+    const [result] = await db.pool.query(sql, values);
+
+    res.json(result);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Błąd serwera"
+    });
+  }
+});
 
 // Create
 

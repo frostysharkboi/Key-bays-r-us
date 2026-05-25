@@ -31,13 +31,12 @@ a{
     display: none;
     position: absolute;
     background-color: #191009;
-    min-width: 160px;
     z-index: 1;
     font-family: akira;
 }
 
 /* Links inside the dropdown */
-.dropdown-content a {
+.dropdown-content h5 {
     color: #DDDDD5;
     padding: 12px 16px;
     text-decoration: none;
@@ -164,4 +163,26 @@ input:focus {
   ::-moz-selection { 
   color: #191009;
   background: #DDDDD5;
+}
+#Error_box{
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: #DDDDD5;
+}
+.btnsrch:hover{
+    background-color: #d31717;
+}
+.noaccount{
+    color: #C51515;
+    text-shadow:
+                -2px -2px 0 #DDDDD5,
+                2px -2px 0 #DDDDD5,
+                -2px 2px 0 #DDDDD5,
+                2px 2px 0 #DDDDD5,
+                -3px 0px 0 #DDDDD5,
+                3px 0px 0 #DDDDD5,
+                0px -3px 0 #DDDDD5,
+                0px 3px 0 #DDDDD5;
+}
+.noaccount:hover{
+    color: #d31717;
 }

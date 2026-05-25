@@ -83,4 +83,4 @@ def parse_date(date_str):
         ).strftime("%Y-%m-%d")
 
     except:
-        return None
+        return datetime.now().strftime("%Y-%m-%d")
