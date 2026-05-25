@@ -174,8 +174,6 @@ export default function Root(){
                 <div className={(e == formatedGames[0])? "carousel-item active":"carousel-item"} data-bs-interval="300" onClick={() => RedirectToGamePage(e.id)}>
                   <img src={e.cover_img} className="mx-auto d-block w-25 h-25" alt="..."/>
                   <div className="carousel-caption d-none d-md-block">
-                    <h5 className="font">{e.title}</h5>
-                    <p className='discount'>{e.about}</p>
                   </div>
                 </div>
               )
