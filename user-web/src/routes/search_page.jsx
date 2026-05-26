@@ -50,12 +50,12 @@ export default function SearchPage(){
   const getFilteredGames = () => {
     const outputTags = filterTags.filter(tag => tag.isSelected).map(tag=>tag.id);
     console.log(outputTags);
-    axios.get("http://localhost:3000/games/tagsort", { params: { tags: outputTags }, paramsSerializer: params => {return "tags=" + params.tags.join("&tags=");}}).then((res) => {
+    axios.get("https://keysrus-backend.onrender.com/games/tagsort", { params: { tags: outputTags }, paramsSerializer: params => {return "tags=" + params.tags.join("&tags=");}}).then((res) => {
       setGames(res.data);
     });
   }
   const getAllTags = () => {
-    axios.get("http://localhost:3000/tags").then((res) => {
+    axios.get("https://keysrus-backend.onrender.com/tags").then((res) => {
       setTags(res.data);
 
       const mapped = res.data.map(e => ({
@@ -145,7 +145,7 @@ export default function SearchPage(){
     React.useEffect(() => {
     if(location.state != null){
       console.log("Przed pobraniem danych z loginu");
-      axios.get("http://localhost:3000/users/byid", {params: {id: location.state.userId}}).then((res) => {
+      axios.get("https://keysrus-backend.onrender.com/users/byid", {params: {id: location.state.userId}}).then((res) => {
         console.log(res.data);
         GetUserData({
           id: res.data[0].id,

@@ -29,13 +29,13 @@ function App() {
 
   // Pobranie danych z tabeli
   const getAllGames = () => {
-    axios.get("http://localhost:3000/games").then((res) => {
-    //axios.get("http://localhost:3000/games/tagsort", {params: { name: "RPG" }}).then((res) => { by filtrować
+    axios.get("https://keysrus-backend.onrender.com/games").then((res) => {
+    //axios.get("https://keysrus-backend.onrender.com/games/tagsort", {params: { name: "RPG" }}).then((res) => { by filtrować
       setGames(res.data);
     });
   };
   const getAllTags = () => {
-    axios.get("http://localhost:3000/tags").then((res) => {
+    axios.get("https://keysrus-backend.onrender.com/tags").then((res) => {
       setTags(res.data);
     });
   };

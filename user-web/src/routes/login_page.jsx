@@ -32,7 +32,7 @@ export default function Root(){
 
   // Pobranie danych z tabeli
   const LoadUsersData = () => {
-    axios.get("http://localhost:3000/users").then((res) => {
+    axios.get("https://keysrus-backend.onrender.com/users").then((res) => {
       GetAllUsersData(res.data);
     });
   };
@@ -51,7 +51,7 @@ export default function Root(){
 
       setIsUserLogged(true);
 
-      axios.get("http://localhost:3000/users/byemail", {
+      axios.get("https://keysrus-backend.onrender.com/users/byemail", {
         params: {
           email: Input_Login
         }

@@ -29,25 +29,25 @@ export default function Root(){
   // Pobranie danych z tabeli
   const getGame = () => {
     console.log("getgame 1");
-    axios.get("http://localhost:3000/games/alldata", { params: { game_id: GameId }}).then((res) => {
+    axios.get("https://keysrus-backend.onrender.com/games/alldata", { params: { game_id: GameId }}).then((res) => {
       setGame(res.data);
     });
   };
 
   const getAllTags = () => {
-    axios.get("http://localhost:3000/tags").then((res) => {
+    axios.get("https://keysrus-backend.onrender.com/tags").then((res) => {
       setTags(res.data);
     });
   };
 
   const getSomeTags = () => {
-    axios.get("http://localhost:3000/game_tags").then((res) => {
+    axios.get("https://keysrus-backend.onrender.com/game_tags").then((res) => {
       uptadeTags(res.data);
     });
   };
 
   const getAllReviews = () => {
-    axios.get("http://localhost:3000/ratings").then((res) => {
+    axios.get("https://keysrus-backend.onrender.com/ratings").then((res) => {
       updateReviews(res.data);
     });
   };
@@ -162,7 +162,7 @@ export default function Root(){
     React.useEffect(() => {
     if(location.state != null){
       console.log("Przed pobraniem danych z loginu");
-      axios.get("http://localhost:3000/users/byid", {params: {id: location.state.userId}}).then((res) => {
+      axios.get("https://keysrus-backend.onrender.com/users/byid", {params: {id: location.state.userId}}).then((res) => {
         console.log(res.data);
         GetUserData({
           id: res.data[0].id,

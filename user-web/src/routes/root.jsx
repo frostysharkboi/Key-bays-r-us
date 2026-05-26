@@ -16,7 +16,7 @@ export default function Root(){
 
   // Pobranie danych z tabeli
   const getGames = () => {
-    axios.get("http://localhost:3000/games/cover").then((res) => {
+    axios.get("https://keysrus-backend.onrender.com/games/cover").then((res) => {
       setGames(res.data);
 
       const mapped = res.data.map(e => ({
@@ -30,7 +30,7 @@ export default function Root(){
     });
   };
   const getAllTags = () => {
-    axios.get("http://localhost:3000/tags").then((res) => {
+    axios.get("https://keysrus-backend.onrender.com/tags").then((res) => {
       setTags(res.data);
     });
   };
@@ -80,7 +80,7 @@ export default function Root(){
   React.useEffect(() => {
     if(location.state != null){
       console.log("Przed pobraniem danych z loginu");
-      axios.get("http://localhost:3000/users/byid", {params: {id: location.state.userId}}).then((res) => {
+      axios.get("https://keysrus-backend.onrender.com/users/byid", {params: {id: location.state.userId}}).then((res) => {
         console.log(res.data);
         GetUserData({
           id: res.data[0].id,
