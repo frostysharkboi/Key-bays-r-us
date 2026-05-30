@@ -5,6 +5,7 @@ import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel,
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, replace, useNavigate, useLocation  } from 'react-router-dom';
 import './root.css'
+import { axiosPath } from "../App";
 
 export default function Root(){
 
@@ -23,7 +24,7 @@ export default function Root(){
 
   // Pobranie danych z tabeli
   const LoadUsersData = () => {
-    axios.get("https://keysrus-backend.onrender.com/users").then((res) => {
+    axios.get(`${axiosPath}/users`).then((res) => {
       GetAllUsersData(res.data);
     });
   };
@@ -80,9 +81,9 @@ export default function Root(){
         console.log("Czy weryfikacja przeszła: ", isDataGood);
         if(duplicate == false){
             console.log("Dane się nie powtarzają w bazie");
-            axios.post("https://keysrus-backend.onrender.com/users/adduser",{ login: newUser.login, email: newUser.mail, pass: newUser.pass, phone: newUser.phone, discord_tag: newUser.discord });
+            axios.post(`${axiosPath}/users/adduser`,{ login: newUser.login, email: newUser.mail, pass: newUser.pass, phone: newUser.phone, discord_tag: newUser.discord });
             console.log("Udało się?");
-            axios.get("https://keysrus-backend.onrender.com/users/byemail", {
+            axios.get(`${axiosPath}/users/byemail`, {
               params: {
                 email: newUser.mail
               }
