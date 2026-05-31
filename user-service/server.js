@@ -231,6 +231,19 @@ app.get("/wishlist/wishlistData", async (req, res) => {
   }
 });
 
+// id gier na wisliscie użytkownika
+app.get("/wishlist", async (req, res) => {
+  const { user_id } = req.query;
+  try {
+    const sql = `SELECT game_id FROM wishlist WHERE user_id = ?`;
+    const [rows] = await db.pool.query(sql, [user_id]);
+    res.json(rows.map(row => row.game_id));
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
+
 //POLECENIA DOTYCZĄCE OFERT
 //Wybierz dane z tabeli, gdzie id gry jest podobne do podanego id.
 
@@ -263,6 +276,24 @@ app.get("/transactions/transactionsByBuyer", async (req, res) => {
   }
 });
 
+// pobranie liste id gier które ma użytkownik
+
+app.get("/users/:userId/library", async (req, res) => {
+  const userId = Number(req.params.userId);
+  try {
+    const sql = `
+      SELECT ko.game_id 
+      FROM transactions t
+      JOIN key_offers ko ON t.offer_id = ko.id
+      WHERE t.reciever_id = ? AND t.status = 'Success' AND ko.status = 'Closed'
+    `;
+    const [rows] = await db.pool.query(sql, [userId]);
+    res.json(rows.map(row => row.game_id));
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
 //domyślny select * dowolnej tabeli
 
 // axios.get("http://localhost:3000/table").then((res) => {setTable(res.data)})
@@ -425,6 +456,20 @@ app.patch("/:table/:id", async (req,res) => {
 
 // Destroy
 
+// usuwanie z wishlisty
+app.delete("/wishlist/remove", async (req, res) => {
+  const { user_id, game_id } = req.query;
+  try {
+    const sql = `DELETE FROM wishlist WHERE user_id = ? AND game_id = ?`;
+    await db.pool.query(sql, [user_id, game_id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
+
+//domyślny
 app.delete("/:table/:id", async (req,res) => {
   const table = req.params.table;
   const id = Number(req.params.id);
