@@ -133,7 +133,7 @@ export default function WishlistPage() {
             <h3 className='mx-4 mt-4 p-3 text-center font'>Filtruj listę:</h3>
             <div className="addpanel box-idk">
               <div className="addpaneldiv row p-2 pe-4">
-                <h2 className='font'>Tytuł gier</h2>
+                <h2 className='font'>Tytul gier</h2>
                 <input className='col p-2 inp-srch' type="text" value={globalFilter ?? ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder='Wpisz nazwę...'/>
               </div>
             </div>

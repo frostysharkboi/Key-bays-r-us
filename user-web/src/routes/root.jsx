@@ -103,16 +103,16 @@ export default function Root(){
         <div className='col-4'>
           <div className="dropdown">
             <button className="dropbtn font" id="nick">
-              {userData.isLogged ? userData.login : "Gość"}
+              {userData.isLogged ? userData.login : "Gosc"}
             </button>
             <div className="dropdown-content fw-bold">
               {!userData.isLogged ? (
-                <h5 onClick={() => navigate("/Login")}>Zaloguj się</h5>
+                <h5 onClick={() => navigate("/Login")}>Zaloguj sie</h5>
               ) : (
                 <>
-                  <h5 onClick={() => navigate('/Wishlist')}>Lista życzeń</h5>
-                  <h5>Zarządzaj kontem</h5>
-                  <h5 onClick={LogOutUser}>Wyloguj się</h5>
+                  <h5 onClick={() => navigate('/Wishlist')}>Lista Zyczen</h5>
+                  <h5>Zarzadzaj kontem</h5>
+                  <h5 onClick={LogOutUser}>Wyloguj sie</h5>
                 </>
               )}
             </div>
@@ -132,9 +132,9 @@ export default function Root(){
                   onClick={() => RedirectToGamePage(e.id)}
                   style={{ cursor: 'pointer' }}
                 >
-                  <img src={e.cover_img} className="mx-auto d-block w-25 h-25" alt={e.title}/>
+                  <img src={e.cover_img} className="mx-auto d-block w-50 h-50" alt={e.title}/>
                   <div className="carousel-caption d-none d-md-block">
-                    <h5 className="text-dark bg-light d-inline-block px-2 py-1 rounded">{e.title}</h5>
+                    <h5 className="opacity-50 bg-dark d-inline-block px-2 py-1">{e.title}</h5>
                   </div>
                 </div>
               );

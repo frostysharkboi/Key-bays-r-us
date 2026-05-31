@@ -102,7 +102,7 @@ export default function Root(){
           </div>
           <br></br>
           <div>
-            <label>Hasło</label>
+            <label>Haslo</label>
             <br></br>
             <input type="password" name='input_pass' id="input_pass" value={Input_Pass} placeholder='. . .' onChange={(e) => changeInputPass(e.target.value)}/>
             <br></br>
@@ -112,7 +112,7 @@ export default function Root(){
             <p id="Error_box" className='text-center fs-3 text-danger'>{errorBoxText}</p>
           </div>
           <br></br>
-          <button className='border border-3' onClick={CheckIfLoginIsInDb}>ZALOGUJ SIĘ</button>
+          <button className='border border-3' onClick={CheckIfLoginIsInDb}>ZALOGUJ SIE</button>
           <h5 className='noaccount' onClick={() => navigate("/Register", {replace: true})}>Nie mam konta</h5>
       </div>
 

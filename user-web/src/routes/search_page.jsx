@@ -143,15 +143,15 @@ export default function SearchPage(){
                   <div className="dropdown">
                     {/* Dynamiczne wyświetlanie stanu zalogowania z kontekstu */}
                     <button className="dropbtn font" id="nick">
-                      {userData.isLogged ? userData.login : "Gość"}
+                      {userData.isLogged ? userData.login : "Gosc"}
                     </button>
                     <div className="dropdown-content fw-bold">
                       {!userData.isLogged ? (
-                        <h5 onClick={() => navigate("/Login")}>Zaloguj się</h5>
+                        <h5 onClick={() => navigate("/Login")}>Zaloguj sie</h5>
                       ) : (
                         <>
-                          <h5 onClick={() => navigate("/Wishlist")}>Moja Lista Życzeń</h5>
-                          <h5 onClick={LogOutUser}>Wyloguj się</h5>
+                          <h5 onClick={() => navigate("/Wishlist")}>Moja Lista Zyczen</h5>
+                          <h5 onClick={LogOutUser}>Wyloguj sie</h5>
                         </>
                       )}
                     </div>
@@ -166,7 +166,7 @@ export default function SearchPage(){
                     <h3 className='mx-4 mt-4 p-3 text-center font'>Filtry:</h3>
                     <div className="addpanel box-idk">
                       <div className="addpaneldiv row p-2 pe-4">
-                        <h2 className='font'>Tytuł</h2>
+                        <h2 className='font'>Tytul</h2>
                         <input className='col p-2 inp-srch' type="text" value={globalFilter ?? ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder='Search...'/>
                       </div>
                       <div className='addpaneldiv col p-2 pe-4'>

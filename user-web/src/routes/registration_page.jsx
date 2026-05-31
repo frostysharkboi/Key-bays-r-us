@@ -173,7 +173,7 @@ export default function Root() {
           </div>
           <br />
           <div>
-            <label>Hasło</label>
+            <label>Haslo</label>
             <br />
             <input type="password" name="pass" value={newUser.pass} placeholder='. . .' onChange={handleInputChange}/>
           </div>
@@ -195,7 +195,7 @@ export default function Root() {
             {successBoxText && <p id="Success_box" className='text-center fs-3 text-success'>{successBoxText}</p>}
           </div>
           <br />
-          <button className='border border-3 btnsrch' onClick={AddUserToService}>ZAREJESTRUJ SIĘ</button>
+          <button className='border border-3 btnsrch' onClick={AddUserToService}>ZAREJESTRUJ SIE</button>
       </div>
 
       {/* Stopka */}

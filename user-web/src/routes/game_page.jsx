@@ -99,12 +99,12 @@ export default function GamePage(){
         </div>
         <div className='col-4'>
           <div className="dropdown">
-            <button className="dropbtn font">{userData.isLogged ? userData.login : "Gość"}</button>
+            <button className="dropbtn font">{userData.isLogged ? userData.login : "Gosc"}</button>
             <div className="dropdown-content fw-bold">
-              {!userData.isLogged ? <h5 onClick={() => navigate("/Login")}>Zaloguj się</h5> : (
+              {!userData.isLogged ? <h5 onClick={() => navigate("/Login")}>Zaloguj sie</h5> : (
                 <>
-                  <h5 onClick={() => navigate("/Wishlist")}>Lista życzeń</h5>
-                  <h5 onClick={logout}>Wyloguj się</h5>
+                  <h5 onClick={() => navigate("/Wishlist")}>Lista życzen</h5>
+                  <h5 onClick={logout}>Wyloguj sie</h5>
                 </>
               )}
             </div>
@@ -171,7 +171,7 @@ export default function GamePage(){
               <b>System:</b> {gameData ? gameData.opt_os : "---"}<br/>
               <b>Grafika:</b> {gameData ? gameData.opt_gpu : "---"}<br/>
               <b>Procesor:</b> {gameData ? gameData.opt_cpu : "---"}<br/>
-              <b>RAM:</b> {gameData ? (gameData.opt_ram / 1024).toFixed(0) : "---"} GB<br/>
+              <b>RAM:</b> {gameData ? gameData.opt_ram : "---"} GB<br/>
               <b>Miejsce:</b> {gameData ? gameData.opt_size : "---"} GB
             </p>
           </div>
@@ -181,7 +181,7 @@ export default function GamePage(){
               <b>System:</b> {gameData ? gameData.min_os : "---"}<br/>
               <b>Grafika:</b> {gameData ? gameData.min_gpu : "---"}<br/>
               <b>Procesor:</b> {gameData ? gameData.min_cpu : "---"}<br/>
-              <b>RAM:</b> {gameData ? (gameData.min_ram / 1024).toFixed(0) : "---"} GB<br/>
+              <b>RAM:</b> {gameData ? gameData.min_ram : "---"} GB<br/>
               <b>Miejsce:</b> {gameData ? gameData.min_size : "---"} GB
             </p>
           </div>
