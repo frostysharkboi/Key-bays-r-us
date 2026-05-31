@@ -7,6 +7,8 @@ const app = express();
 const cors = require("cors");
 const mariadb = require("mariadb"); // chyba już w tym miejscu nic nie robi ale lepiej mieć niż nie
 const bodyParser = require("body-parser");
+const axios = require("axios"); // DODANO IMPORT BIBLIOTEKI AXIOS DLA ZAPYTAŃ DO STEAM API
+
 const port = process.env.PORT || 3000;
 const db = require("./db/db");
 
@@ -34,11 +36,59 @@ async function loadSchema() { // kombinuje obie listy getTables i getColumns zwr
   console.log("Loaded schema:", schema);
 }
 
-// UTWORZENIE SERVERA
+// UTWORZENIE SERVERA i KONFIGURACJA CORS
+// (Wszystkie app.use MUSZĄ być przed definicjami tras app.get / app.post)
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
-app.use(cors());
+app.use(cors()); // <-- Ta linijka teraz poprawnie zabezpiecza również poniższy endpoint Steam
+
+// =========================================================================
+// ENDPOINT PROXY STEAM (Teraz pod app.use(cors()), dzięki czemu CORS zadziała)
+// =========================================================================
+app.get('/api/steam-rating', async (req, res) => {
+  const { appid } = req.query;
+  
+  if (!appid) {
+    return res.status(400).json({ error: 'Brak parametru appid' });
+  }
+
+  try {
+    // Odpytujemy oficjalne, publiczne API Steam (User Reviews), które zwraca czyste statystyki ocen
+    const reviewsResponse = await axios.get(`https://store.steampowered.com/appreviews/${appid}?json=1&language=all&purchase_type=all`);
+    
+    const reviewSummary = reviewsResponse.data.query_summary;
+    
+    if (reviewSummary && reviewSummary.total_reviews > 0) {
+      // Obliczamy procent pozytywnych ocen
+      const totalReviews = reviewSummary.total_reviews;
+      const totalPositive = reviewSummary.total_positive;
+      
+      // Przeliczamy procent na skalę 0-5
+      const percentage = (totalPositive / totalReviews) * 100;
+      const ratingScale5 = (percentage / 20).toFixed(1);
+
+      return res.json({
+        success: true,
+        score: ratingScale5, // Ocena w skali 0-5 (np. 4.2)
+        percent: Math.round(percentage), // Procent (np. 84%)
+        review_score_desc: reviewSummary.review_score_desc // Słowny opis (np. "Very Positive")
+      });
+    } else {
+      // Obsługa sytuacji, gdy gra nie ma jeszcze ocen na platformie Steam
+      return res.json({
+        success: true,
+        score: "0.0",
+        percent: 0,
+        review_score_desc: "Brak recenzji"
+      });
+    }
+  } catch (error) {
+    console.error('Błąd Steam API Proxy:', error.message);
+    res.status(500).json({ error: 'Błąd połączenia ze Steam API' });
+  }
+});
+// =========================================================================
 
 app.listen(port, async () => {
   await loadSchema();
@@ -159,7 +209,7 @@ app.get("/games/alldata", async (req, res) => {
   const { game_id } = req.query;
 
   try {
-    const sql = `SELECT DISTINCT g.id "id", g.title "title", g.developer "developer", g.publisher "publisher", g.about "about", DATE_FORMAT(g.release_date, "%Y-%m-%d") "release_date", g.cover_img "cover_img", g.icon "icon", o.gpu "opt_gpu", o.cpu "opt_cpu", o.ram "opt_ram", o.size "opt_size", o.os "opt_os", o.other "opt_other", r.gpu "min_gpu", r.cpu "min_cpu", r.ram "min_ram", r.size "min_size", r.os "min_os", r.other "min_other" FROM opt_req o JOIN games g ON o.game_id = g.id JOIN min_req r ON r.game_id = g.id WHERE g.id LIKE ${game_id}`;
+    const sql = `SELECT DISTINCT g.id "id", g.title "title", g.steam_rating "steam_rating", g.developer "developer", g.publisher "publisher", g.about "about", DATE_FORMAT(g.release_date, "%Y-%m-%d") "release_date", g.cover_img "cover_img", g.icon "icon", o.gpu "opt_gpu", o.cpu "opt_cpu", o.ram "opt_ram", o.size "opt_size", o.os "opt_os", o.other "opt_other", r.gpu "min_gpu", r.cpu "min_cpu", r.ram "min_ram", r.size "min_size", r.os "min_os", r.other "min_other" FROM opt_req o JOIN games g ON o.game_id = g.id JOIN min_req r ON r.game_id = g.id WHERE g.id LIKE ${game_id}`;
     const result = await db.pool.query(sql);
     res.json(result);
   } catch (err) {

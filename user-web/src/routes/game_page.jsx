@@ -7,6 +7,8 @@ import './root.css';
 import { axiosPath } from "../App";
 
 import WishlistButton from '../components/wishlist-button/WishlistButton';
+import SiteRating from '../components/ratings/SiteRating';
+import SteamRating from '../components/ratings/SteamRating';
 
 export default function GamePage(){
   const { userData, logout } = useContext(UserContext);
@@ -24,6 +26,7 @@ export default function GamePage(){
   const getGame = () => {
     if (!GameId) return;
     axios.get(`${axiosPath}/games/alldata`, { params: { game_id: GameId }}).then((res) => {
+      console.log("Dane pobranej gry z API:", res.data[0]); // <-- DODAJ TĘ LINIJKĘ
       setGame(res.data);
     });
   };
@@ -84,21 +87,6 @@ export default function GamePage(){
     ) : <p>BRAK RECENZJI</p>;
   }
 
-  function SredniaRecenzji(){
-    let sumaRecenzji = 0; let liczbaPetli = 0; let stringGwiazdki = "";
-    if (reviews) {
-      reviews.forEach(e => {
-        if (e.game_id == GameId) { sumaRecenzji += Number(e.rating); liczbaPetli += 1; }
-      });
-    }
-    if (liczbaPetli > 0) {
-      const srednia = Math.round(sumaRecenzji / liczbaPetli);
-      for (let i = 0; i < srednia; i++) stringGwiazdki += "★";
-    }
-    while (stringGwiazdki.length < 5) stringGwiazdki += "☆";
-    return <p className="fs-4 text-warning m-0"> {stringGwiazdki} </p>;
-  }
-
   return (
     <div className="container-fluid col">
       <div className="row m-3 p-3 text-center">
@@ -134,20 +122,26 @@ export default function GamePage(){
         <div className='col-7'>
           {gameData && <img src={gameData.cover_img} alt="Cover" className="img-fluid rounded" style={{maxHeight: '400px'}}/>}
         </div>
-        <div className='box-idk col-5 p-3 border'>
+        <div className='box-idk col-5 p-3 border d-flex flex-column justify-content-between'>
+            {/* Sekcja ocen podzielona na dwa komponenty w jednym wierszu */}
+            <div className="row align-items-center g-0">
+              <div className="col-6 border-end">
+                <SiteRating gameId={GameId} />
+              </div>
+              <div className="col-6">
+                <SteamRating gameId={GameId} />
+              </div>
+            </div>
+
+            <br/>
             <div>
-              <p className='font fw-bold'>Recenzje</p>
-              {SredniaRecenzji()}
+              <p className='font fw-bold m-0'>Tagi:</p>
+              <p className="m-0">| {WypiszTagi()}</p>
             </div>
             <br/>
             <div>
-              <p className='font fw-bold'>Tagi:</p>
-              <p>| {WypiszTagi()}</p>
-            </div>
-            <br/>
-            <div>
-              <p><b>Data Wydania:</b> {gameData ? gameData.release_date : "---"}</p>
-              <p><b>Developer:</b> {gameData ? gameData.publisher : "---"}</p>
+              <p className="m-0"><b>Data Wydania:</b> {gameData ? gameData.release_date : "---"}</p>
+              <p className="m-0"><b>Developer:</b> {gameData ? gameData.publisher : "---"}</p>
             </div>
         </div>
       </div>
