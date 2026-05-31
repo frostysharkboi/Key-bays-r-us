@@ -5,6 +5,7 @@ import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel,
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import './root.css';
+import { axiosPath } from "../App";
 
 export default function SearchPage(){
   // UseState do operacji na danych
@@ -50,12 +51,12 @@ export default function SearchPage(){
   const getFilteredGames = () => {
     const outputTags = filterTags.filter(tag => tag.isSelected).map(tag=>tag.id);
     console.log(outputTags);
-    axios.get("https://keysrus-backend.onrender.com/games/tagsort", { params: { tags: outputTags }, paramsSerializer: params => {return "tags=" + params.tags.join("&tags=");}}).then((res) => {
+    axios.get(`${axiosPath}/games/tagsort`, { params: { tags: outputTags }, paramsSerializer: params => {return "tags=" + params.tags.join("&tags=");}}).then((res) => {
       setGames(res.data);
     });
   }
   const getAllTags = () => {
-    axios.get("https://keysrus-backend.onrender.com/tags").then((res) => {
+    axios.get(`${axiosPath}/tags`).then((res) => {
       setTags(res.data);
 
       const mapped = res.data.map(e => ({
@@ -145,7 +146,7 @@ export default function SearchPage(){
     React.useEffect(() => {
     if(location.state != null){
       console.log("Przed pobraniem danych z loginu");
-      axios.get("https://keysrus-backend.onrender.com/users/byid", {params: {id: location.state.userId}}).then((res) => {
+      axios.get(`${axiosPath}/users/byid`, {params: {id: location.state.userId}}).then((res) => {
         console.log(res.data);
         GetUserData({
           id: res.data[0].id,

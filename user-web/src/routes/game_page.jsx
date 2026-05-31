@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import './root.css';
+import { axiosPath } from "../App";
 
 export default function Root(){
 
@@ -29,25 +30,25 @@ export default function Root(){
   // Pobranie danych z tabeli
   const getGame = () => {
     console.log("getgame 1");
-    axios.get("https://keysrus-backend.onrender.com/games/alldata", { params: { game_id: GameId }}).then((res) => {
+    axios.get(`${axiosPath}/games/alldata`, { params: { game_id: GameId }}).then((res) => {
       setGame(res.data);
     });
   };
 
   const getAllTags = () => {
-    axios.get("https://keysrus-backend.onrender.com/tags").then((res) => {
+    axios.get(`${axiosPath}/tags`).then((res) => {
       setTags(res.data);
     });
   };
 
   const getSomeTags = () => {
-    axios.get("https://keysrus-backend.onrender.com/game_tags").then((res) => {
+    axios.get(`${axiosPath}/game_tags`).then((res) => {
       uptadeTags(res.data);
     });
   };
 
   const getAllReviews = () => {
-    axios.get("https://keysrus-backend.onrender.com/ratings").then((res) => {
+    axios.get(`${axiosPath}/ratings`).then((res) => {
       updateReviews(res.data);
     });
   };
@@ -162,7 +163,7 @@ export default function Root(){
     React.useEffect(() => {
     if(location.state != null){
       console.log("Przed pobraniem danych z loginu");
-      axios.get("https://keysrus-backend.onrender.com/users/byid", {params: {id: location.state.userId}}).then((res) => {
+      axios.get(`${axiosPath}/users/byid`, {params: {id: location.state.userId}}).then((res) => {
         console.log(res.data);
         GetUserData({
           id: res.data[0].id,

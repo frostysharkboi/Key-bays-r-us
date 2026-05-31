@@ -4,6 +4,9 @@ import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+//export const axiosPath = "https://keysrus-backend.onrender.com";
+export const axiosPath = "http://localhost:3000";
+
 //import './App.css'
 
 // NAJPIERW ZRÓB DZIAŁANIA Z config.txt
@@ -13,7 +16,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 function App() {
   
   // UseState do operacji na danych
-  const [globalFilter, setGlobalFilter] = useState(""); // Filtry
+  const [globalFilter, setGlobalFilter] = useState(""); // Filtry 
   const [sorting, setSorting] = useState([]);           // Sortowanie
   const [pagination, setPagination] = useState({        // Wybrana strona:
     pageIndex: 0,                                       //    aktualna strona
@@ -29,13 +32,13 @@ function App() {
 
   // Pobranie danych z tabeli
   const getAllGames = () => {
-    axios.get("https://keysrus-backend.onrender.com/games").then((res) => {
-    //axios.get("https://keysrus-backend.onrender.com/games/tagsort", {params: { name: "RPG" }}).then((res) => { by filtrować
+    axios.get(`${axiosPath}/games`).then((res) => {
+    //axios.get(`${axiosPath}/games/tagsort`, {params: { name: "RPG" }}).then((res) => { by filtrować
       setGames(res.data);
     });
   };
   const getAllTags = () => {
-    axios.get("https://keysrus-backend.onrender.com/tags").then((res) => {
+    axios.get(`${axiosPath}/tags`).then((res) => {
       setTags(res.data);
     });
   };
