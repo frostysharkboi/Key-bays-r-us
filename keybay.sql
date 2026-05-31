@@ -317,12 +317,15 @@ INSERT INTO `tags` (`id`, `tag`, `icon`) VALUES
 (4, 'FPS', NULL),
 (5, 'Adventure', NULL),
 (6, 'Multiplayer', NULL),
-(7, 'Strategy', NULL),
-(8, 'Simulation', NULL),
-(9, 'Horror', NULL),
-(10, 'Indie', NULL),
-(11, 'Survival', NULL),
-(12, 'Sandbox', NULL);
+(7, 'Singleplayer', NULL),
+(8, 'Strategy', NULL),
+(9, 'Simulation', NULL),
+(10, 'Horror', NULL),
+(11, 'Indie', NULL),
+(12, 'Survival', NULL),
+(13, 'Sandbox', NULL),
+(14, 'Stealth', NULL),
+(15, 'Driving', NULL);
 
 -- --------------------------------------------------------
 

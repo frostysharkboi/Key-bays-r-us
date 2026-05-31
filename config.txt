@@ -15,7 +15,6 @@ w zewnętrznym folderze (server-test):
       npm start
     terminal 2:
       cd user-web
-      npm install
       npm i @tanstack/react-table axios bootstrap @popperjs/core
       npm run dev
 
@@ -30,7 +29,7 @@ w zewnętrznym folderze (server-test):
 by aktualizować git: git fetch --all
 
 By zaktualizować baze:
-  wykonajcie znowu import bazy, potem nowa konsola do wykonania kodu python:
+  wykonajcie w nowej konsoli kod python:
     cd steamdb-connection
     pip install -r requirements.txt
     python main.py

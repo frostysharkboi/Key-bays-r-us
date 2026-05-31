@@ -5,6 +5,7 @@ import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel,
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import './root.css';
+import { axiosPath } from "../App";
 
 export default function SearchPage(){
   // UseState do operacji na danych
@@ -112,7 +113,7 @@ export default function SearchPage(){
     React.useEffect(() => {
     if(location.state != null){
       console.log("Pobieranie danych użytkownika");
-      axios.get("https://keysrus-backend.onrender.com/users/byid", {params: {id: location.state.userId}}).then((res) => {
+      axios.get(`${axiosPath}/users/byid`, {params: {id: location.state.userId}}).then((res) => {
         console.log(res.data);
         GetUserData({
           id: res.data[0].id,
@@ -126,7 +127,7 @@ export default function SearchPage(){
   const getGames = () => {
     const outputTags = filterTags.filter(tag => tag.isSelected).map(tag=>tag.id);
     console.log(outputTags);
-    axios.get("https://keysrus-backend.onrender.com/wishlist/wishlistData", {params: {id: UserData.id}}).then((res) => {
+    axios.get(`${axiosPath}/wishlist/wishlistData`, {params: {id: UserData.id}}).then((res) => {
       setGames(res.data);
     });
   }
