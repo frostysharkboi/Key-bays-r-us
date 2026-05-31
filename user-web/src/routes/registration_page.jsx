@@ -1,131 +1,103 @@
 import { useState } from 'react';
 import axios from 'axios';
 import * as React from 'react';
-import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
-import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, replace, useNavigate, useLocation  } from 'react-router-dom';
-import './root.css'
+import { useNavigate } from 'react-router-dom';
+import './root.css';
 import { axiosPath } from "../App";
 
-export default function Root(){
-
-  // UseState do operacji na danych
-  const [globalFilter, setGlobalFilter] = useState(""); // Filtry
-  const [sorting, setSorting] = useState([]);           // Sortowanie
-  const [pagination, setPagination] = useState({        // Wybrana strona:
-    pageIndex: 0,                                       //    aktualna strona
-    pageSize: 5,                                        //    ilośc rekordów na strone
-  });
-
-  const [SearchThisTitle, changeTitle] = useState(null);
+export default function Root() {
+  const navigate = useNavigate();
   const [Users, GetAllUsersData] = useState([]);
   
-  const navigate = useNavigate();
+  // Stany dla komunikatów walidacji i sukcesu
+  const [errorBoxText, setErrorBoxText] = useState("");
+  const [successBoxText, setSuccessBoxText] = useState("");
 
-  // Pobranie danych z tabeli
+  // Zunifikowany obiekt danych nowego użytkownika
+  const [newUser, changeUserData] = useState({
+    mail: '',
+    pass: '',
+    login: '',
+    phone: '',
+    discord: ''
+  });
+
+  // Pobranie danych użytkowników z bazy w celu lokalnej weryfikacji duplikatów
   const LoadUsersData = () => {
     axios.get(`${axiosPath}/users`).then((res) => {
       GetAllUsersData(res.data);
     });
   };
 
-  
-
   React.useEffect(() => {
     LoadUsersData();
   }, []);
 
-  const [inputMail, changeInputMail] = useState(null);
-  const [inputPass, changeInputPass] = useState(null); 
-  const [inputLogin, changeInputLogin] = useState(null);
-  const [inputPhone, changeInputPhone] = useState(null);
-  const [inputDiscord, changeInputDiscord] = useState(null); 
+  // Uniwersalny handler dla wszystkich pól formularza
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    changeUserData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-  const [newUser, changeUserData] = useState({
-    mail: null,
-    pass: null,
-    login: null,
-    phone: null,
-    discord: null
-  });
-
-  let isDataGood = false;
-
-  const [UserData, GetUserData] = useState({
-      id: null
-    });
-
-  React.useEffect(() => {
-    changeUserData({
-    mail: inputMail,
-    pass: inputPass,
-    login: inputLogin,
-    phone: inputPhone,
-    discord: inputDiscord
-  });
-  }, [inputMail, inputPass, inputLogin, inputPhone, inputDiscord]);
-
-  const [ifRegistrationWasSuccseful, CreateNewUser] = useState(null);
-
-  function AddUserToService(){
-    CheckIfDataIsGood();
+  // Główna funkcja rejestrująca użytkownika w systemie
+  function AddUserToService() {
+    setErrorBoxText("");
+    setSuccessBoxText("");
+    
+    const currentValidationResult = CheckIfDataIsGood();
     let duplicate = false;
 
+    // Sprawdzanie czy podane dane nie dublują istniejących rekordów w bazie
     Users.forEach(user => {
         if(user.login == newUser.login || user.email == newUser.mail || user.phone == newUser.phone || user.discord_tag == newUser.discord){
             duplicate = true;
         }
     });
 
-    if(isDataGood == true){
-        console.log("Czy weryfikacja przeszła: ", isDataGood);
-        if(duplicate == false){
-            console.log("Dane się nie powtarzają w bazie");
-            axios.post(`${axiosPath}/users/adduser`,{ login: newUser.login, email: newUser.mail, pass: newUser.pass, phone: newUser.phone, discord_tag: newUser.discord });
-            console.log("Udało się?");
-            axios.get(`${axiosPath}/users/byemail`, {
-              params: {
-                email: newUser.mail
-              }
+    if (currentValidationResult === true) {
+        if (duplicate == false) {
+            axios.post(`${axiosPath}/users/adduser`, { 
+              login: newUser.login, 
+              email: newUser.mail, 
+              pass: newUser.pass, 
+              phone: newUser.phone, 
+              discord_tag: newUser.discord 
             })
-            .then((res) => {
-              navigate("/", {
-                replace: true,
-                state: {
-                  userId: res.data[0].id
-                }
-              });
+            .then(() => {
+              setSuccessBoxText("Rejestracja zakończona sukcesem! Za chwilę nastąpi przekierowanie do logowania...");
+              
+              changeUserData({ mail: '', pass: '', login: '', phone: '', discord: '' });
+              setTimeout(() => {
+                navigate("/Login", { replace: true }); 
+              }, 2000);
+            })
+            .catch((err) => {
+              setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
+              console.error(err);
             });
         } else {
-            document.getElementById("Error_box").innerHTML =
-            "Użytkownik o istniejącym mailu bądź nicku już istnieje.";
+            setErrorBoxText("Użytkownik o istniejącym mailu bądź nicku już istnieje.");
         }
     }
   }
 
-  function CheckIfDataIsGood(){
-    document.getElementById("Error_box").innerHTML = "";
-    if(newUser.mail != null && newUser.pass != null && newUser.login != null){
-        console.log("Dane nie są puste");
+  // Funkcja walidująca poprawność wprowadzonych danych (E-mail, Login, Siła hasła)
+  function CheckIfDataIsGood() {
+    if (newUser.mail && newUser.pass && newUser.login) {
         const mailArr = newUser.mail.split("");
-        let ifMailIsGood = {
-            itHasAt: false,
-            itHasCom: false,
-            isItEmail: false
-        };
+        let ifMailIsGood = { itHasAt: false, itHasCom: false, isItEmail: false };
+        
         mailArr.forEach(char => {
-            if(char === "@"){
-                ifMailIsGood.itHasAt = true;
-            }
-
-            if(char === "."){
-                ifMailIsGood.itHasCom = true;
-            }
+            if (char === "@") ifMailIsGood.itHasAt = true;
+            if (char === ".") ifMailIsGood.itHasCom = true;
         });
-        if(ifMailIsGood.itHasAt == true && ifMailIsGood.itHasCom == true){
+        
+        if (ifMailIsGood.itHasAt && ifMailIsGood.itHasCom) {
             ifMailIsGood.isItEmail = true;
         }
-
 
         let passwordStrenght = {
             uppercase: false,
@@ -135,134 +107,95 @@ export default function Root(){
             isLongEnought: false,
             isPasswordStrongEnought: false
         };
+        
         const passArr = newUser.pass.split("");
         passArr.forEach(char => {
-            if(/[A-Z]/.test(char)){
-                passwordStrenght.uppercase = true;
-            }
-
-            if(/[a-z]/.test(char)){
-                passwordStrenght.lowercase = true;
-            }
-
-            if(char.charCodeAt(0) > 47 && char.charCodeAt(0) < 58){
-                passwordStrenght.number = true;
-            }
-
-            if(char.charCodeAt(0) > 32 && char.charCodeAt(0) < 44){
-                passwordStrenght.otherChar = true;
-            }
+            if (/[A-Z]/.test(char)) passwordStrenght.uppercase = true;
+            if (/[a-z]/.test(char)) passwordStrenght.lowercase = true;
+            if (char.charCodeAt(0) > 47 && char.charCodeAt(0) < 58) passwordStrenght.number = true;
+            if (char.charCodeAt(0) > 32 && char.charCodeAt(0) < 44) passwordStrenght.otherChar = true;
         });
-        if(newUser.pass.length >= 8){
-            passwordStrenght.isLongEnought = true;
+        
+        if (newUser.pass.length >= 8) passwordStrenght.isLongEnought = true;
+
+        if (!ifMailIsGood.isItEmail) {
+            setErrorBoxText("Email jest nieprawidłowy");
+            return false;
         }
 
-        if(ifMailIsGood.isItEmail == false){
-            document.getElementById("Error_box").innerHTML =
-            "Email jest nieprawidłowy";
+        if (newUser.login.length < 5) {
+            setErrorBoxText("Nick musi mieć co najmniej pięć znaków.");
+            return false;
         }
 
-        if(newUser.login.length < 5){
-            document.getElementById("Error_box").innerHTML =
-            "Nick musi mieć conajmniej osiem znaków.";
-        }
-
-        if(passwordStrenght.isLongEnought == true && passwordStrenght.otherChar == true && passwordStrenght.number == true 
-            && passwordStrenght.lowercase == true && passwordStrenght.uppercase == true
-        ){
+        if (passwordStrenght.isLongEnought && passwordStrenght.otherChar && passwordStrenght.number && passwordStrenght.lowercase && passwordStrenght.uppercase) {
             passwordStrenght.isPasswordStrongEnought = true;
         } else {
-            document.getElementById("Error_box").innerHTML =
-            "Hasło musi mieć conajmniej osiem znaków, zawierać jedną dużą i małą literę, cyfrę oraz znak specjalny.";
+            setErrorBoxText("Hasło musi mieć co najmniej osiem znaków, zawierać jedną dużą i małą literę, cyfrę oraz znak specjalny.");
+            return false;
         }
 
-        if(ifMailIsGood.isItEmail == true && newUser.login.length >= 5 && passwordStrenght.isPasswordStrongEnought == true){
-            isDataGood = true;
-        }
+        return true;
     } else {
-        document.getElementById("Error_box").innerHTML =
-        "Formularz nie został wypełniony.";
+        setErrorBoxText("Formularz nie został wypełniony.");
+        return false;
     }
   }
 
-    function RedirectToStorefront(){
-      navigate('/', {state: {login: null, isLogged: false, discordTag: null}});
-    }
-    
-  function RedirectToSeaching(e) {
-    if(e == null){
-      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
-    } else {
-      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
-    }
-  }
-  
-
-    return (
+  return (
     <>
     <div className="container-fluid">
-      {/*Nagłówek Strony*/}
+      {/* Nagłówek Strony */}
       <div className="row m-3 p-3 text-center">
-
-        {/* Wyszukiwarka */}
         <div className='col-4'>
-          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
-          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
+          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => navigate("/Search", { state: { Title: e.target.value } })}/>
+          <button className='border border-3 btnsrch' onClick={() => navigate("/Search")}>SZUKAJ</button>
         </div>
 
-        {/* Logo, wiadomo */}
         <div className='col-4 fw-bolder logo'>
-          <h1 onClick={RedirectToStorefront}>Keys &apos;R&apos; Us</h1>
+          <h1 onClick={() => navigate('/')}>Keys &apos;R&apos; Us</h1>
         </div>
       </div>
 
-      {/* Box z loginem */}
+      {/* Formularz Rejestracji */}
       <div className='row m-1 text-center font'>
-          <h3>LOGOWANIE</h3>
+          <h3>REJESTRACJA</h3>
           <div>
             <label>E-mail</label>
-            <br></br>
-            <input type="email" placeholder='. . .' onChange={(e) => changeInputMail(e.target.value)}/>
-            <br></br>
-            <label></label>
+            <br />
+            <input type="email" name="mail" value={newUser.mail} placeholder='. . .' onChange={handleInputChange}/>
           </div>
-          <br></br>
+          <br />
           <div>
             <label>Nick</label>
-            <br></br>
-            <input type="text" placeholder='. . .' onChange={(e) => changeInputLogin(e.target.value)}/>
-            <br></br>
-            <label></label>
+            <br />
+            <input type="text" name="login" value={newUser.login} placeholder='. . .' onChange={handleInputChange}/>
           </div>
-          <br></br>
+          <br />
           <div>
-            <label>Haslo</label>
-            <br></br>
-            <input type="password" placeholder='. . .' onChange={(e) => changeInputPass(e.target.value)}/>
-            <br></br>
+            <label>Hasło</label>
+            <br />
+            <input type="password" name="pass" value={newUser.pass} placeholder='. . .' onChange={handleInputChange}/>
           </div>
-          <br></br>
+          <br />
           <div>
             <label>Numer telefonu</label>
-            <br></br>
-            <input type="text" placeholder='. . .' onChange={(e) => changeInputPhone(e.target.value)}/>
-            <br></br>
-            <label></label>
+            <br />
+            <input type="text" name="phone" value={newUser.phone} placeholder='. . .' onChange={handleInputChange}/>
           </div>
-          <br></br>
+          <br />
           <div>
             <label>Tag discord</label>
-            <br></br>
-            <input type="text" placeholder='. . .' onChange={(e) => changeInputDiscord(e.target.value)}/>
-            <br></br>
-            <label></label>
+            <br />
+            <input type="text" name="discord" value={newUser.discord} placeholder='. . .' onChange={handleInputChange}/>
           </div>
-          <br></br>
+          <br />
           <div>
-            <p id="Error_box" className='text-center fs-3 text-danger'></p>
+            {errorBoxText && <p id="Error_box" className='text-center fs-3 text-danger'>{errorBoxText}</p>}
+            {successBoxText && <p id="Success_box" className='text-center fs-3 text-success'>{successBoxText}</p>}
           </div>
-          <br></br>
-          <button className='border border-3 btnsrch' onClick={() => AddUserToService()}>ZAREJESTRUJ SIE</button>
+          <br />
+          <button className='border border-3 btnsrch' onClick={AddUserToService}>ZAREJESTRUJ SIĘ</button>
       </div>
 
       {/* Stopka */}
@@ -274,5 +207,5 @@ export default function Root(){
       </div>
     </div>
     </>
-  )
+  );
 }

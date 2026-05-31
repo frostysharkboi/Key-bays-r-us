@@ -1,101 +1,33 @@
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
-import { useEffect } from 'react';
+import { UserContext } from '../../public/user-context/UserContext';
 import { BrowserRouter, Routes, Route, Link, replace, useNavigate, useLocation  } from 'react-router-dom';
 import './root.css'
 import { axiosPath } from "../App";
 
 export default function Root(){
-
-  // UseState do operacji na danych
+  const navigate = useNavigate();
+  const { setUserData } = useContext(UserContext);
+  
   const [globalFilter, setGlobalFilter] = useState(""); // Filtry
   const [sorting, setSorting] = useState([]);           // Sortowanie
   const [pagination, setPagination] = useState({        // Wybrana strona:
     pageIndex: 0,                                       //    aktualna strona
-    pageSize: 5,                                        //    ilośc rekordów na strone
+    pageSize: 5,                                        //    ilość rekordów na strone
   });
 
   const [Users, GetAllUsersData] = useState([]);
-  const [LoggedUser, ChangeLoggedUser] = useState([]);
-
-  const [IsUserLogged, setIsUserLogged] = useState(false);
   const [SearchThisTitle, changeTitle] = useState(null);
-
-  const [UserData, GetUserData] = useState({
-      login: null,
-      isLogged: false,
-      discordTag: null
-    });
   
-  const navigate = useNavigate();
+  const [errorBoxText, setErrorBoxText] = useState("");
 
-  // Pobranie danych z tabeli
   const LoadUsersData = () => {
     axios.get(`${axiosPath}/users`).then((res) => {
       GetAllUsersData(res.data);
     });
   };
-
-  function CheckIfLoginIsInDb() {
-
-    const user = Users.find(
-      (temp) =>
-        temp.email === Input_Login &&
-        temp.pass === Input_Pass
-    );
-
-    if(user){
-
-      document.getElementById("Error_box").innerHTML = "";
-
-      setIsUserLogged(true);
-
-      axios.get(`${axiosPath}/users/byemail`, {
-        params: {
-          email: Input_Login
-        }
-      })
-      .then((res) => {
-        navigate("/", {
-          replace: true,
-          state: {
-            userId: res.data[0].id
-          }
-        });
-
-        //console.log(res.data);
-
-      });
-
-    } else {
-
-      document.getElementById("Error_box").innerHTML =
-        "Email lub hasło są nieprawidłowe.";
-
-      setIsUserLogged(false);
-    }
-}
-  function RedirectToStorefront(){
-    navigate('/', {state: {login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
-  }
-
-  function RedirectToSeaching(e) {
-    if(e == null){
-      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
-    } else {
-      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
-    }
-  }
-
-  function RedirectToSeaching(e) {
-    if(e == null){
-      navigate("/Search", {state: {Title: SearchThisTitle, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
-    } else {
-      navigate("/Search", {state: {GenreId: e, login: UserData.login, isLogged: UserData.isLogged, discordTag: UserData.discordTag}});
-    }
-  }
 
   React.useEffect(() => {
     LoadUsersData();
@@ -104,7 +36,43 @@ export default function Root(){
   const [Input_Login, changeInputLogin] = useState(""); 
   const [Input_Pass, changeInputPass] = useState(""); 
 
-    return (
+  function CheckIfLoginIsInDb() {
+    setErrorBoxText("");
+
+    const foundUser = Users.find(
+      (temp) =>
+        temp.email === Input_Login &&
+        temp.pass === Input_Pass
+    );
+
+    if (foundUser) {
+      setUserData({
+        id: foundUser.id,
+        login: foundUser.login,
+        isLogged: true,
+        discordTag: foundUser.discord_tag
+      });
+
+      navigate("/", { replace: true });
+
+    } else {
+      setErrorBoxText("Email lub hasło są nieprawidłowe.");
+    }
+  }
+
+  function RedirectToStorefront(){
+    navigate('/');
+  }
+
+  function RedirectToSeaching(e) {
+    if(e == null){
+      navigate("/Search", {state: {Title: SearchThisTitle}});
+    } else {
+      navigate("/Search", {state: {GenreId: e}});
+    }
+  }
+
+  return (
     <>
     <div className="container-fluid">
       {/*Nagłówek Strony*/}
@@ -116,7 +84,7 @@ export default function Root(){
           <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
         </div>
 
-        {/* Logo, wiadomo */}
+        {/* Logo */}
         <div className='col-4 fw-bolder logo'>
           <h1 onClick={RedirectToStorefront}>Keys &apos;R&apos; Us</h1>
         </div>
@@ -128,22 +96,23 @@ export default function Root(){
           <div>
             <label>Email</label>
             <br></br>
-            <input type="text" name='input_login' id="input_login" placeholder='. . .' onChange={(e) => changeInputLogin(e.target.value)}/>
+            <input type="text" name='input_login' id="input_login" value={Input_Login} placeholder='. . .' onChange={(e) => changeInputLogin(e.target.value)}/>
             <br></br>
             <label></label>
           </div>
           <br></br>
           <div>
-            <label>Haslo</label>
+            <label>Hasło</label>
             <br></br>
-            <input type="password" name='input_pass' id="input_pass" placeholder='. . .' onChange={(e) => changeInputPass(e.target.value)}/>
+            <input type="password" name='input_pass' id="input_pass" value={Input_Pass} placeholder='. . .' onChange={(e) => changeInputPass(e.target.value)}/>
             <br></br>
           </div>
           <div>
-            <p id="Error_box" className='text-center fs-3 text-danger'></p>
+            {/* Wyświetlanie błędu zarządzane przez React Context / State */}
+            <p id="Error_box" className='text-center fs-3 text-danger'>{errorBoxText}</p>
           </div>
           <br></br>
-          <button className='border border-3' onClick={() => CheckIfLoginIsInDb()}>ZALOGUJ SIE</button>
+          <button className='border border-3' onClick={CheckIfLoginIsInDb}>ZALOGUJ SIĘ</button>
           <h5 className='noaccount' onClick={() => navigate("/Register", {replace: true})}>Nie mam konta</h5>
       </div>
 

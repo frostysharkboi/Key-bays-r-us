@@ -3,6 +3,7 @@ import axios from 'axios';
 import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import { useEffect } from 'react';
+import { UserProvider } from '../public/user-context/UserContext';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 export const axiosPath = "https://keysrus-backend.onrender.com";
 //export const axiosPath = "http://localhost:3000";
@@ -12,6 +13,8 @@ export const axiosPath = "https://keysrus-backend.onrender.com";
 // NAJPIERW ZRÓB DZIAŁANIA Z config.txt
 // Ważny pliki do operacji na bazie: server.js (nazwa bazy danych) i db.js (tabela i jej używane kolumny)
 // Modyfikacja wartości w funkcjach zmienia wartości, ten plik jest dobry do bawienia się z wyświetlaniem
+
+// Większość rzeczy w tym pliku nic nie robi, jest pozostałością oryginalnej strony debugowej
 
 function App() {
   

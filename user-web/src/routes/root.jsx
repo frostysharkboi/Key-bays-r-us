@@ -1,21 +1,25 @@
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import * as React from 'react';
-import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
-import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import { UserContext } from '../../public/user-context/UserContext';
+import { useNavigate } from 'react-router-dom';
 import './root.css'
 import { axiosPath } from "../App";
 
 export default function Root(){
+  const { userData, logout } = useContext(UserContext);
 
-  // UseState do operacji na danych
+  const [games, setGames] = useState([]);                 // Dane gier z bazy danych
+  const [formatedGames, setFormatedGames] = useState([]); // Sformatowane dane gier
+  const [tags, setTags] = useState([]);                   // Dane tagów z bazy danych
+  const [SearchThisTitle, changeTitle] = useState("");
 
-  const [games, setGames] = useState([]);               // Dane gier z bazy danych
-  const [formatedGames, setFormatedGames] = useState([]);               // Dane gier z bazy danych
-  const [tags, setTags] = useState([]);                 // Dane tagów z bazy danych
+  // Stan odpowiedzialny za sterowanie automatyczną karuzelą
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  // Pobranie danych z tabeli
+  const navigate = useNavigate();
+
+  // Pobranie danych o okładkach gier z tabeli
   const getGames = () => {
     axios.get(`${axiosPath}/games/cover`).then((res) => {
       setGames(res.data);
@@ -30,97 +34,58 @@ export default function Root(){
       setFormatedGames(mapped);
     });
   };
+
   const getAllTags = () => {
     axios.get(`${axiosPath}/tags`).then((res) => {
       setTags(res.data);
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getGames();
   }, []);
-  React.useEffect(() => {
+
+  useEffect(() => {
     if (formatedGames.length > 0) {
       getAllTags();
     }
   }, [formatedGames]);
 
-  const [SearchThisTitle, changeTitle] = useState(null);
-  const navigate = useNavigate();
-  const location = useLocation();
+  useEffect(() => {
+    if (formatedGames.length === 0) return;
 
-  function RedirectToSeaching(e) {
-    if(e == null){
-      navigate("/Search", {state: {Title: SearchThisTitle, userId: UserData.id, isLogged: UserData.isLogged}});
+    const interval = setInterval(() => {
+      setActiveIndex((prevIndex) => 
+        prevIndex === formatedGames.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000);
+
+    // Czyszczenie interwału, by zapobiec wyciekom pamięci przy przełączaniu podstron
+    return () => clearInterval(interval);
+  }, [formatedGames]);
+
+  // Czyste funkcje nawigacyjne bez przesyłania stanów usera
+  function RedirectToSeaching(genreId) {
+    if (genreId == null) {
+      navigate("/Search", { state: { Title: SearchThisTitle } });
     } else {
-      navigate("/Search", {state: {GenreId: e, userId: UserData.id, isLogged: UserData.isLogged}});
+      navigate("/Search", { state: { GenreId: genreId } });
     }
   }
 
-  function RedirectToGamePage(e){
-    navigate('/Game',{state:{GameId: e, userId: UserData.id, isLogged: UserData.isLogged}});
+  function RedirectToGamePage(gameId) {
+    navigate('/Game', { state: { GameId: gameId } });
   }
 
-  function RedirectToStorefront(){
-    navigate('/', {state: {userId: UserData.id, isLogged: UserData.isLogged}});
-  }
-  
-  function GoToLoginPage(){
-    navigate("Login", {replace: true})
+  function LogOutUser() {
+    logout();
+    navigate("/", { replace: true });
   }
 
-  //Kod odpowiedzialny za logowanie.
-  
-  const [UserData, GetUserData] = useState({
-    id: null,
-    login: null,
-    isLogged: false,
-    discordTag: null
-  });
-
-  React.useEffect(() => {
-    if(location.state != null){
-      console.log("Przed pobraniem danych z loginu");
-      axios.get(`${axiosPath}/users/byid`, {params: {id: location.state.userId}}).then((res) => {
-        console.log(res.data);
-        GetUserData({
-          id: res.data[0].id,
-          login: res.data[0].login,
-          isLogged: true,
-          discordTag: res.data[0].discord_tag
-        })
-      });
-    }
-    console.log("UseEffect miał już miejsce");
-  }, [location.state]);
-
-  React.useEffect(() => {
-    console.log("ROOT.JSX\nOTRZYMANE DANE:\n", UserData);
-        if(UserData.login == null){
-          document.getElementById("nick").innerHTML = "Gosc";
-        } else {
-          document.getElementById("nick").innerHTML = UserData["login"];
-        }
-  }, [UserData])
-
-  
-  //console.log(UserData["login"]);
-
-  function LogOut(){
-    GetUserData(null);
-
-    navigate("/", {
-      replace: true,
-      state: null
-    });
-  }
-
-//Test
-  
-    return (
+  return (
     <>
     <div className="container-fluid">
-      {/*Nagłówek Strony*/}
+      {/* Nagłówek Strony */}
       <div className="row m-3 p-3 text-center">
 
         {/* Wyszukiwarka */}
@@ -129,84 +94,72 @@ export default function Root(){
           <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
         </div>
 
-        {/* Logo, wiadomo */}
+        {/* Logo */}
         <div className='col-4 fw-bolder logo'>
-          <h1 onClick={RedirectToStorefront}>Keys &apos;R&apos; Us</h1>
+          <h1 onClick={() => navigate('/')}>Keys &apos;R&apos; Us</h1>
         </div>
 
         {/* Dropdown menu konta */}
         <div className='col-4'>
           <div className="dropdown">
-          <button className="dropbtn font" id="nick"></button>
+            <button className="dropbtn font" id="nick">
+              {userData.isLogged ? userData.login : "Gość"}
+            </button>
             <div className="dropdown-content fw-bold">
-               {!UserData?.isLogged && (
-                  <h5 onClick={GoToLoginPage}>
-                    Zaloguj sie
-                  </h5>
-                )}
-              {UserData?.isLogged && (
+              {!userData.isLogged ? (
+                <h5 onClick={() => navigate("/Login")}>Zaloguj się</h5>
+              ) : (
                 <>
-                  <h5 onClick={() => navigate('Wishlist', {state: {userId: UserData.id, isLogged: UserData.isLogged}})}>Lista życzeń</h5>
-
+                  <h5 onClick={() => navigate('/Wishlist')}>Lista życzeń</h5>
                   <h5>Zarządzaj kontem</h5>
-
-                  <h5 onClick={LogOut}>
-                    Wyloguj sie
-                  </h5>
+                  <h5 onClick={LogOutUser}>Wyloguj się</h5>
                 </>
               )}
             </div>
           </div> 
         </div>
       </div>
-    
-      {/* Baner */}
-      <div className="row m-3 p-3 text-center">
-        <img src="https://store-images.s-microsoft.com/image/apps.5012.65806558541457305.a0ff0982-eced-4bfd-bb78-5ba7a73376c4.069fcd98-6d14-48a3-82a3-074b07fb3acb?q=90&w=480&h=270" className='mx-auto w-25 h-25 rounded'/>
-      </div>
 
-      {/* Karulezela */}
+      {/* Karuzela sterowana przez Reacta (Pierwszy statyczny obrazek usunięty zgodnie z prośbą) */}
       <div className="row m-3 p-3 text-center">
-        <div id="carouselExampleSlidesOnly" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-touch="false">
+        <div className="carousel slide carousel-fade">
           <div className="carousel-inner">
-
-            {formatedGames.map(e=>{
-              return(
-                <div className={(e == formatedGames[0])? "carousel-item active":"carousel-item"} data-bs-interval="300" onClick={() => RedirectToGamePage(e.id)}>
-                  <img src={e.cover_img} className="mx-auto d-block w-25 h-25" alt="..."/>
+            {formatedGames.map((e, index) => {
+              return (
+                <div 
+                  key={e.id}
+                  className={index === activeIndex ? "carousel-item active" : "carousel-item"} 
+                  onClick={() => RedirectToGamePage(e.id)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <img src={e.cover_img} className="mx-auto d-block w-25 h-25" alt={e.title}/>
                   <div className="carousel-caption d-none d-md-block">
+                    <h5 className="text-dark bg-light d-inline-block px-2 py-1 rounded">{e.title}</h5>
                   </div>
                 </div>
-              )
+              );
             })}
-
           </div>
         </div>
       </div>
 
-      {/* Gatunki */}
+      {/* Sekcja Gatunki */}
       <div className='row m-1 text-center font'>
           <h2>GATUNKI</h2>
       </div>
       <div className="row row-cols-4 justify-content-md-center m-3 p-3 text-center">
-      {/* 
-      
-      Ignacy----> Myślałem, żeby wrzucić tu pętle, która by przeszukiwała baze w poszukiwaniu gatunków gier i na podstawie znalezionych gatunków wypisywała je w kartach poniżej. 
-      Dominik----> Zrobi się w dalszej części.
-      Jakub----> Zrobiłem =) ale chyba jeszcze przekierowania trzeba zrobić.
-      */}
-
-      {tags.map((row)=>(
-        <a onClick={() => RedirectToSeaching(parseInt(row.id))}>
-          <div className="card rounded-0 border tag border-3 font col p-4 m-3" key={row.id}>
-              <div className="card-body w-40">
-                {/*<img src={row.icon} alt={row.tag}/>*/}
-                <p className="card-text w-40 fw-bold">{row.tag}</p>
-              </div>
+        {tags.map((row) => (
+          <div 
+            className="card rounded-0 border tag border-3 font col p-4 m-3" 
+            key={row.id} 
+            onClick={() => RedirectToSeaching(parseInt(row.id))}
+            style={{ cursor: 'pointer' }}
+          >
+            <div className="card-body w-40">
+              <p className="card-text w-40 fw-bold">{row.tag}</p>
+            </div>
           </div>
-        </a>
-        ))
-      }
+        ))}
       </div>
 
       {/* Stopka */}
@@ -218,5 +171,5 @@ export default function Root(){
       </div>
     </div>
     </>
-  )
+  );
 }

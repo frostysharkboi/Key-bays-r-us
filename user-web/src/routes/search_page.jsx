@@ -1,60 +1,50 @@
-import { useState } from 'react';
+import { useState, useContext, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
-import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import { UserContext } from '../../public/user-context/UserContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './root.css';
 import { axiosPath } from "../App";
 
 export default function SearchPage(){
-  // UseState do operacji na danych
-  const [globalFilter, setGlobalFilter] = useState(""); // Filtry
-  const [sorting, setSorting] = useState([]);           // Sortowanie
-  const [pagination, setPagination] = useState({        // Wybrana strona:
-    pageIndex: 0,                                       //    aktualna strona
-    pageSize: 8,                                        //    ilośc rekordów na strone
-  });
+  const { userData, logout } = useContext(UserContext);
+  
+  const [globalFilter, setGlobalFilter] = useState(""); 
+  const [sorting, setSorting] = useState([]);           
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 8 });
 
-  const [games, setGames] = useState([]);               // Dane gier z bazy danych
-  const [tags, setTags] = useState([]);                 // Dane tagów z bazy danych
-  const [filterTags, setFilterTags] = useState([]);     // Dane tagów do filtrów z bazy danych
-  const [gamesData, setGamesData] = useState({          // Dane obecnie wybranej gry
-    title:"",
-    about:""
-  });
+  const [games, setGames] = useState([]);               
+  const [tags, setTags] = useState([]);                 
+  const [filterTags, setFilterTags] = useState([]);     
+  const [SearchThisTitle, changeTitle] = useState("");
 
-  const [SearchThisTitle, changeTitle] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [UserData, GetUserData] = useState({
-      id: null,
-      login: null,
-      isLogged: false,
-      discordTag: null
-    });
-
-  useEffect(()=>{if(location.state.Title != null)setGlobalFilter(location.state.Title)},[]);
+  useEffect(() => {
+    if (location.state?.Title) {
+      setGlobalFilter(location.state.Title);
+    }
+  }, [location.state]);
   
-  //Tu jest wyszukiwanie gry z tego paska na górze.
-  var Title = location.state.Title;
-  var GenreId = location.state.GenreId;
-  
-  console.log(Title + "\n" + GenreId);
+  const GenreId = location.state?.GenreId;
 
-  function RedirectToGamePage(e){
-    navigate('/Game',{state:{GameId: e, userId: UserData.id}});
-  }
-
-  // Pobranie danych z tabeli
+  // Pobranie przefiltrowanej listy gier z backendu
   const getFilteredGames = () => {
-    const outputTags = filterTags.filter(tag => tag.isSelected).map(tag=>tag.id);
-    console.log(outputTags);
-    axios.get(`${axiosPath}/games/tagsort`, { params: { tags: outputTags }, paramsSerializer: params => {return "tags=" + params.tags.join("&tags=");}}).then((res) => {
+    const outputTags = filterTags.filter(tag => tag.isSelected).map(tag => tag.id);
+    
+    axios.get(`${axiosPath}/games/tagsort`, { 
+      params: { tags: outputTags }, 
+      paramsSerializer: params => "tags=" + params.tags.join("&tags=")
+    })
+    .then((res) => {
       setGames(res.data);
-    });
-  }
+    })
+    .catch(err => console.error("Błąd pobierania gier:", err));
+  };
+
+  // Pobranie listy wszystkich tagów/gatunków z bazy danych
   const getAllTags = () => {
     axios.get(`${axiosPath}/tags`).then((res) => {
       setTags(res.data);
@@ -68,42 +58,42 @@ export default function SearchPage(){
       setFilterTags(mapped);
     });
   };
-  const anySelected = filterTags.some(t=>t.isSelected);
-  React.useEffect(() => {
+
+  const anySelected = filterTags.some(t => t.isSelected);
+
+  useEffect(() => {
     getAllTags();
-  }, []);
-  //inaczej by poczekało na wykonanie poprzedniego
-  React.useEffect(() => {
+  }, [GenreId]);
+
+  useEffect(() => {
     if (filterTags.length > 0) {
       getFilteredGames();
     }
   }, [filterTags]);
 
-
-
-  // Wygenerowanie tabeli w html z danymi
-  const columns = React.useMemo(() => [
-    { header: "ID", accessorKey: "id", enableSorting: true,
-      cell: (info)=>{ return <b>{info.getValue()}</b> }
-     },
-    { header: "Title", accessorKey: "title", enableSorting: true},
-    { header: "About", accessorKey: "about", enableSorting: false},
-    { header: "Image", accessorKey: "cover_img", enableSorting: false,
-      cell: (info)=>{
-        var alt_text = "Cover Art of " + info.row.original.title;
-        return(<img src={info.getValue()} alt={alt_text} width={200} />)
-      }
+  // Struktura kolumn tabeli
+  const columns = useMemo(() => [
+    { 
+      header: "ID", 
+      accessorKey: "id", 
+      cell: (info) => <b>{info.getValue()}</b> 
+    },
+    { header: "Title", accessorKey: "title" },
+    { header: "About", accessorKey: "about", enableSorting: false },
+    { 
+      header: "Image", 
+      accessorKey: "cover_img", 
+      enableSorting: false,
+      cell: (info) => <img src={info.getValue()} alt={`Cover of ${info.row.original.title}`} width={200} />
     }
-  ],[]);
+  ], []);
 
-  
-
-  // Obsługa funkcji tabeli (tu większośc rzeczy po prostu wklejałem wdg zapotrzebowań innych funkcji np. wyszukiwanie, sortowanie i filtrowanie)
+  // Konfiguracja instancji TanStack Table
   const table = useReactTable({
     data: games,
     columns,
     state: { sorting, globalFilter, pagination },
-    onSortingChange: (newSorting) => {  setSorting(newSorting);},
+    onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
@@ -111,123 +101,73 @@ export default function SearchPage(){
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel()
   });
-  /*
-  // Czyszczenie danych po zatwierdzeniu 
-  const clearAll=()=>{
-    setGamesData({
-      title:"",
-      about:""
-    });
-    getAllGames();
-  }
-  */
+
   const rows = table.getRowModel().rows;
   const emptyRowCount = pagination.pageSize - rows.length;
 
-  async function RedirectToSeaching(e) {
-    if(e == null){
+  function RedirectToGamePage(gameId) {
+    navigate('/Game', { state: { GameId: gameId } });
+  }
+
+  function RedirectToSeaching(genreId) {
+    if (genreId == null) {
       setGlobalFilter(SearchThisTitle);
-      navigate("/Search", {state: {Title: globalFilter, userId: userData.id, isLogged: UserData.isLogged}});
     } else {
-      navigate("/Search", {state: {GenreId: e, userId: userData.id, isLogged: UserData.isLogged}});
+      navigate("/Search", { state: { GenreId: genreId } });
     }
   }
 
-  function RedirectToStorefront(){
-    navigate('/', {state: {userId: UserData.id, isLogged: UserData.isLogged}});
+  function LogOutUser() {
+    logout();
+    navigate("/", { replace: true });
   }
-
- function GoToLoginPage(){
-    navigate("/Login", {replace: true})
-  }
-
-
-  //Kod odpowiedzialny za logowanie.
-    React.useEffect(() => {
-    if(location.state != null){
-      console.log("Przed pobraniem danych z loginu");
-      axios.get(`${axiosPath}/users/byid`, {params: {id: location.state.userId}}).then((res) => {
-        console.log(res.data);
-        GetUserData({
-          id: res.data[0].id,
-          login: res.data[0].login,
-          isLogged: true,
-          discordTag: res.data[0].discord_tag
-        })
-      });
-    }
-    console.log("UseEffect miał już miejsce");
-  }, [location.state]);
-    
-    React.useEffect(() => {
-            if(UserData.login == null){
-              document.getElementById("nick").innerHTML = "Gosc";
-            } else {
-              document.getElementById("nick").innerHTML = UserData["login"];
-            }
-      }, [UserData])
-  
-    console.log("SEARCH_PAGE.JSX\nOTRZYMANE DANE:\n", location.state);
-    //console.log(UserData["login"]);
-  
-    function LogOut(){
-      GetUserData(null);
-  
-      navigate("/", {
-        replace: true,
-        state: null
-      });
-    }
 
   return (
     <>
         <div className="container-fluid">
-              {/*Nagłówek Strony*/}
+              {/* Nagłówek Strony */}
               <div className="row m-3 p-3 text-center">
-        
                 {/* Wyszukiwarka */}
                 <div className='col-4'>
                   <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
                   <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
                 </div>
         
-                {/* Logo, wiadomo */}
+                {/* Logo */}
                 <div className='col-4 fw-bolder logo'>
-                  <h1 onClick={RedirectToStorefront}>Keys &apos;R&apos; Us</h1>
+                  <h1 onClick={() => navigate('/')}>Keys &apos;R&apos; Us</h1>
                 </div>
 
-                {/* Dropdown menu konta */}
+                {/* Menu profilu */}
                 <div className='col-4'>
                   <div className="dropdown">
-                  <button className="dropbtn font" id="nick"></button>
+                    {/* Dynamiczne wyświetlanie stanu zalogowania z kontekstu */}
+                    <button className="dropbtn font" id="nick">
+                      {userData.isLogged ? userData.login : "Gość"}
+                    </button>
                     <div className="dropdown-content fw-bold">
-                      {!UserData?.isLogged && (
-                        <h5 onClick={GoToLoginPage}>
-                          Zaloguj sie
-                        </h5>
+                      {!userData.isLogged ? (
+                        <h5 onClick={() => navigate("/Login")}>Zaloguj się</h5>
+                      ) : (
+                        <>
+                          <h5 onClick={() => navigate("/Wishlist")}>Moja Lista Życzeń</h5>
+                          <h5 onClick={LogOutUser}>Wyloguj się</h5>
+                        </>
                       )}
-                    {UserData?.isLogged && (
-                      <>
-                        <h5>Zarzadzaj kontem</h5>
-
-                        <h5 onClick={LogOut}>
-                          Wyloguj sie
-                        </h5>
-                      </>
-                    )}
                     </div>
                   </div> 
                 </div>
               </div>
             
+              {/* Główna sekcja z tabelą i panelami bocznymi */}
               <h3 className='mx-4 mt-4 p-4 font'>Wyniki Wyszukiwania</h3>
                 <div className="row px-4 pb-4">
                   <div className="col-12 col-lg-4 custom-border border-dark">
                     <h3 className='mx-4 mt-4 p-3 text-center font'>Filtry:</h3>
                     <div className="addpanel box-idk">
                       <div className="addpaneldiv row p-2 pe-4">
-                        <h2 className='font'>Tytul</h2>
-                        <input className='col p-2 inp-srch' type="text" name='search' id='search' value={globalFilter ?? ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder='Search...'/>
+                        <h2 className='font'>Tytuł</h2>
+                        <input className='col p-2 inp-srch' type="text" value={globalFilter ?? ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder='Search...'/>
                       </div>
                       <div className='addpaneldiv col p-2 pe-4'>
                         <h2 className='font'>Gatunki</h2>
@@ -263,7 +203,7 @@ export default function SearchPage(){
                       </thead>
                       <tbody>
                         {rows.map((row) => (
-                          <tr className='' key={row.id} onClick={() => RedirectToGamePage(parseInt(row.getVisibleCells()[0].getValue()))}>
+                          <tr key={row.id} onClick={() => RedirectToGamePage(parseInt(row.getVisibleCells()[0].getValue()))} style={{cursor: 'pointer'}}>
                             {row.getVisibleCells().map((cell) => (
                               <td key={cell.id}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -273,8 +213,7 @@ export default function SearchPage(){
                         ))}
                         {Array.from({ length: emptyRowCount }).map((_, idx) => (
                           <tr key={`empty-${idx}`} className="empty-row">
-                            <td colSpan={columns.length} style={{ height: "48px", opacity: 0 }}>
-                            </td>
+                            <td colSpan={columns.length} style={{ height: "48px", opacity: 0 }}></td>
                           </tr>
                         ))}
                         <tr>
@@ -300,8 +239,7 @@ export default function SearchPage(){
                     <p>Mail: biurokeysrus@gmail.com</p>          
                   </div>
                 </div>
-                
             </div>
     </>
-    )
-  };
+  );
+}
