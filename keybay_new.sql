@@ -16,15 +16,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `keybay`
---
-
-DROP DATABASE IF EXISTS keybay;
-CREATE DATABASE keybay;
-USE keybay;
-"""
+  
 --
 -- Database: `41188776_keysrus`
 --
@@ -32,7 +24,7 @@ USE keybay;
 DROP DATABASE IF EXISTS 41188776_keysrus;
 CREATE DATABASE 41188776_keysrus;
 USE 41188776_keysrus;
-"""
+
 -- --------------------------------------------------------
 
 --
