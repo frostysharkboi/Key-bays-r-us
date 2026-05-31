@@ -5,7 +5,7 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { UserProvider } from '../public/user-context/UserContext.jsx';
+import { UserProvider } from './components/user-context/UserContext.jsx';
 
 import Root from "./routes/root.jsx";
 import SearchPage from './routes/search_page.jsx';

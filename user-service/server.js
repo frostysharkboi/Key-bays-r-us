@@ -236,7 +236,7 @@ app.get("/wishlist", async (req, res) => {
   const { user_id } = req.query;
   try {
     const sql = `SELECT game_id FROM wishlist WHERE user_id = ?`;
-    const [rows] = await db.pool.query(sql, [user_id]);
+    const rows = await db.pool.query(sql, [user_id]);
     res.json(rows.map(row => row.game_id));
   } catch (err) {
     console.error(err);
@@ -287,7 +287,7 @@ app.get("/users/:userId/library", async (req, res) => {
       JOIN key_offers ko ON t.offer_id = ko.id
       WHERE t.reciever_id = ? AND t.status = 'Success' AND ko.status = 'Closed'
     `;
-    const [rows] = await db.pool.query(sql, [userId]);
+    const rows = await db.pool.query(sql, [userId]);
     res.json(rows.map(row => row.game_id));
   } catch (err) {
     console.error(err);

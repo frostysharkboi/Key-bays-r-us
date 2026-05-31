@@ -2,7 +2,7 @@ import { useState, useContext, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
-import { UserContext } from '../../public/user-context/UserContext';
+import { UserContext } from '../components/user-context/UserContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './root.css';
 import { axiosPath } from "../App";

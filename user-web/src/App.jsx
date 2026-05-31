@@ -3,10 +3,10 @@ import axios from 'axios';
 import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import { useEffect } from 'react';
-import { UserProvider } from '../public/user-context/UserContext';
+import { UserProvider } from './components/user-context/UserContext';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-export const axiosPath = "https://keysrus-backend.onrender.com";
-//export const axiosPath = "http://localhost:3000";
+//export const axiosPath = "https://keysrus-backend.onrender.com";
+export const axiosPath = "http://localhost:3000";
 
 //import './App.css'
 
