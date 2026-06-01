@@ -309,6 +309,22 @@ app.get("/key_offers/offersForGame", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+//Polecenie pobierające dane potrzenych do ofert
+app.get("/key_offers/offersForGames", async (req, res) => {
+  const { id } = req.query;
+  
+  try {
+    const sql = `SELECT ko.*, u.login FROM key_offers as ko JOIN users u ON ko.seller_id = u.id WHERE game_id LIKE ${id};`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 //POLECENIA DOTYCZĄCE TRANSAKCJI
 //Wybierz dane z tabeli, gdzie id kupującego jest podobne do podanego id.
 

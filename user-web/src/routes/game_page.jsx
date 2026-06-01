@@ -9,6 +9,8 @@ import { axiosPath } from "../App";
 import WishlistButton from '../components/wishlist-button/WishlistButton';
 import SiteRating from '../components/ratings/SiteRating';
 import SteamRating from '../components/ratings/SteamRating';
+import SaleOffers from '../components/offers/SaleOffers';
+
 
 export default function GamePage(){
   const { userData, logout } = useContext(UserContext);
@@ -188,10 +190,7 @@ export default function GamePage(){
         </div>
       </div>
 
-      <div className='row m-3 p-3 text-center border border-3 offer'>
-        <p className='font fw-bold'>Oferty sklepu</p>
-        <h3 className='tbd text-muted fs-5'>TBD</h3>
-      </div>
+      <SaleOffers gameId={GameId} />
 
       <div className='box-idk row m-3 p-3 text-center border'>
         <p className='font fw-bold'>Szczegółowe Recenzje</p>
