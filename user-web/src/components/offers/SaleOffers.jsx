@@ -8,7 +8,6 @@ export default function SaleOffers({ gameId }) {
   const { userData, logout } = useContext(UserContext);
 
   const [offersData, GetOffers] = useState(null);
-  const [offersBtnTemp, changeBtn] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -36,18 +35,6 @@ export default function SaleOffers({ gameId }) {
         setLoading(false);
       });
   }, [gameId]);
-
-  useEffect(() => {
-    if (offersData != null) {
-      const newButtons = offersData.map(offer => ({
-        offerId: offer.id,
-        isVisible: false
-      }));
-
-      changeBtn(newButtons);
-      console.log(offersBtnTemp);
-    }
-  }, [offersData]);
 
   if (loading) {
     return (
@@ -77,6 +64,7 @@ export default function SaleOffers({ gameId }) {
               key={offer.id} 
               offer={offer} 
               userData={userData} 
+              gameId={gameId}
             />
           ))}
         </div>
