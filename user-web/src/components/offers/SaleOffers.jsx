@@ -57,15 +57,11 @@ export default function SaleOffers({ gameId }){
     }
 
     function showforWho(offerId){
-      /*
-      if(document.getElementById(offerId).style.visibility == "visible"){
-        if(forWho == userData.login){
-          document.getElementById(`${offerId}Bullshit`).style.visibility = "hidden";
-        } else {
-          document.getElementById(`${offerId}Bullshit`).style.visibility = "visible";
-        }
+      if(forWho == userData.login){
+        document.getElementById(`offer-${offerId}`).style.visibility = "hidden";
+      } else {
+        document.getElementById(`offer-${offerId}`).style.visibility = "visible";
       }
-      */
     }
 
     const [forWho, changePerson] = useState(userData.login);
@@ -102,13 +98,16 @@ export default function SaleOffers({ gameId }){
             </p>
             <button onClick={() => showButton(offer.id)}>KUP</button>
             <div id={offer.id} style={{visibility: "hidden"}}>
-              <select onChange={showforWho(offer.id)}>
+              <select onChange={(e) => {changePerson(e.target.value)}}>
                 <option value={userData.login}>Dla mnie</option>
-                <option value="Other"></option>
+                <option value="Other">Dla kogoś innego</option>
               </select>
-              <div id={`${offer.id}Bullshit`} style={{visibility: "hidden"}}>
-                  <input type="text" onChange={(e) => forWho(e.target.value)}/>
-              </div>
+              { forWho !== userData.login && (
+                <div>
+                  <input type="text" onChange={(e) => changePerson(e.target.value)}/>
+                  <button>Zgiftuj</button>
+                </div>
+              )}
             </div>
           </div>
         ))}
