@@ -10,16 +10,17 @@ import WishlistButton from '../components/wishlist-button/WishlistButton';
 import SiteRating from '../components/ratings/SiteRating';
 import SteamRating from '../components/ratings/SteamRating';
 import SaleOffers from '../components/offers/SaleOffers';
+import Header from '../components/header/Header';
+import Footer from '../components/footer/Footer';
 
 
-export default function GamePage(){
+export default function GamePage() {
   const { userData, logout } = useContext(UserContext);
 
-  const [game, setGame] = useState([]);               
-  const [tags, setTags] = useState([]);                 
-  const [connectedTags, updateTags] = useState([]);   
-  const [reviews, updateReviews] = useState([]);      
-  const [SearchThisTitle, changeTitle] = useState("");
+  const [game, setGame] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [connectedTags, updateTags] = useState([]);
+  const [reviews, updateReviews] = useState([]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,8 +28,8 @@ export default function GamePage(){
 
   const getGame = () => {
     if (!GameId) return;
-    axios.get(`${axiosPath}/games/alldata`, { params: { game_id: GameId }}).then((res) => {
-      console.log("Dane pobranej gry z API:", res.data[0]); // <-- DODAJ TĘ LINIJKĘ
+    axios.get(`${axiosPath}/games/alldata`, { params: { game_id: GameId } }).then((res) => {
+      console.log("Dane pobranej gry z API:", res.data[0]);
       setGame(res.data);
     });
   };
@@ -60,7 +61,7 @@ export default function GamePage(){
 
   const gameData = game[0];
 
-  function WypiszTagi(){
+  function WypiszTagi() {
     const powiazaneTagi = [];
     if (connectedTags && tags.length > 0) {
       connectedTags.forEach(e => {
@@ -73,7 +74,7 @@ export default function GamePage(){
     return <>{powiazaneTagi.map((t, idx) => <span key={idx}> {t} | </span>)}</>;
   }
 
-  function WypiszRecenzje(){
+  function WypiszRecenzje() {
     const powiazaneRecenzje = [];
     if (reviews) {
       reviews.forEach(e => {
@@ -91,28 +92,8 @@ export default function GamePage(){
 
   return (
     <div className="container-fluid col">
-      <div className="row m-3 p-3 text-center">
-        <div className='col-4'>
-          <input type="text" id="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
-          <button className='border border-3 btnsrch' onClick={() => navigate("/Search", { state: { Title: SearchThisTitle } })}>SZUKAJ</button>
-        </div>
-        <div className='col-4 fw-bolder logo'>
-          <h1 onClick={() => navigate('/')}>Keys &apos;R&apos; Us</h1>
-        </div>
-        <div className='col-4'>
-          <div className="dropdown">
-            <button className="dropbtn font">{userData.isLogged ? userData.login : "Gosc"}</button>
-            <div className="dropdown-content fw-bold">
-              {!userData.isLogged ? <h5 onClick={() => navigate("/Login")}>Zaloguj sie</h5> : (
-                <>
-                  <h5 onClick={() => navigate("/Wishlist")}>Lista życzen</h5>
-                  <h5 onClick={logout}>Wyloguj sie</h5>
-                </>
-              )}
-            </div>
-          </div> 
-        </div>
-      </div>
+      {/* Nagłówek Strony */}
+      <Header />
 
       <div className='row m-3 p-3 text-center'>
         <div className='col'>
@@ -122,29 +103,29 @@ export default function GamePage(){
 
       <div className='row m-3 p-3 text-center'>
         <div className='col-7'>
-          {gameData && <img src={gameData.cover_img} alt="Cover" className="img-fluid rounded" style={{maxHeight: '400px'}}/>}
+          {gameData && <img src={gameData.cover_img} alt="Cover" className="img-fluid rounded w-75" style={{ maxHeight: '400px' }} />}
         </div>
         <div className='box-idk col-5 p-3 border d-flex flex-column justify-content-between'>
-            {/* Sekcja ocen podzielona na dwa komponenty w jednym wierszu */}
-            <div className="row align-items-center g-0">
-              <div className="col-6 border-end">
-                <SiteRating gameId={GameId} />
-              </div>
-              <div className="col-6">
-                <SteamRating gameId={GameId} />
-              </div>
+          {/* Sekcja ocen podzielona na dwa komponenty w jednym wierszu */}
+          <div className="row align-items-center g-0">
+            <div className="col-6 border-end">
+              <SiteRating gameId={GameId} />
             </div>
+            <div className="col-6">
+              <SteamRating gameId={GameId} />
+            </div>
+          </div>
 
-            <br/>
-            <div>
-              <p className='font fw-bold m-0'>Tagi:</p>
-              <p className="m-0">| {WypiszTagi()}</p>
-            </div>
-            <br/>
-            <div>
-              <p className="m-0"><b>Data Wydania:</b> {gameData ? gameData.release_date : "---"}</p>
-              <p className="m-0"><b>Developer:</b> {gameData ? gameData.publisher : "---"}</p>
-            </div>
+          <br />
+          <div>
+            <p className='font fw-bold m-0'>Tagi:</p>
+            <p className="m-0">| {WypiszTagi()}</p>
+          </div>
+          <br />
+          <div>
+            <p className="m-0"><b>Data Wydania:</b> {gameData ? gameData.release_date : "---"}</p>
+            <p className="m-0"><b>Developer:</b> {gameData ? gameData.publisher : "---"}</p>
+          </div>
         </div>
       </div>
 
@@ -154,14 +135,14 @@ export default function GamePage(){
             <p className="fw-bold font">O grze:</p>
             <p>{gameData ? gameData.about : "Brak opisu gry."}</p>
           </div>
-          
+
           {/* Blok dedykowanego przycisku Wishlisty */}
           {userData.isLogged && gameData && (
             <div className="mt-3 text-center">
-              <WishlistButton 
-                gameId={gameData.id} 
-                userId={userData.id} 
-                isLogged={userData.isLogged} 
+              <WishlistButton
+                gameId={gameData.id}
+                userId={userData.id}
+                isLogged={userData.isLogged}
               />
             </div>
           )}
@@ -170,20 +151,20 @@ export default function GamePage(){
           <div className='box-idk m-2 p-3 border flex-fill text-start'>
             <h3 className='font fs-5 text-center mb-3'>Zalecane Wymagania:</h3>
             <p>
-              <b>System:</b> {gameData ? gameData.opt_os : "---"}<br/>
-              <b>Grafika:</b> {gameData ? gameData.opt_gpu : "---"}<br/>
-              <b>Procesor:</b> {gameData ? gameData.opt_cpu : "---"}<br/>
-              <b>RAM:</b> {gameData ? gameData.opt_ram : "---"} GB<br/>
+              <b>System:</b> {gameData ? gameData.opt_os : "---"}<br />
+              <b>Grafika:</b> {gameData ? gameData.opt_gpu : "---"}<br />
+              <b>Procesor:</b> {gameData ? gameData.opt_cpu : "---"}<br />
+              <b>RAM:</b> {gameData ? gameData.opt_ram : "---"} GB<br />
               <b>Miejsce:</b> {gameData ? gameData.opt_size : "---"} GB
             </p>
           </div>
           <div className='box-idk m-2 p-3 border flex-fill text-start'>
             <h3 className='font fs-5 text-center mb-3'>Minimalne Wymagania:</h3>
             <p>
-              <b>System:</b> {gameData ? gameData.min_os : "---"}<br/>
-              <b>Grafika:</b> {gameData ? gameData.min_gpu : "---"}<br/>
-              <b>Procesor:</b> {gameData ? gameData.min_cpu : "---"}<br/>
-              <b>RAM:</b> {gameData ? gameData.min_ram : "---"} GB<br/>
+              <b>System:</b> {gameData ? gameData.min_os : "---"}<br />
+              <b>Grafika:</b> {gameData ? gameData.min_gpu : "---"}<br />
+              <b>Procesor:</b> {gameData ? gameData.min_cpu : "---"}<br />
+              <b>RAM:</b> {gameData ? gameData.min_ram : "---"} GB<br />
               <b>Miejsce:</b> {gameData ? gameData.min_size : "---"} GB
             </p>
           </div>
@@ -193,9 +174,12 @@ export default function GamePage(){
       <SaleOffers gameId={GameId} />
 
       <div className='box-idk row m-3 p-3 text-center border'>
-        <p className='font fw-bold'>Szczegółowe Recenzje</p>
+        <p className='font fw-bold'>Szczegolowe Recenzje</p>
         <div className="text-start p-2">{WypiszRecenzje()}</div>
       </div>
+
+      {/* Stópka */}
+      <Footer />
     </div>
   );
 }

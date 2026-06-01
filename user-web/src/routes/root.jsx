@@ -5,14 +5,15 @@ import { UserContext } from '../components/user-context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import './root.css'
 import { axiosPath } from "../App";
+import Footer from '../components/footer/Footer';
+import Header from '../components/header/Header';
 
-export default function Root(){
+export default function Root() {
   const { userData, logout } = useContext(UserContext);
 
   const [games, setGames] = useState([]);                 // Dane gier z bazy danych
   const [formatedGames, setFormatedGames] = useState([]); // Sformatowane dane gier
   const [tags, setTags] = useState([]);                   // Dane tagów z bazy danych
-  const [SearchThisTitle, changeTitle] = useState("");
 
   // Stan odpowiedzialny za sterowanie automatyczną karuzelą
   const [activeIndex, setActiveIndex] = useState(0);
@@ -55,7 +56,7 @@ export default function Root(){
     if (formatedGames.length === 0) return;
 
     const interval = setInterval(() => {
-      setActiveIndex((prevIndex) => 
+      setActiveIndex((prevIndex) =>
         prevIndex === formatedGames.length - 1 ? 0 : prevIndex + 1
       );
     }, 5000);
@@ -84,92 +85,55 @@ export default function Root(){
 
   return (
     <>
-    <div className="container-fluid">
-      {/* Nagłówek Strony */}
-      <div className="row m-3 p-3 text-center">
+      <div className="container-fluid">
+        {/* Nagłówek Strony */}
+        <Header />
 
-        {/* Wyszukiwarka */}
-        <div className='col-4'>
-          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
-          <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
-        </div>
-
-        {/* Logo */}
-        <div className='col-4 fw-bolder logo'>
-          <h1 onClick={() => navigate('/')}>Keys &apos;R&apos; Us</h1>
-        </div>
-
-        {/* Dropdown menu konta */}
-        <div className='col-4'>
-          <div className="dropdown">
-            <button className="dropbtn font" id="nick">
-              {userData.isLogged ? userData.login : "Gosc"}
-            </button>
-            <div className="dropdown-content fw-bold">
-              {!userData.isLogged ? (
-                <h5 onClick={() => navigate("/Login")}>Zaloguj sie</h5>
-              ) : (
-                <>
-                  <h5 onClick={() => navigate('/Wishlist')}>Lista Zyczen</h5>
-                  <h5>Zarzadzaj kontem</h5>
-                  <h5 onClick={LogOutUser}>Wyloguj sie</h5>
-                </>
-              )}
-            </div>
-          </div> 
-        </div>
-      </div>
-
-      {/* Karuzela sterowana przez Reacta (Pierwszy statyczny obrazek usunięty zgodnie z prośbą) */}
-      <div className="row m-3 p-3 text-center">
-        <div className="carousel slide carousel-fade">
-          <div className="carousel-inner">
-            {formatedGames.map((e, index) => {
-              return (
-                <div 
-                  key={e.id}
-                  className={index === activeIndex ? "carousel-item active" : "carousel-item"} 
-                  onClick={() => RedirectToGamePage(e.id)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <img src={e.cover_img} className="mx-auto d-block w-50 h-50" alt={e.title}/>
-                  <div className="carousel-caption d-none d-md-block">
-                    <h5 className="opacity-50 bg-dark d-inline-block px-2 py-1">{e.title}</h5>
+        {/* Karuzela sterowana przez Reacta (Pierwszy statyczny obrazek usunięty zgodnie z prośbą) */}
+        <div className="row m-3 p-3 text-center">
+          <div className="carousel slide carousel-fade">
+            <div className="carousel-inner">
+              {formatedGames.map((e, index) => {
+                return (
+                  <div
+                    key={e.id}
+                    className={index === activeIndex ? "carousel-item active" : "carousel-item"}
+                    onClick={() => RedirectToGamePage(e.id)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <img src={e.cover_img} className="mx-auto d-block w-50 h-50" alt={e.title} />
+                    <div className="carousel-caption d-none d-md-block">
+                      <h5 className="opacity-50 bg-dark d-inline-block px-2 py-1">{e.title}</h5>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Sekcja Gatunki */}
-      <div className='row m-1 text-center font'>
-          <h2>GATUNKI</h2>
-      </div>
-      <div className="row row-cols-4 justify-content-md-center m-3 p-3 text-center">
-        {tags.map((row) => (
-          <div 
-            className="card rounded-0 border tag border-3 font col p-4 m-3" 
-            key={row.id} 
-            onClick={() => RedirectToSeaching(parseInt(row.id))}
-            style={{ cursor: 'pointer' }}
-          >
-            <div className="card-body w-40">
-              <p className="card-text w-40 fw-bold">{row.tag}</p>
+                );
+              })}
             </div>
           </div>
-        ))}
-      </div>
-
-      {/* Stopka */}
-      <div className="row m-3 p-3 text-center">
-        <div className='col'>
-          <p>Kontakt</p>
-          <p>Mail: biurokeysrus@gmail.com</p>          
         </div>
+
+        {/* Sekcja Gatunki */}
+        <div className='row m-1 text-center font'>
+          <h2>GATUNKI</h2>
+        </div>
+        <div className="row row-cols-4 justify-content-md-center m-3 p-3 text-center">
+          {tags.map((row) => (
+            <div
+              className="card rounded-0 border tag border-3 font col p-4 m-3"
+              key={row.id}
+              onClick={() => RedirectToSeaching(parseInt(row.id))}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="card-body w-40">
+                <p className="card-text w-40 fw-bold">{row.tag}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Stopka */}
+        <Footer />
       </div>
-    </div>
     </>
   );
 }
