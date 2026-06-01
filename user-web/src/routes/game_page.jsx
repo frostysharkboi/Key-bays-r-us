@@ -148,26 +148,33 @@ export default function GamePage() {
           )}
         </div>
         <div className='col-7 d-flex'>
-          <div className='box-idk m-2 p-3 border flex-fill text-start'>
-            <h3 className='font fs-5 text-center mb-3'>Zalecane Wymagania:</h3>
-            <p>
-              <b>System:</b> {gameData ? gameData.opt_os : "---"}<br />
-              <b>Grafika:</b> {gameData ? gameData.opt_gpu : "---"}<br />
-              <b>Procesor:</b> {gameData ? gameData.opt_cpu : "---"}<br />
-              <b>RAM:</b> {gameData ? gameData.opt_ram : "---"} GB<br />
-              <b>Miejsce:</b> {gameData ? gameData.opt_size : "---"} GB
-            </p>
-          </div>
-          <div className='box-idk m-2 p-3 border flex-fill text-start'>
-            <h3 className='font fs-5 text-center mb-3'>Minimalne Wymagania:</h3>
-            <p>
-              <b>System:</b> {gameData ? gameData.min_os : "---"}<br />
-              <b>Grafika:</b> {gameData ? gameData.min_gpu : "---"}<br />
-              <b>Procesor:</b> {gameData ? gameData.min_cpu : "---"}<br />
-              <b>RAM:</b> {gameData ? gameData.min_ram : "---"} GB<br />
-              <b>Miejsce:</b> {gameData ? gameData.min_size : "---"} GB
-            </p>
-          </div>
+          {gameData && (
+            <>
+              {/* Zalecane Wymagania */}
+              <div className='box-idk m-2 p-3 border flex-fill text-start'>
+                <h3 className='font fs-5 text-center mb-3'>Zalecane Wymagania:</h3>
+                <p>
+                  {gameData.opt_os && <><b>System:</b> {gameData.opt_os}<br /></>}
+                  {gameData.opt_gpu && <><b>Grafika:</b> {gameData.opt_gpu}<br /></>}
+                  {gameData.opt_cpu && <><b>Procesor:</b> {gameData.opt_cpu}<br /></>}
+                  {gameData.opt_ram && <><b>RAM:</b> {gameData.opt_ram} GB<br /></>}
+                  {gameData.opt_size && <><b>Miejsce:</b> {gameData.opt_size} GB<br /></>}
+                </p>
+              </div>
+
+              {/* Minimalne Wymagania */}
+              <div className='box-idk m-2 p-3 border flex-fill text-start'>
+                <h3 className='font fs-5 text-center mb-3'>Minimalne Wymagania:</h3>
+                <p>
+                  {gameData.min_os && <><b>System:</b> {gameData.min_os}<br /></>}
+                  {gameData.min_gpu && <><b>Grafika:</b> {gameData.min_gpu}<br /></>}
+                  {gameData.min_cpu && <><b>Procesor:</b> {gameData.min_cpu}<br /></>}
+                  {gameData.min_ram && <><b>RAM:</b> {gameData.min_ram} GB<br /></>}
+                  {gameData.min_size && <><b>Miejsce:</b> {gameData.min_size} GB<br /></>}
+                </p>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
