@@ -10,6 +10,7 @@ import WishlistButton from '../components/wishlist-button/WishlistButton';
 import SiteRating from '../components/ratings/SiteRating';
 import SteamRating from '../components/ratings/SteamRating';
 import SaleOffers from '../components/offers/SaleOffers';
+import ReviewsSection from '../components/reviews/ReviewsSection';
 import Header from '../components/header/Header';
 import Footer from '../components/footer/Footer';
 
@@ -178,12 +179,11 @@ export default function GamePage() {
         </div>
       </div>
 
+      {/* Oferty */}
       <SaleOffers gameId={GameId} />
 
-      <div className='box-idk row m-3 p-3 text-center border'>
-        <p className='font fw-bold'>Szczegolowe Recenzje</p>
-        <div className="text-start p-2">{WypiszRecenzje()}</div>
-      </div>
+      {/* Recenzje */}
+      <ReviewsSection gameId={GameId} />
 
       {/* Stópka */}
       <Footer />
