@@ -99,7 +99,7 @@ export default function ReviewsSection({ gameId }) {
                                 </div>
                                 <div className="btn-group gap-2">
                                     <button className="btn btn-sm btn-primary" onClick={() => setEditingReview(myReview)}>Edytuj</button>
-                                    <button className="btn btn-sm btn-danger" onClick={() => handleDelete(myReview.id)}>Usun</button>
+                                    <button className="btn btn-sm btn-danger" onClick={() => handleDelete(myReview.user_id)}>Usun</button>
                                 </div>
                             </div>
                         ) : (
