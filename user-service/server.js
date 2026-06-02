@@ -99,6 +99,20 @@ app.listen(port, async () => {
 
 // Read
 
+// Pobieranie wszystkich ofert (dla administratora lub ogólnej listy)
+app.get('/key_offers/allOffers', async (req, res) => {
+  const { userId, userRole } = req.query;
+  const sql = `SELECT ko.id, ko.game_id, g.title, ko.seller_id, u.login AS seller, ko.game_key, ko.other, ko.status, ko.suggested_price, u.login AS seller_login FROM key_offers ko LEFT JOIN games g ON ko.game_id = g.id LEFT JOIN users u ON ko.seller_id = u.id`;
+  if (userRole == "seller") sql += `WHERE ko.seller_id = ${userId}`;
+  try {
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 //Wyswietlanie gier po kategoriach (by wyszukiwanie wciąż działało osobno);
 
 //    axios.get("http://localhost:3000/games/tagsort", { params: { tags: array[string] }, paramsSerializer: params => {return "tags=" + params.tags.join("&tags=");}}).then((res) => {setGames(res.data);});
@@ -552,6 +566,32 @@ app.put('/api/reviews', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send(err);
+  }
+});
+
+// Aktualizacja statusu konkretnej oferty
+app.patch('/key_offers/updateStatus', async (req, res) => {
+  const { offerId, newStatus } = req.body;
+
+  // Walidacja danych wejściowych
+  if (!offerId || !newStatus) {
+    return res.status(400).json({ error: "Brak offerId lub newStatus w żądaniu." });
+  }
+
+  const sql = `UPDATE key_offers SET status = ? WHERE id = ?`;
+
+  try {
+    // UWAGA: Brak nawiasów [ ] wokół result! Przypisujemy bezpośrednio.
+    const result = await db.pool.query(sql, [newStatus, offerId]);
+
+    // Logujemy, żebyś widział w terminalu, co dokładnie zwraca Twoja baza
+    console.log("Status zaktualizowany pomyślnie. Wynik z bazy:", result);
+
+    // Zwracamy czysty sukces do Reacta
+    res.json({ success: true, message: "Status został zaktualizowany." });
+  } catch (err) {
+    console.error("Błąd podczas aktualizacji statusu:", err);
+    res.status(500).json({ error: err.message });
   }
 });
 

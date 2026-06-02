@@ -74,11 +74,6 @@ export default function SearchPage() {
 
   // Struktura kolumn tabeli
   const columns = useMemo(() => [
-    {
-      header: "ID",
-      accessorKey: "id",
-      cell: (info) => <b>{info.getValue()}</b>
-    },
     { header: "Title", accessorKey: "title" },
     { header: "About", accessorKey: "about", enableSorting: false },
     {
