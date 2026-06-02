@@ -10,6 +10,7 @@ export default function SaleOffers({ gameId }) {
   const [offersData, GetOffers] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [openedOfferId, setOpenedOfferId] = useState(null);
 
   useEffect(() => {
     if (!gameId) return;
@@ -65,6 +66,8 @@ export default function SaleOffers({ gameId }) {
               offer={offer} 
               userData={userData} 
               gameId={gameId}
+              openedOfferId={openedOfferId}
+              setOpenedOfferId={setOpenedOfferId}
             />
           ))}
         </div>
