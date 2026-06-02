@@ -10,7 +10,7 @@ import WishlistButton from '../components/wishlist-button/WishlistButton';
 import SiteRating from '../components/ratings/SiteRating';
 import SteamRating from '../components/ratings/SteamRating';
 import SaleOffers from '../components/offers/SaleOffers';
-import ReviewsSection from '../components/rating/ReviewsSection';
+import ReviewsSection from '../components/reviews/ReviewsSection';
 import Header from '../components/header/Header';
 import Footer from '../components/footer/Footer';
 
