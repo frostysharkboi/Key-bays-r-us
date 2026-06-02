@@ -19,22 +19,27 @@ export default function SaleOffers({ gameId }) {
     setError(false);
 
     console.log("Zaczyna pobierać dane. Id gry nie było puste.");
-    // Zapytanie do naszego lokalnego backendu proxy
+
     axios.get(`${axiosPath}/key_offers/offersForGames`, { params: { id: gameId } })
       .then((res) => {
-        if (res.data && res.data[0].id != null) {
-          GetOffers(res.data);
-          console.log("Dane zostały pobrane\n", res.data);
-        } else {
-          setError(true);
-        }
+        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+          const isAdmin = userData && userData.type === 'admin';
+
+          let validOffers = isAdmin ? res.data : res.data.filter((offer) => offer.status === 'Active' || offer.status === 'Other');
+
+          if (userData && userData.id) {
+            validOffers = validOffers.sort((a, b) => {
+              const aIsMine = a.seller_id === userData.id ? 1 : 0;
+              const bIsMine = b.seller_id === userData.id ? 1 : 0;
+              return bIsMine - aIsMine;
+            });
+          }
+
+          GetOffers(validOffers);
+          console.log("Posortowane oferty (własne na początku):\n", validOffers);
+        } else GetOffers([]);
         setLoading(false);
       })
-      .catch((err) => {
-        console.error("Błąd pobierania danych ofert", err);
-        setError(true);
-        setLoading(false);
-      });
   }, [gameId]);
 
   if (loading) {
@@ -46,7 +51,7 @@ export default function SaleOffers({ gameId }) {
     );
   }
 
-  if (error || !offersData) {
+  if (error || !offersData || offersData.length === 0) {
     return (
       <div className='row m-3 p-3 text-center border border-3 offer'>
         <p className='font fw-bold'>Oferty sklepu</p>
@@ -61,10 +66,10 @@ export default function SaleOffers({ gameId }) {
       <div className="container-fluid">
         <div className="row flex-row flex-nowrap overflow-auto">
           {offersData.map((offer) => (
-            <OfferItem 
-              key={offer.id} 
-              offer={offer} 
-              userData={userData} 
+            <OfferItem
+              key={offer.id}
+              offer={offer}
+              userData={userData}
               gameId={gameId}
               openedOfferId={openedOfferId}
               setOpenedOfferId={setOpenedOfferId}
