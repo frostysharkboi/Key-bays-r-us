@@ -23,7 +23,15 @@ export default function OfferItem({ offer, userData, gameId, openedOfferId, setO
     setOpenedOfferId(
       openedOfferId === offer.id ? null : offer.id
     );
-    console.log("Man");
+  }
+
+  function GetInContact(){
+    let popup = confirm(`Źródła komunikacji z sprzedawcą\nTag Discord: ${offer.discord_tag}\nCzy chcesz przejść do DM sprzedawcy?`);
+    if(popup == true){
+      console.log("Link czy cuś");
+    } else {
+      console.log("nigg");
+    }
   }
 
   const isVisible = openedOfferId === offer.id;
@@ -36,7 +44,7 @@ export default function OfferItem({ offer, userData, gameId, openedOfferId, setO
         <h5>Cena: {offer.suggested_price} zł.</h5>
         <h5>Status: {offer.status}</h5>
       </div>
-      <button onClick={() => showButton()}>KUP</button>
+      <button onClick={() => showButton()}>Wiecej</button>
       
       
       {offer != null && isVisible && (
@@ -49,7 +57,12 @@ export default function OfferItem({ offer, userData, gameId, openedOfferId, setO
           {forWho !== userData.login && (
             <div>
               <input type="text" onChange={(e) => changePerson(e.target.value)} />
-              <button>Zgiftuj</button>
+              <h5><button onClick={() => GetInContact()}>Zgiftuj</button></h5>
+            </div>
+          )}
+          {forWho === userData.login && (
+            <div>
+              <h5><button onClick={() => GetInContact()}>Kup</button></h5>
             </div>
           )}
       </div>

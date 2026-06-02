@@ -315,7 +315,7 @@ app.get("/key_offers/offersForGames", async (req, res) => {
   const { id } = req.query;
   
   try {
-    const sql = `SELECT ko.*, u.login FROM key_offers as ko JOIN users u ON ko.seller_id = u.id WHERE game_id LIKE ${id};`;
+    const sql = `SELECT ko.*, u.login, u.discord_tag FROM key_offers as ko JOIN users u ON ko.seller_id = u.id WHERE game_id LIKE ${id};`;
     const result = await db.pool.query(sql);
     res.json(result);
   } catch (err) {
