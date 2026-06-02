@@ -50,7 +50,8 @@ export default function Root(){
         id: foundUser.id,
         login: foundUser.login,
         isLogged: true,
-        discordTag: foundUser.discord_tag
+        discordTag: foundUser.discord_tag,
+        type: foundUser.type
       });
 
       navigate("/", { replace: true });

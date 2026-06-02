@@ -383,6 +383,35 @@ app.get("/:table", async (req,res) => {
 
 // Reszta bardziej pod stronke admina
 
+//Dodawanie ofert
+app.post("/key_offers/add", async (req, res) => {
+  const {
+    key,
+    price,
+    other,
+    seller_id,
+    game_id,
+    status,
+  } = req.body;
+
+  try {
+    const columns = ["seller_id", "game_id", "game_key", "other", "status", "suggested_price"];
+    const values = [seller_id, game_id, key, other, status, price];
+    const placeholders = ["?", "?", "?", "?", "?", "?"]; 
+    
+    const sql = `INSERT INTO key_offers (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
+
+    const [result] = await db.pool.query(sql, values);
+    res.json(result);
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Błąd serwera"
+    });
+  }
+});
+
 // Dodawanie do Rejestracji
 app.post("/users/adduser", async (req, res) => {
   const {

@@ -14,6 +14,7 @@ import GamePage from "./routes/game_page.jsx";
 import LoginPage from "./routes/login_page.jsx";
 import RegistrationPage from "./routes/registration_page.jsx";
 import WishlistPage from "./routes/wishlist_page.jsx";
+import CreateOfferPage from "./routes/createOffer_page.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <Root />, errorElement: <ErrorPage /> },
@@ -21,7 +22,8 @@ const router = createBrowserRouter([
   { path: "Game", element: <GamePage />, errorElement: <ErrorPage /> },
   { path: "Login", element: <LoginPage />, errorElement: <ErrorPage /> },
   { path: "Register", element: <RegistrationPage />, errorElement: <ErrorPage /> },
-  { path: "Wishlist", element: <WishlistPage />, errorElement: <ErrorPage /> }
+  { path: "Wishlist", element: <WishlistPage />, errorElement: <ErrorPage /> },
+  { path: "Create-Offer", element: <CreateOfferPage />, errorElement: <ErrorPage />}
 ]);
 
 createRoot(document.getElementById('root')).render(

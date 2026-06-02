@@ -27,6 +27,7 @@ export default function OfferItem({ offer, userData, gameId, openedOfferId, setO
 
   function GetInContact(){
     let popup = confirm(`Źródła komunikacji z sprzedawcą\nTag Discord: ${offer.discord_tag}\nCzy chcesz przejść do DM sprzedawcy?`);
+    //const sellerLink = `https://discordapp.com/channels/@me/${}/`;
     if(popup == true){
       console.log("Link czy cuś");
     } else {

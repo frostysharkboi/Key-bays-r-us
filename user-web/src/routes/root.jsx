@@ -43,6 +43,7 @@ export default function Root(){
 
   useEffect(() => {
     getGames();
+    console.log(userData);
   }, []);
 
   useEffect(() => {
@@ -96,7 +97,7 @@ export default function Root(){
 
         {/* Logo */}
         <div className='col-4 fw-bolder logo'>
-          <h1 onClick={() => navigate('/')}>Keys &apos;R&apos; Us</h1>
+          <h1 onClick={() => navigate('google.com')}>Keys &apos;R&apos; Us</h1>
         </div>
 
         {/* Dropdown menu konta */}
@@ -112,6 +113,9 @@ export default function Root(){
                 <>
                   <h5 onClick={() => navigate('/Wishlist')}>Lista Zyczen</h5>
                   <h5>Zarzadzaj kontem</h5>
+                  {userData.type == "seller" && (
+                    <h5>Dodaj oferte</h5>
+                  )}
                   <h5 onClick={LogOutUser}>Wyloguj sie</h5>
                 </>
               )}
