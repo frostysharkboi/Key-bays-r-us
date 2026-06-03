@@ -57,7 +57,7 @@ export default function OffersPage() {
         const oldStatus = currentOffer ? currentOffer.status : 'Active';
 
         // 2. BLOKADA DLA SPRZEDAWCY: Jeśli sprzedawca próbuje ustawić 'Closed', wyrzucamy alert i cofamy zmianę
-        if (userData?.type === 'seller' && newStatus === 'Closed') {
+        if (userData?.role === 'seller' && newStatus === 'Closed') {
             alert("Jako sprzedawca nie masz uprawnień do ręcznego ustawiania statusu 'Closed'.");
 
             // Wymuszamy ponowne ustawienie starego statusu w stanie (reset wizualny selektu)
