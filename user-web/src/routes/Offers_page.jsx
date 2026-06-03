@@ -20,7 +20,7 @@ export default function OffersPage() {
     const [offers, setOffers] = useState([]);
 
     useEffect(() => {
-        if (!userData || userData.role === 'user') {
+        if (!userData || userData.type === 'user') {
             console.warn("Wykryto próbę nieautoryzowanego dostępu. Przekierowanie...");
             navigate('/'); // Przekierowanie na stronę główną
         }
@@ -36,11 +36,11 @@ export default function OffersPage() {
     // Pobranie ofert z backendu
     useEffect(() => {
         // Jeśli userData jeszcze się ładuje lub rola jest niepoprawna, przerywamy strzał
-        if (!userData || userData.role === 'user') return;
+        if (!userData || userData.type === 'user') return;
 
-        axios.get(`${axiosPath}/key_offers/allOffers`, { params: { userId: userData.id, userRole: userData.role } })
+        axios.get(`${axiosPath}/key_offers/allOffers`, { params: { userId: userData.id, userRole: userData.type } })
             .then((res) => {
-                console.log("Oferty załadowane dla roli:", userData.role, res.data);
+                console.log("Oferty załadowane dla roli:", userData.type, res.data);
                 setOffers(Array.isArray(res.data) ? res.data : []);
             })
             .catch(err => {
@@ -52,13 +52,44 @@ export default function OffersPage() {
     }, [userData, axiosPath, navigate]);
 
     const handleStatusChange = (offerId, newStatus) => {
+        // 1. Szukamy oferty w obecnym stanie, żeby wiedzieć, jaki miała status PRZED zmianą
+        const currentOffer = offers.find(o => o.id === offerId);
+        const oldStatus = currentOffer ? currentOffer.status : 'Active';
+
+        // 2. BLOKADA DLA SPRZEDAWCY: Jeśli sprzedawca próbuje ustawić 'Closed', wyrzucamy alert i cofamy zmianę
+        if (userData?.type === 'seller' && newStatus === 'Closed') {
+            alert("Jako sprzedawca nie masz uprawnień do ręcznego ustawiania statusu 'Closed'.");
+
+            // Wymuszamy ponowne ustawienie starego statusu w stanie (reset wizualny selektu)
+            setOffers(prevOffers => [...prevOffers]);
+            return;
+        }
+
+        // 3. ALERT DLA ADMINISTRATORA: Jeśli status zmienia się na 'Closed', pytamy o potwierdzenie
+        if (newStatus === 'Closed') {
+            const isConfirmed = window.confirm(
+                `Czy na pewno chcesz zmienić status oferty ID: ${offerId} na "Closed"?\nTej operacji nie można cofnąć.`
+            );
+
+            // Jeśli kliknął "Anuluj" (false)
+            if (!isConfirmed) {
+                console.log("Zmiana statusu na Closed anulowana przez użytkownika.");
+
+                // Odświeżamy stan tą samą referencją, co zmusi Reacta do powrotu do poprzedniego statusu w <select>
+                setOffers(prevOffers => [...prevOffers]);
+                return; // Przerywamy funkcję, Axios się nie wykona
+            }
+        }
+
+        // 4. Jeśli przeszło walidacje i potwierdzenia -> wysyłamy standardowy strzał do bazy
         axios.patch(`${axiosPath}/key_offers/updateStatus`, {
             offerId: offerId,
             newStatus: newStatus
         })
             .then(() => {
-                console.log(`Status oferty ${offerId} zmieniony na ${newStatus}`);
+                console.log(`Status oferty ${offerId} pomyślnie zmieniony na ${newStatus}`);
 
+                // Aktualizujemy stan nową wartością
                 setOffers(prevOffers =>
                     prevOffers.map(offer =>
                         offer.id === offerId ? { ...offer, status: newStatus } : offer
@@ -67,7 +98,9 @@ export default function OffersPage() {
             })
             .catch(err => {
                 console.error("Błąd zmiany statusu:", err);
-                alert("Nie udało się zmienić statusu: " + (err.response?.data?.error || err.message));
+                alert("Nie udało się zapisać zmiany w bazie danych.");
+                // W razie błędu sieciowego również cofamy zmianę wizualną
+                setOffers(prevOffers => [...prevOffers]);
             });
     };
 
@@ -89,16 +122,12 @@ export default function OffersPage() {
                 const offerId = info.row.original.id;
 
                 return (
-                    <select
-                        className={`form-select form-select-sm fw-bold ${currentStatus === 'Active' ? 'text-primary' : currentStatus === 'Closed' ? 'text-danger' : 'text-secondary'
-                            }`}
-                        value={currentStatus}
-                        onClick={(e) => e.stopPropagation()}
-                        onChange={(e) => handleStatusChange(offerId, e.target.value)}
-                        style={{ width: "130px", cursor: "pointer" }}
+                    <select className={`form-select form-select-sm fw-bold ${currentStatus === 'Active' ? 'text-primary' : currentStatus === 'Closed' ? 'text-danger' : 'text-secondary'}`}
+                        value={currentStatus} onClick={(e) => e.stopPropagation()} onChange={(e) => handleStatusChange(offerId, e.target.value)}
+                        style={{ width: "130px", cursor: "pointer" }} disabled={userData.type === 'seller' ? (currentStatus === "Closed" ? true : false) : false}
                     >
                         <option value="Active">Active</option>
-                        <option value="Closed">Closed</option>
+                        <option value="Closed" disabled={userData.type === 'seller'}>Closed</option>
                         <option value="Other">Other</option>
                     </select>
                 );
