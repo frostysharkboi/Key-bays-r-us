@@ -102,7 +102,7 @@ export default function Root() {
             other: offerAsObject.other,
             game_id: offerAsObject.gameId,
             seller_id: userData.id,
-            status: "Activie"
+            status: "Active"
         }).then(() => {
             console.log("Chyba przeszło?");
             let popup = alert("Dodano ofertę", "Twoja oferta właśnie została wystawiona", "ok");
