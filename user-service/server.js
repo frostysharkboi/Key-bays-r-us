@@ -446,51 +446,20 @@ app.post('/api/reviews', async (req, res) => {
   }
 });
 
-// Dodawanie do Rejestracji
-app.post("/users/adduser", async (req, res) => {
-  const {
-    login,
-    email,
-    pass,
-    phone,
-    discord_tag
-  } = req.body;
+// Create
 
+//dodanie recenzji
+app.post('/api/reviews', async (req, res) => {
+  const { game_id, user_id, rating, other } = req.body;
   try {
-    const columns = ["login", "email", "pass"];
-    const values = [login, email, pass];
-    const placeholders = ["?", "?", "?"];
-
-    if (phone) {
-      columns.push("phone");
-      values.push(phone);
-      placeholders.push("?");
-    }
-
-    if (discord_tag) {
-      columns.push("discord_tag");
-      values.push(discord_tag);
-      placeholders.push("?");
-    }
-
-    const sql = `
-      INSERT INTO users (${columns.join(", ")})
-      VALUES (${placeholders.join(", ")})
-    `;
-
-    const [result] = await db.pool.query(sql, values);
-
-    res.json(result);
-
+    const sql = 'INSERT INTO ratings (game_id, user_id, rating, other) VALUES (?, ?, ?, ?)';
+    await db.pool.query(sql, [game_id, user_id, String(rating), other]); // rzutujemy rating na String, bo w bazie to ENUM
+    res.sendStatus(201);
   } catch (err) {
     console.error(err);
-    res.status(500).json({
-      error: "Błąd serwera"
-    });
+    res.status(500).send(err);
   }
 });
-
-// Create
 
 // dodanie użytkowników
 
@@ -500,25 +469,22 @@ app.post("/users/adduser", async (req, res) => {
   const { login, email, pass, phone, discord_tag } = req.body;
 
   try {
-    const columns = ["login", "email", "password"];
-    const values = [login, email, pass];
-    const placeholders = ["?", "?", "?"];
+    const columns = ["login", "email", "pass"];
+    const values = [`"${login}"`, `"${email}"`, `"${pass}"`];
 
     if (phone) {
       columns.push("phone");
-      values.push(phone);
-      placeholders.push("?");
+      values.push(`"${phone}"`);
     }
 
     if (discord_tag) {
       columns.push("discord_tag");
-      values.push(discord_tag);
-      placeholders.push("?");
+      values.push(`"${discord_tag}"`);
     }
 
-    const sql = `INSERT INTO users (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
+    const sql = `INSERT INTO users (${columns.join(", ")}) VALUES (${values.join(", ")})`;
 
-    const [result] = await db.pool.query(sql, values);
+    const result = db.pool.query(sql);
     res.json(result);
 
   } catch (err) {
