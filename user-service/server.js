@@ -265,6 +265,18 @@ app.get("/users/byemail", async (req, res) => {
   }
 });
 
+//Zapytanie potrzebne do transakcji
+app.get("/users/getThemAll", async (req, res) => {
+  try {
+    const sql = `SELECT * FROM users`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({error: err.message});
+  }
+});
+
 //POLECENIA DOTYCZĄCE WISHLISTY
 //Wybierz dane z tabeli, gdzie id usera jest podobne do podanego id.
 
@@ -342,6 +354,17 @@ app.get("/transactions/transactionsByBuyer", async (req, res) => {
   }
 });
 
+app.get("/transactions/getAll", async (req, res) => {
+  try {
+    const sql = "SELECT * FROM transactions";
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // pobranie liste id gier które ma użytkownik
 
 app.get("/users/:userId/library", async (req, res) => {
@@ -396,12 +419,39 @@ app.post("/key_offers/add", async (req, res) => {
 
   try {
     const columns = ["seller_id", "game_id", "game_key", "other", "status", "suggested_price"];
-    const values = [seller_id, game_id, key, other, status, price];
+    const values = [seller_id, game_id, key, other, String(status), price];
     const placeholders = ["?", "?", "?", "?", "?", "?"]; 
     
     const sql = `INSERT INTO key_offers (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
 
-    const [result] = await db.pool.query(sql, values);
+    const result = db.pool.query(sql, values);
+    res.json(result);
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Błąd serwera"
+    });
+  }
+});
+
+//Dodawanie transakcji
+app.post("/transactions/add", async (req, res) => {
+  const {
+    offerId,
+    buyerId,
+    receiverId,
+    status,
+  } = req.body;
+
+  try {
+    const columns = ["offer_id", "buyer_id", "reciever_id", "status"];
+    const values = [offerId, buyerId, receiverId, String(status)];
+    const placeholders = ["?", "?", "?", "?"];
+    
+    const sql = `INSERT INTO transactions (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
+
+    const result = db.pool.query(sql, values);
     res.json(result);
     
   } catch (err) {
@@ -444,7 +494,7 @@ app.post("/users/adduser", async (req, res) => {
       VALUES (${placeholders.join(", ")})
     `;
 
-    const [result] = await db.pool.query(sql, values);
+    const result = db.pool.query(sql, values);
 
     res.json(result);
 
@@ -466,7 +516,7 @@ app.post("/users/adduser", async (req, res) => {
   const { login, email, pass, phone, discord_tag } = req.body;
 
   try {
-    const columns = ["login", "email", "password"];
+    const columns = ["login", "email", "pass"];
     const values = [login, email, pass];
     const placeholders = ["?", "?", "?"];
 
@@ -484,7 +534,7 @@ app.post("/users/adduser", async (req, res) => {
 
     const sql = `INSERT INTO users (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
 
-    const [result] = await db.pool.query(sql, values);
+    const [result] = db.pool.query(sql, values);
     res.json(result);
 
   } catch (err) {

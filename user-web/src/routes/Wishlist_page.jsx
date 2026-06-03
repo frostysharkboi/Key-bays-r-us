@@ -105,20 +105,26 @@ export default function WishlistPage() {
             <h1 onClick={() => navigate('/')}>Keys &apos;R&apos; Us</h1>
           </div>
 
-          {/* Menu konta */}
+          {/* Dropdown menu konta */}
           <div className='col-4'>
             <div className="dropdown">
-              {/* Dynamiczne wstrzyknięcie nicku zalogowanego użytkownika bezpośrednio z kontekstu */}
               <button className="dropbtn font" id="nick">
-                {userData.isLogged ? userData.login : "Konto"}
+                {userData.isLogged ? userData.login : "Gosc"}
               </button>
               <div className="dropdown-content fw-bold">
                 {!userData.isLogged ? (
-                  <h5 onClick={() => navigate("/Login", { replace: true })}>Zaloguj się</h5>
+                  <h5 onClick={() => navigate("/Login")}>Zaloguj sie</h5>
                 ) : (
                   <>
-                    <h5 onClick={() => navigate("/Wishlist")}>Moja Lista Życzeń</h5>
-                    <h5 onClick={LogOutUser}>Wyloguj się</h5>
+                    <h5 onClick={() => navigate('/Wishlist')}>Lista Zyczen</h5>
+                    <h5>Zarzadzaj kontem</h5>
+                    {userData.type == "seller" && (
+                      <h5 onClick={() => navigate("/Create-Offer")}>Dodaj oferte</h5>
+                    )}
+                    {userData.type == "admin" && (
+                      <h5>Panel Admina</h5>
+                    )}
+                    <h5 onClick={LogOutUser}>Wyloguj sie</h5>
                   </>
                 )}
               </div>

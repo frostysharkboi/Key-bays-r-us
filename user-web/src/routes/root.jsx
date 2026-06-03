@@ -114,7 +114,10 @@ export default function Root(){
                   <h5 onClick={() => navigate('/Wishlist')}>Lista Zyczen</h5>
                   <h5>Zarzadzaj kontem</h5>
                   {userData.type == "seller" && (
-                    <h5>Dodaj oferte</h5>
+                    <h5 onClick={() => navigate("/Create-Offer")}>Dodaj oferte</h5>
+                  )}
+                  {userData.type == "admin" && (
+                    <h5>Panel Admina</h5>
                   )}
                   <h5 onClick={LogOutUser}>Wyloguj sie</h5>
                 </>
@@ -126,7 +129,7 @@ export default function Root(){
 
       {/* Karuzela sterowana przez Reacta (Pierwszy statyczny obrazek usunięty zgodnie z prośbą) */}
       <div className="row m-3 p-3 text-center">
-        <div className="carousel slide carousel-fade">
+        <div className="carousel slide carousel-fade w-25">
           <div className="carousel-inner">
             {formatedGames.map((e, index) => {
               return (

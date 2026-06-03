@@ -123,6 +123,11 @@ export default function Root() {
     }
   }
 
+  function LogOutUser() {
+    logout();
+    navigate("/", { replace: true });
+  }
+
   return (
     <>
     <div className="container-fluid">
@@ -137,14 +142,20 @@ export default function Root() {
           <h1 onClick={() => navigate('/')}>Keys &apos;R&apos; Us</h1>
         </div>
 
+      {/* Dropdown menu konta */}
         <div className='col-4'>
           <div className="dropdown">
-            <button className="dropbtn font">{userData.isLogged ? userData.login : "Gosc"}</button>
+            <button className="dropbtn font" id="nick">
+              {userData.isLogged ? userData.login : "Gosc"}
+            </button>
             <div className="dropdown-content fw-bold">
-              {!userData.isLogged ? <h5 onClick={() => navigate("/Login")}>Zaloguj sie</h5> : (
+              {!userData.isLogged ? (
+                <h5 onClick={() => navigate("/Login")}>Zaloguj sie</h5>
+              ) : (
                 <>
-                  <h5 onClick={() => navigate("/Wishlist")}>Lista życzen</h5>
-                  <h5 onClick={logout}>Wyloguj sie</h5>
+                  <h5 onClick={() => navigate('/Wishlist')}>Lista Zyczen</h5>
+                  <h5>Zarzadzaj kontem</h5>
+                  <h5 onClick={LogOutUser}>Wyloguj sie</h5>
                 </>
               )}
             </div>

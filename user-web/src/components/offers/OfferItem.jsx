@@ -4,9 +4,11 @@ import { axiosPath } from '../../App';
 import { UserContext } from '../user-context/UserContext';
 
 export default function OfferItem({ offer, userData, gameId, openedOfferId, setOpenedOfferId }) {
-  const [forWho, changePerson] = useState(userData.login);
+  const [forWho, changePerson] = useState(userData.id);
   const [showPurchase, changeVisibility] = useState([]);
-
+  const [AllUsers, getAllUsers] = useState(null);
+  const [forWhoButBetter, changeWho] = useState(true);
+  const [allTrans, getTrans] = useState(null);
   /*
   function showButton(offerId) {
     let boobies = [...showPurchase];
@@ -26,14 +28,58 @@ export default function OfferItem({ offer, userData, gameId, openedOfferId, setO
   }
 
   function GetInContact(){
-    let popup = confirm(`Źródła komunikacji z sprzedawcą\nTag Discord: ${offer.discord_tag}\nCzy chcesz przejść do DM sprzedawcy?`);
-    //const sellerLink = `https://discordapp.com/channels/@me/${}/`;
-    if(popup == true){
-      console.log("Link czy cuś");
+    if(userData.type != "seller") {
+      let popup = confirm(`Źródła komunikacji z sprzedawcą\nTag Discord: ${offer.discord_tag}\nCzy będziesz negocjować o tą ofertę?`);
+      if(popup == true){
+        let receiverId = userData.id;
+        AllUsers.forEach(user => {
+          if(user.id == forWho && user.id != userData.id){
+            receiverId = user.id;
+          }
+        });
+        console.log(`${userData} | ${receiverId} | ${offer.id}`);
+
+        let ifRecieverIsTheSame = false;
+        if(allTrans != null){
+          allTrans.forEach(element => {
+            if(element.reciever_id == receiverId){
+              ifRecieverIsTheSame = true;
+            }
+          });
+        }
+
+        if(ifRecieverIsTheSame == false){
+          axios.post(`${axiosPath}/transactions/add`, {
+            offerId: offer.id,
+            buyerId: userData.id,
+            receiverId: receiverId,
+            status: "Pending"
+          }).then(() => {
+            console.log("Chyba przeszło?");
+            alert("Transakcja została dodana");
+          }).catch((err) => {
+            alert("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
+            console.error(err);
+          });
+        } else {
+          alert("Z jakiegoś powodu, transkacja nie mogła dojść do skutku");
+        }
+      }
     } else {
-      console.log("nigg");
+      alert("Przepraszamy\nZe względu na politykę naszego sklepu, sprzedawcy nie mogą kupować kluczy od innych sprzedawców.");
     }
   }
+
+  useEffect(() => {
+    axios.get(`${axiosPath}/users/getThemAll`).then((res) => {
+      getAllUsers(res.data);
+      console.log("Dane userów\n", res.data);
+    });
+    axios.get(`${axiosPath}/transactions/getAll`).then((res) => {
+      getTrans(res.data);
+      console.log("Transakcje\n", res.data);
+    })
+  }, []);
 
   const isVisible = openedOfferId === offer.id;
 
@@ -50,22 +96,29 @@ export default function OfferItem({ offer, userData, gameId, openedOfferId, setO
       
       {offer != null && isVisible && (
         <div id={offer.id}>
-          <select onChange={(e) => changePerson(e.target.value)} value={forWho}>
-            <option value={userData.login}>Dla mnie</option>
-            <option value="Other">Dla kogoś innego</option>
+          <select onChange={() => changeWho(!forWhoButBetter)}>
+            <option value={true}>Dla mnie</option>
+            <option value={false}>Dla kogoś innego</option>
           </select>
           
-          {forWho !== userData.login && (
+          {forWhoButBetter == false && (
             <div>
-              <input type="text" onChange={(e) => changePerson(e.target.value)} />
+              <input list="allUsers" type="text" onChange={(e) => changePerson(e.target.value)} />
+              <datalist id="allUsers">
+                {AllUsers.map((user) => (
+                  <option key={user.id} value={user.login}>{user.login}</option>
+                ))}
+              </datalist>
               <h5><button onClick={() => GetInContact()}>Zgiftuj</button></h5>
             </div>
           )}
-          {forWho === userData.login && (
+
+          {forWhoButBetter == true && (
             <div>
               <h5><button onClick={() => GetInContact()}>Kup</button></h5>
             </div>
           )}
+
       </div>
       )}
       
