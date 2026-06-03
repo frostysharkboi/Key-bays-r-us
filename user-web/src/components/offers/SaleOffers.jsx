@@ -22,11 +22,13 @@ export default function SaleOffers({ gameId }) {
     // Zapytanie do naszego lokalnego backendu proxy
     axios.get(`${axiosPath}/key_offers/offersForGames`, { params: { id: gameId } })
       .then((res) => {
-        if (res.data && res.data[0].id != null) {
-          GetOffers(res.data);
-          console.log("Dane zostały pobrane\n", res.data);
-        } else {
-          setError(true);
+        if(res.data != null && res.data.length > 0){
+          if (res.data && res.data[0].id != null) {
+            GetOffers(res.data);
+            console.log("Dane zostały pobrane\n", res.data);
+          } else {
+            setError(true);
+          }
         }
         setLoading(false);
       })
