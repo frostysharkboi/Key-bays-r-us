@@ -85,13 +85,17 @@ export default function Root() {
     });
 
     (offerAsObject.key.length > 14 && offerAsObject.key.length < 51) ? offerChekcs.key = true : setErrorBoxText("Klucz jest nieprawidłowy"); 
+    
+    (offerPrice != null)? null : setErrorBoxText("Oferta musi być wycieniona");
+    (offerOther != null)? null : setErrorBoxText("Oferta musi zawierać opis");
 
-    if(offerChekcs.key == true && offerChekcs.title == true) return true;
+    if(offerChekcs.key == true && offerChekcs.title == true && offerPrice != null && offerOther != null) return true;
     return false
   }
 
   function AddOfferToDb(){
     if(CheckIfDataIsGood() == true){
+      if(confirm("Czy na pewno chcesz wystawić tą ofertę?\nWciśnij ok, by wystawić.") == true){
         axios.post(`${axiosPath}/key_offers/add`, {
             key: offerAsObject.key,
             price: offerAsObject.price,
@@ -101,10 +105,21 @@ export default function Root() {
             status: "Activie"
         }).then(() => {
             console.log("Chyba przeszło?");
+            let popup = alert("Dodano ofertę", "Twoja oferta właśnie została wystawiona", "ok");
+            if(popup == true){
+              navigate("/");
+            }
         }).catch((err) => {
             setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
             console.error(err);
         });
+        navigate("/");
+      } else {
+        setTitle("");
+        setPrice("");
+        setOther("");
+        setKey("");
+      }
     }
   }
 
@@ -143,7 +158,7 @@ export default function Root() {
           <div>
             <label>Podaj grę, jaką chcesz wystawić</label>
             <br />
-            <input list="availableGames" onChange={(e) => getTitleAndId(e)}/>
+            <input list="availableGames" onChange={(e) => getTitleAndId(e)} value={offerTitle}/>
             <datalist id="availableGames">
                 {games.map((game) => (
                     <option key={game.id} value={game.title}/>
@@ -152,15 +167,15 @@ export default function Root() {
           </div>
           <div>
             <label>Podaj klucz gry</label>
-            <input type="text" onChange={(e) => setKey(e.target.value)}/>
+            <input type="text" onChange={(e) => setKey(e.target.value)} value={offerKey}/>
           </div>
           <div>
             <label>Podaj sugerowaną cenę sprzedaży</label>
-            <input type="number" min="1" onChange={(e) => setPrice(e.target.value)}/>
+            <input type="number" min="1" onChange={(e) => setPrice(e.target.value)} value={offerPrice}/>
           </div>
           <div>
             <label>Podaj opis oferty</label>
-            <textarea rows="4" cols="50" onChange={(e) => setOther(e.target.value)}/>
+            <textarea rows="4" cols="50" onChange={(e) => setOther(e.target.value)} value={offerOther}/>
           </div>
           <div>
             <button onClick={() => AddOfferToDb()}>Dodaj Oferte</button>
