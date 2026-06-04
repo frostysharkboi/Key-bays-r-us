@@ -185,6 +185,11 @@ export default function Root() {
       return false;
     }
   }
+  
+  function LogOutUser() {
+    logout();
+    navigate("/", { replace: true });
+  }
 
   return (
     <>
