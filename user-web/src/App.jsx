@@ -50,8 +50,6 @@ function App() {
     getAllGames();
   }, []);
 
-
-
   // Wygenerowanie tabeli w html z danymi
   const columns = React.useMemo(() => [
     {
@@ -68,8 +66,6 @@ function App() {
       }
     }
   ], []);
-
-
 
   // Obsługa funkcji tabeli (tu większośc rzeczy po prostu wklejałem wdg zapotrzebowań innych funkcji np. wyszukiwanie, sortowanie i filtrowanie)
   const table = useReactTable({
