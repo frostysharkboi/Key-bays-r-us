@@ -219,12 +219,7 @@ app.get("/games/reviews", async (req, res) => {
 app.get('/api/reviews', async (req, res) => {
   const { gameId } = req.query;
   try {
-    const sql = `
-      SELECT r.*, u.login 
-      FROM ratings r 
-      JOIN users u ON r.user_id = u.id 
-      WHERE r.game_id = ?
-    `;
+    const sql = `SELECT r.*, u.login FROM ratings r JOIN users u ON r.user_id = u.id WHERE r.game_id = ${gameId}`;
     const result = await db.pool.query(sql, [gameId]);
     res.json(result);
   } catch (err) {
@@ -243,9 +238,9 @@ app.get('/api/transactions/check-purchase', async (req, res) => {
   }
 
   try {
-    const sql = `SELECT COUNT(t.id) FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.reciever_id = ? AND ko.game_id = ? AND t.status = 'Success' LIMIT 1`;
+    const sql = `SELECT COUNT(t.id) FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.reciever_id = ${userId} AND ko.game_id = ${gameId} AND t.status = 'Success'`;
 
-    const result = await db.pool.query(sql, [userId, gameId]);
+    const result = await db.pool.query(sql);
     res.json({ hasPurchased: result > 0 });
   } catch (err) {
     console.error("Błąd bazy danych:", err);

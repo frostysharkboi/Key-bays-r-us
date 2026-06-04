@@ -36,12 +36,7 @@ export default function ReviewsSection({ gameId }) {
         // 3. BEZPIECZNE SPRAWDZANIE ZAKUPU: Wymuszamy rzutowanie na typ Number na wypadek,
         // gdyby React próbował wysłać do bazy stringi lub wartości tekstowe typu "null"/"undefined".
         if (userData?.isLogged && userData?.id && !isAdmin) {
-            axios.get(`${axiosPath}/api/transactions/check-purchase`, {
-                params: {
-                    userId: Number(userData.id),
-                    gameId: Number(gameId)
-                }
-            })
+            axios.get(`${axiosPath}/api/transactions/check-purchase`, { params: { userId: Number(userData.id), gameId: Number(gameId) } })
                 .then(res => {
                     setHasPurchased(res.data.hasPurchased);
                 })
