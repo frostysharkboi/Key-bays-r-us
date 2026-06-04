@@ -1,7 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
-import { axiosPath } from '../../App';
-import { UserContext } from '../user-context/UserContext';
+import React, { useState } from 'react';
 
 export default function OfferItem({ offer, userData, gameId, openedOfferId, setOpenedOfferId }) {
   const [forWho, changePerson] = useState(userData.id);
@@ -21,11 +18,8 @@ export default function OfferItem({ offer, userData, gameId, openedOfferId, setO
   }
   */
 
-  function showButton() {
-    setOpenedOfferId(
-      openedOfferId === offer.id ? null : offer.id
-    );
-  }
+    // POPRAWKA: Usunęliśmy stąd blokujący warunek "if (!isAdmin && ...)", 
+    // ponieważ rodzic (SaleOffers) już zajął się odrzuceniem złych statusów.
 
   function GetInContact(){
     if(userData.type != "seller") {

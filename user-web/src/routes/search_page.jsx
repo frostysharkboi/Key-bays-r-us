@@ -7,16 +7,16 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import './root.css';
 import { axiosPath } from "../App";
 
-export default function SearchPage(){
+export default function SearchPage() {
   const { userData, logout } = useContext(UserContext);
-  
-  const [globalFilter, setGlobalFilter] = useState(""); 
-  const [sorting, setSorting] = useState([]);           
+
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 8 });
 
-  const [games, setGames] = useState([]);               
-  const [tags, setTags] = useState([]);                 
-  const [filterTags, setFilterTags] = useState([]);     
+  const [games, setGames] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [filterTags, setFilterTags] = useState([]);
   const [SearchThisTitle, changeTitle] = useState("");
 
   const navigate = useNavigate();
@@ -27,21 +27,21 @@ export default function SearchPage(){
       setGlobalFilter(location.state.Title);
     }
   }, [location.state]);
-  
+
   const GenreId = location.state?.GenreId;
 
   // Pobranie przefiltrowanej listy gier z backendu
   const getFilteredGames = () => {
     const outputTags = filterTags.filter(tag => tag.isSelected).map(tag => tag.id);
-    
-    axios.get(`${axiosPath}/games/tagsort`, { 
-      params: { tags: outputTags }, 
+
+    axios.get(`${axiosPath}/games/tagsort`, {
+      params: { tags: outputTags },
       paramsSerializer: params => "tags=" + params.tags.join("&tags=")
     })
-    .then((res) => {
-      setGames(res.data);
-    })
-    .catch(err => console.error("Błąd pobierania gier:", err));
+      .then((res) => {
+        setGames(res.data);
+      })
+      .catch(err => console.error("Błąd pobierania gier:", err));
   };
 
   // Pobranie listy wszystkich tagów/gatunków z bazy danych
@@ -73,16 +73,16 @@ export default function SearchPage(){
 
   // Struktura kolumn tabeli
   const columns = useMemo(() => [
-    { 
-      header: "ID", 
-      accessorKey: "id", 
-      cell: (info) => <b>{info.getValue()}</b> 
+    {
+      header: "ID",
+      accessorKey: "id",
+      cell: (info) => <b>{info.getValue()}</b>
     },
     { header: "Title", accessorKey: "title" },
     { header: "About", accessorKey: "about", enableSorting: false },
-    { 
-      header: "Image", 
-      accessorKey: "cover_img", 
+    {
+      header: "Image",
+      accessorKey: "cover_img",
       enableSorting: false,
       cell: (info) => <img src={info.getValue()} alt={`Cover of ${info.row.original.title}`} width={200} />
     }
@@ -164,88 +164,93 @@ export default function SearchPage(){
                   </div> 
                 </div>
               </div>
-            
-              {/* Główna sekcja z tabelą i panelami bocznymi */}
-              <h3 className='mx-4 mt-4 p-4 font'>Wyniki Wyszukiwania</h3>
-                <div className="row px-4 pb-4">
-                  <div className="col-12 col-lg-4 custom-border border-dark">
-                    <h3 className='mx-4 mt-4 p-3 text-center font'>Filtry:</h3>
-                    <div className="addpanel box-idk">
-                      <div className="addpaneldiv row p-2 pe-4">
-                        <h2 className='font'>Tytul</h2>
-                        <input className='col p-2 inp-srch' type="text" value={globalFilter ?? ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder='Search...'/>
-                      </div>
-                      <div className='addpaneldiv col p-2 pe-4'>
-                        <h2 className='font'>Gatunki</h2>
-                        {filterTags.map((t) => (
-                          <div className='row' key={t.id}>
-                            <input className='btn-check col' type="checkbox" name={`Gat_${t.id}`} id={`Gat_${t.id}`} checked={t.isSelected}
-                              onChange={(e) => {setFilterTags(prev => prev.map(
-                                tag => tag.id === t.id ? { ...tag, isSelected: e.target.checked } : tag
-                              ));}}
-                            />
-                            <label htmlFor={`Gat_${t.id}`}
-                              className={`p-2 m-1 btn-kirk border border-6 ${ t.isSelected || !anySelected ? "btn-zaz" : "btn-odz" }`}
-                            >{t.tag}</label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col">
-                    <table className='table border border-3 table-sm table-striped table-hover ms-3'>
-                      <thead>
-                        {table.getHeaderGroups().map(hg => (
-                          <tr className='table-part-top border border-3' key={hg.id}>
-                            {hg.headers.map(header => (
-                              <th key={header.id} onClick={header.column.getToggleSortingHandler()} style={{ cursor: header.column.getCanSort() ? "pointer" : "default" }}>
-                                {header.column.getIsSorted() === "desc" ? "↑ " : (header.column.getIsSorted() === "asc" ? "↓ " : "")}
-                                {flexRender(header.column.columnDef.header, header.getContext())}
-                                {header.column.getIsSorted() === "desc" ? " ↑" : (header.column.getIsSorted() === "asc" ? " ↓" : "")}
-                              </th>
-                            ))}
-                          </tr>
-                        ))}
-                      </thead>
-                      <tbody>
-                        {rows.map((row) => (
-                          <tr key={row.id} onClick={() => RedirectToGamePage(parseInt(row.getVisibleCells()[0].getValue()))} style={{cursor: 'pointer'}}>
-                            {row.getVisibleCells().map((cell) => (
-                              <td key={cell.id}>
-                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                        {Array.from({ length: emptyRowCount }).map((_, idx) => (
-                          <tr key={`empty-${idx}`} className="empty-row">
-                            <td colSpan={columns.length} style={{ height: "48px", opacity: 0 }}></td>
-                          </tr>
-                        ))}
-                        <tr>
-                          <td colSpan={columns.length}>
-                            <div className="d-flex justify-content-between align-items-center">
-                              <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.firstPage()} disabled={!table.getCanPreviousPage()}> First </button>
-                              <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}> Previous </button>
-                              <span>Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}</span>
-                              <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>Next</button>
-                              <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.lastPage()} disabled={!table.getCanNextPage()}>Last</button>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-        
-                {/* Stopka */}
-                <div className="row m-3 p-3 text-center">
-                  <div className='col'>
-                    <p>Kontakt</p>
-                    <p>Mail: biurokeysrus@gmail.com</p>          
-                  </div>
-                </div>
             </div>
+          </div>
+        </div>
+
+        {/* Główna sekcja z tabelą i panelami bocznymi */}
+        <h3 className='mx-4 mt-4 p-4 font'>Wyniki Wyszukiwania</h3>
+        <div className="row px-4 pb-4">
+          <div className="col-12 col-lg-4 custom-border border-dark">
+            <h3 className='mx-4 mt-4 p-3 text-center font'>Filtry:</h3>
+            <div className="addpanel box-idk">
+              <div className="addpaneldiv row p-2 pe-4">
+                <h2 className='font'>Tytul</h2>
+                <input className='col p-2 inp-srch' type="text" value={globalFilter ?? ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder='Search...' />
+              </div>
+              <div className='addpaneldiv col p-2 pe-4'>
+                <h2 className='font'>Gatunki</h2>
+                {filterTags.map((t) => (
+                  <div className='row' key={t.id}>
+                    <input className='btn-check col' type="checkbox" name={`Gat_${t.id}`} id={`Gat_${t.id}`} checked={t.isSelected}
+                      onChange={(e) => {
+                        setFilterTags(prev => prev.map(
+                          tag => tag.id === t.id ? { ...tag, isSelected: e.target.checked } : tag
+                        ));
+                      }}
+                    />
+                    <label htmlFor={`Gat_${t.id}`}
+                      className={`p-2 m-1 btn-kirk border border-6 ${t.isSelected || !anySelected ? "btn-zaz" : "btn-odz"}`}
+                    >{t.tag}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="col">
+            <table className='table border border-3 table-sm table-striped table-hover ms-3'>
+              <thead>
+                {table.getHeaderGroups().map(hg => (
+                  <tr className='table-part-top border border-3' key={hg.id}>
+                    {hg.headers.map(header => (
+                      <th key={header.id} onClick={header.column.getToggleSortingHandler()} style={{ cursor: header.column.getCanSort() ? "pointer" : "default" }}>
+                        {header.column.getIsSorted() === "desc" ? "↑ " : (header.column.getIsSorted() === "asc" ? "↓ " : "")}
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.column.getIsSorted() === "desc" ? " ↑" : (header.column.getIsSorted() === "asc" ? " ↓" : "")}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody>
+                {rows.map((row) => (
+                  <tr key={row.id} onClick={() => RedirectToGamePage(parseInt(row.getVisibleCells()[0].getValue()))} style={{ cursor: 'pointer' }}>
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+                {Array.from({ length: emptyRowCount }).map((_, idx) => (
+                  <tr key={`empty-${idx}`} className="empty-row">
+                    <td colSpan={columns.length} style={{ height: "48px", opacity: 0 }}></td>
+                  </tr>
+                ))}
+                <tr>
+                  <td colSpan={columns.length}>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.firstPage()} disabled={!table.getCanPreviousPage()}> First </button>
+                      <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}> Previous </button>
+                      <span>Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}</span>
+                      <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>Next</button>
+                      <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.lastPage()} disabled={!table.getCanNextPage()}>Last</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Stopka */}
+        <div className="row m-3 p-3 text-center">
+          <div className='col'>
+            <p>Kontakt</p>
+            <p>Mail: biurokeysrus@gmail.com</p>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

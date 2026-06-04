@@ -5,9 +5,9 @@ import { UserContext } from '../user-context/UserContext';
 import OfferItem from './OfferItem';
 
 export default function SaleOffers({ gameId }) {
-  const { userData, logout } = useContext(UserContext);
+  const { userData } = useContext(UserContext);
 
-  const [offersData, GetOffers] = useState(null);
+  const [offersData, setOffersData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [openedOfferId, setOpenedOfferId] = useState(null);
@@ -17,9 +17,8 @@ export default function SaleOffers({ gameId }) {
 
     setLoading(true);
     setError(false);
+    console.log("=== URUCHOMIENIE POBIERANIA DANYCH ===");
 
-    console.log("Zaczyna pobierać dane. Id gry nie było puste.");
-    // Zapytanie do naszego lokalnego backendu proxy
     axios.get(`${axiosPath}/key_offers/offersForGames`, { params: { id: gameId } })
       .then((res) => {
         if(res.data != null && res.data.length > 0){
@@ -30,15 +29,20 @@ export default function SaleOffers({ gameId }) {
             setError(true);
           }
         }
+
+        // Wyłączamy ładowanie dopiero, gdy cała logika (pobranie + filtry) się zakończyła
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Błąd pobierania danych ofert", err);
+        console.error("Błąd pobierania ofert dla gry:", err);
         setError(true);
         setLoading(false);
       });
-  }, [gameId]);
 
+    // Reagujemy zarówno na zmianę oglądanej gry, jak i na zalogowanie/wczytanie profilu użytkownika
+  }, [gameId, userData]);
+
+  // Widok ładowania
   if (loading) {
     return (
       <div className='row m-3 p-3 text-center border border-3 offer'>
@@ -48,7 +52,8 @@ export default function SaleOffers({ gameId }) {
     );
   }
 
-  if (error || !offersData) {
+  // Widok błędu lub braku ofert
+  if (error || offersData.length === 0) {
     return (
       <div className='row m-3 p-3 text-center border border-3 offer'>
         <p className='font fw-bold'>Oferty sklepu</p>
@@ -57,16 +62,17 @@ export default function SaleOffers({ gameId }) {
     );
   }
 
+  // Widok poprawnie wyrenderowanych ofert
   return (
     <div className='row m-3 p-3 text-center border border-3 offer'>
       <p className='font fw-bold'>Oferty sklepu</p>
       <div className="container-fluid">
         <div className="row flex-row flex-nowrap overflow-auto">
           {offersData.map((offer) => (
-            <OfferItem 
-              key={offer.id} 
-              offer={offer} 
-              userData={userData} 
+            <OfferItem
+              key={offer.id}
+              offer={offer}
+              userData={userData}
               gameId={gameId}
               openedOfferId={openedOfferId}
               setOpenedOfferId={setOpenedOfferId}

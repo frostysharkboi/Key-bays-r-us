@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { axiosPath } from '../../App';
 
-export default function UserOffers({ gameId }){
+export default function UserOffers({ gameId }) {
 
-    const [offersData, GetOffers] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
+  const [offersData, GetOffers] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-    useEffect(() => {
+  useEffect(() => {
     if (!gameId) return;
 
     setLoading(true);
@@ -33,7 +33,7 @@ export default function UserOffers({ gameId }){
       });
   }, [gameId]);
 
-    if (loading) {
+  if (loading) {
     return (
       <div className='row m-3 p-3 text-center border border-3 offer'>
         <p className='font fw-bold'>Oferty sklepu</p>
@@ -55,19 +55,19 @@ export default function UserOffers({ gameId }){
     <div className='row m-3 p-3 text-center border border-3 offer'>
       <p className='font fw-bold'>Oferty sklepu</p>
       <div className="container-fluid">
-      <div className="row flex-row flex-nowrap overflow-auto">
-        {offersData.map((offer) => (
-          <div key={offer.id} className="col-3">
-            <h2>{offer.login}</h2>
-            <p>
-              <h5>{offer.other}</h5>
-              <h5>Cena: {offer.suggested_price} zł.</h5>
-              <h5>Status: {offer.status}</h5>
-            </p>
-          </div>
-        ))}
+        <div className="row flex-row flex-nowrap overflow-auto">
+          {offersData.map((offer) => (
+            <div key={offer.id} className="col-3">
+              <h2>{offer.login}</h2>
+              <p>
+                <h5>{offer.other}</h5>
+                <h5>Cena: {offer.suggested_price} zł.</h5>
+                <h5>Status: {Array.isArray(offer.status) ? offer.status[0] : offer.status}</h5>
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
-  </div>
     </div>
   );
 }
