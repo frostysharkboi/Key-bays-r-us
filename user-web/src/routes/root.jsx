@@ -44,6 +44,7 @@ export default function Root() {
 
   useEffect(() => {
     getGames();
+    console.log(userData);
   }, []);
 
   useEffect(() => {

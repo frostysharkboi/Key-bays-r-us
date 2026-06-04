@@ -1,97 +1,121 @@
 import React, { useState } from 'react';
 
 export default function OfferItem({ offer, userData, gameId, openedOfferId, setOpenedOfferId }) {
-    const isAdmin = userData && userData.type === 'admin';
-    const [forWho, setForWho] = useState(userData ? userData.login : '');
-    const isVisible = openedOfferId === offer.id;
-
-    // POPRAWKA: Bezpiecznie wyciągamy status i usuwamy z niego białe znaki
-    const cleanStatus = (Array.isArray(offer.status) ? offer.status[0] : String(offer.status)).trim();
+  const [forWho, changePerson] = useState(userData.id);
+  const [showPurchase, changeVisibility] = useState([]);
+  const [AllUsers, getAllUsers] = useState(null);
+  const [forWhoButBetter, changeWho] = useState(true);
+  const [allTrans, getTrans] = useState(null);
+  /*
+  function showButton(offerId) {
+    let boobies = [...showPurchase];
+    boobies.forEach(element => {
+      if(element.id == offerId){
+        element.isVisible = true;
+      };
+    });
+    changeVisibility(boobies);
+  }
+  */
 
     // POPRAWKA: Usunęliśmy stąd blokujący warunek "if (!isAdmin && ...)", 
     // ponieważ rodzic (SaleOffers) już zajął się odrzuceniem złych statusów.
 
-    const showButton = () => {
-        if (isVisible) {
-            setOpenedOfferId(null);
+  function GetInContact(){
+    if(userData.type != "seller") {
+      let popup = confirm(`Źródła komunikacji z sprzedawcą\nTag Discord: ${offer.discord_tag}\nCzy będziesz negocjować o tą ofertę?`);
+      if(popup == true){
+        let receiverId = userData.id;
+        AllUsers.forEach(user => {
+          if(user.id == forWho && user.id != userData.id){
+            receiverId = user.id;
+          }
+        });
+        console.log(`${userData} | ${receiverId} | ${offer.id}`);
+
+        let ifRecieverIsTheSame = false;
+        if(allTrans != null){
+          allTrans.forEach(element => {
+            if(element.reciever_id == receiverId){
+              ifRecieverIsTheSame = true;
+            }
+          });
+        }
+
+        if(ifRecieverIsTheSame == false){
+          axios.post(`${axiosPath}/transactions/add`, {
+            offerId: offer.id,
+            buyerId: userData.id,
+            receiverId: receiverId,
+            status: "Pending"
+          }).then(() => {
+            console.log("Chyba przeszło?");
+            alert("Transakcja została dodana");
+          }).catch((err) => {
+            alert("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
+            console.error(err);
+          });
         } else {
-            setOpenedOfferId(offer.id);
+          alert("Z jakiegoś powodu, transkacja nie mogła dojść do skutku");
         }
-    };
+      }
+    } else {
+      alert("Przepraszamy\nZe względu na politykę naszego sklepu, sprzedawcy nie mogą kupować kluczy od innych sprzedawców.");
+    }
+  }
 
-    const changePerson = (value) => {
-        setForWho(value);
-    };
+  useEffect(() => {
+    axios.get(`${axiosPath}/users/getThemAll`).then((res) => {
+      getAllUsers(res.data);
+      console.log("Dane userów\n", res.data);
+    });
+    axios.get(`${axiosPath}/transactions/getAll`).then((res) => {
+      getTrans(res.data);
+      console.log("Transakcje\n", res.data);
+    })
+  }, []);
 
-    const GetInContact = () => {
-        if (!userData) {
-            alert("Musisz być zalogowany, aby dokonać zakupu!");
-            return;
-        }
+  const isVisible = openedOfferId === offer.id;
 
-        const targetName = forWho === 'Other' ? "kogoś innego" : "Ciebie";
-        let popup = confirm(`Chcesz kupić grę z oferty sprzedawcy ${offer.login} dla ${targetName}?\nCena: ${offer.suggested_price} zł.`);
-
-        if (popup) {
-            console.log("Inicjalizacja transakcji dla oferty o ID:", offer.id);
-        }
-    };
-
-    return (
-        <div className="col-3 border p-3 m-2 bg-light rounded shadow-sm" style={{ minWidth: '250px' }}>
-            <h2>{offer.login}</h2>
-            <div className="my-2">
-                <h5 className="text-secondary">{offer.other || 'Brak opisu'}</h5>
-                <h5>Cena: <span className="text-success fw-bold">{offer.suggested_price} zł.</span></h5>
-
-                <h5>
-                    Status:{' '}
-                    {/* POPRAWKA: Używamy cleanStatus, by kolory tekstu działały poprawnie */}
-                    <span className={cleanStatus === 'Active' ? 'text-primary' : 'text-danger'}>
-                        {cleanStatus}
-                    </span>
-                </h5>
+  return (
+    <div className="col-3">
+      <h2>{offer.login}</h2>
+      <div>
+        <h5>{offer.other}</h5>
+        <h5>Cena: {offer.suggested_price} zł.</h5>
+        <h5>Status: {offer.status}</h5>
+      </div>
+      <button onClick={() => showButton()}>Wiecej</button>
+      
+      
+      {offer != null && isVisible && (
+        <div id={offer.id}>
+          <select onChange={() => changeWho(!forWhoButBetter)}>
+            <option value={true}>Dla mnie</option>
+            <option value={false}>Dla kogoś innego</option>
+          </select>
+          
+          {forWhoButBetter == false && (
+            <div>
+              <input list="allUsers" type="text" onChange={(e) => changePerson(e.target.value)} />
+              <datalist id="allUsers">
+                {AllUsers.map((user) => (
+                  <option key={user.id} value={user.login}>{user.login}</option>
+                ))}
+              </datalist>
+              <h5><button onClick={() => GetInContact()}>Zgiftuj</button></h5>
             </div>
+          )}
 
-            <button className="btn btn-outline-primary btn-sm w-100" onClick={showButton}>
-                {isVisible ? 'Mniej' : 'Wiecej'}
-            </button>
+          {forWhoButBetter == true && (
+            <div>
+              <h5><button onClick={() => GetInContact()}>Kup</button></h5>
+            </div>
+          )}
 
-            {offer != null && isVisible && (
-                <div id={`offer-details-${offer.id}`} className="mt-3 p-2 border-top text-start">
-                    <label className="form-label fw-bold" style={{ fontSize: '0.85rem' }}>Przeznaczenie klucza:</label>
-                    <select
-                        className="form-select form-select-sm mb-2"
-                        onChange={(e) => changePerson(e.target.value)}
-                        value={forWho === userData?.login ? userData?.login : 'Other'}
-                    >
-                        {userData && <option value={userData.login}>Dla mnie</option>}
-                        <option value="Other">Dla kogoś innego</option>
-                    </select>
-
-                    {forWho !== userData?.login && (
-                        <div className="mt-2">
-                            <input
-                                type="text"
-                                className="form-control form-control-sm mb-2"
-                                placeholder="Wpisz login lub email obdarowywanego"
-                                onChange={(e) => changePerson(e.target.value)}
-                            />
-                            <button className="btn btn-warning btn-sm w-100" onClick={GetInContact}>
-                                Zgiftuj
-                            </button>
-                        </div>
-                    )}
-
-                    {forWho === userData?.login && (
-                        <div className="mt-2">
-                            <button className="btn btn-success btn-sm w-100" onClick={GetInContact}>
-                                Kup teraz
-                            </button>
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
-    );
+      </div>
+      )}
+      
+    </div>
+  );
 }

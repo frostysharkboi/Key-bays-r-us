@@ -90,6 +90,10 @@ export default function GamePage() {
       </div>
     ) : <p>BRAK RECENZJI</p>;
   }
+  function LogOutUser() {
+    logout();
+    navigate("/", { replace: true });
+  }
 
   return (
     <div className="container-fluid col">
@@ -179,8 +183,9 @@ export default function GamePage() {
         </div>
       </div>
 
-      {/* Oferty */}
-      <SaleOffers gameId={GameId} />
+      {userData.isLogged && gameData && (
+        <SaleOffers gameId={GameId} />
+      )}
 
       {/* Recenzje */}
       <ReviewsSection gameId={GameId} />

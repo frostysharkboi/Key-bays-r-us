@@ -21,34 +21,13 @@ export default function SaleOffers({ gameId }) {
 
     axios.get(`${axiosPath}/key_offers/offersForGames`, { params: { id: gameId } })
       .then((res) => {
-        console.log("1. Dane dotarły z backendu:", res.data);
-
-        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
-          const isAdmin = userData && userData.type === 'admin';
-          console.log("2. Czy zalogowany użytkownik to admin?", isAdmin);
-
-          // Filtrowanie z uwzględnieniem, że status może być tablicą (np. ['Active'])
-          let filtered = isAdmin ? res.data : res.data.filter((offer) => {
-            const currentStatus = Array.isArray(offer.status) ? offer.status[0] : String(offer.status);
-            return currentStatus.trim() === 'Active' || currentStatus.trim() === 'Other';
-          });
-
-          console.log("3. Dane po przefiltrowaniu:", filtered);
-
-          // Sortowanie (własne oferty na początku)
-          if (userData && userData.id) {
-            filtered = [...filtered].sort((a, b) => {
-              const aIsMine = a.seller_id === userData.id ? 1 : 0;
-              const bIsMine = b.seller_id === userData.id ? 1 : 0;
-              return bIsMine - aIsMine;
-            });
+        if(res.data != null && res.data.length > 0){
+          if (res.data && res.data[0].id != null) {
+            GetOffers(res.data);
+            console.log("Dane zostały pobrane\n", res.data);
+          } else {
+            setError(true);
           }
-
-          console.log("4. Finalne dane zapisywane do stanu:", filtered);
-          setOffersData(filtered);
-        } else {
-          console.log("1. Backend zwrócił pustą tablicę lub błędny format.");
-          setOffersData([]);
         }
 
         // Wyłączamy ładowanie dopiero, gdy cała logika (pobranie + filtry) się zakończyła
