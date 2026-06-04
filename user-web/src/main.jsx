@@ -15,6 +15,7 @@ import LoginPage from "./routes/login_page.jsx";
 import RegistrationPage from "./routes/registration_page.jsx";
 import WishlistPage from "./routes/wishlist_page.jsx";
 import OffersPage from './routes/Offers_page.jsx';
+import TransactionsPage from './routes/Transactions_page.jsx';
 
 const router = createBrowserRouter([
   { path: "/", element: <Root />, errorElement: <ErrorPage /> },
@@ -23,7 +24,8 @@ const router = createBrowserRouter([
   { path: "Login", element: <LoginPage />, errorElement: <ErrorPage /> },
   { path: "Register", element: <RegistrationPage />, errorElement: <ErrorPage /> },
   { path: "Wishlist", element: <WishlistPage />, errorElement: <ErrorPage /> },
-  { path: "Offers", element: <OffersPage />, errorElement: <ErrorPage /> }
+  { path: "Offers", element: <OffersPage />, errorElement: <ErrorPage /> },
+  { path: "Transactions", element: <TransactionsPage />, errorElement: <ErrorPage /> }
 ]);
 
 createRoot(document.getElementById('root')).render(

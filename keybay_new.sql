@@ -21,6 +21,10 @@ SET time_zone = "+00:00";
 -- Database: `keybay`
 --
 
+DROP DATABASE IF EXISTS `keybay`;
+CREATE DATABASE `keybay`;
+USE `keybay`;
+
 -- --------------------------------------------------------
 
 --
@@ -3127,8 +3131,7 @@ ALTER TABLE `game_tags`
 --
 ALTER TABLE `key_offers`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_offers_games` (`game_id`),
-  ADD KEY `fk_offers_users` (`seller_id`);
+  ADD KEY `fk_offers_games_users` (`game_id`,`seller_id`);
 
 --
 -- Indexes for table `media`
@@ -3172,8 +3175,7 @@ ALTER TABLE `tags`
 ALTER TABLE `transactions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_tx_offers` (`offer_id`),
-  ADD KEY `fk_tx_buyer` (`buyer_id`),
-  ADD KEY `fk_tx_receiver` (`reciever_id`);
+  ADD KEY `fk_tx_buyer_reciever` (`buyer_id`,`reciever_id`);
 
 --
 -- Indexes for table `users`

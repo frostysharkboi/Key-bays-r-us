@@ -385,7 +385,7 @@ app.get("/transactions/transactionsByBuyer", async (req, res) => {
 
   try {
     const userId = req.query.id;
-    const sql = `SELECT g.id "id", title, cover_img, developer, about FROM wishlist w JOIN games g ON game_id = g.id WHERE user_id LIKE ${userId};`;
+    const sql = `SELECT t.id AS transaction_id, t.status AS transaction_status, t.reciever_id, ko.id AS offer_id, ko.suggested_price, ko.game_key, g.title AS game_title, u.login AS seller_login FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id JOIN users u ON ko.seller_id = u.id JOIN games g ON ko.game_id = g.id WHERE t.buyer_id = ${id};`;
     const result = await db.pool.query(sql);
     res.json(result);
   } catch (err) {
@@ -432,8 +432,7 @@ app.get("/:table", async (req, res) => {
 
 });
 
-
-// Reszta bardziej pod stronke admina
+// Create
 
 //dodanie recenzji
 app.post('/api/reviews', async (req, res) => {
@@ -448,18 +447,35 @@ app.post('/api/reviews', async (req, res) => {
   }
 });
 
-// Create
+// Zatwierdzenie transakcji
+app.post("/transactions/confirm", async (req, res) => {
+  const { transactionId, enteredKey } = req.body;
 
-//dodanie recenzji
-app.post('/api/reviews', async (req, res) => {
-  const { game_id, user_id, rating, other } = req.body;
+  if (!transactionId || !enteredKey) return res.status(400).json({ error: "Brak wymaganych danych transakcji lub klucza." });
+
   try {
-    const sql = 'INSERT INTO ratings (game_id, user_id, rating, other) VALUES (?, ?, ?, ?)';
-    await db.pool.query(sql, [game_id, user_id, String(rating), other]); // rzutujemy rating na String, bo w bazie to ENUM
-    res.sendStatus(201);
+    const verifySql = `SELECT ko.game_key, t.offer_id FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.id = ${transactionId} AND t.status = 'Pending'`;
+    const rows = await db.pool.query(verifySql);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Nie znaleziono aktywnej transakcji." });
+    }
+
+    const { game_key, offer_id } = rows[0];
+
+    if (enteredKey !== game_key) {
+      return res.status(400).json({ error: "Wprowadzony klucz gry jest niepoprawny!" });
+    }
+
+    await db.pool.query(`UPDATE transactions SET status = 'Success' WHERE id = ${transactionId}`);
+    await db.pool.query(`UPDATE transactions SET status = 'Cancelled' WHERE offer_id = ${offer_id} AND id != ${transactionId}`);
+    await db.pool.query(`UPDATE key_offers SET status = 'Closed' WHERE id = ${offer_id}`);
+
+    res.json({ success: true, message: "Transakcja została pomyślnie zatwierdzona!" });
+
   } catch (err) {
     console.error(err);
-    res.status(500).send(err);
+    res.status(500).json({ error: "Błąd serwera podczas przetwarzania transakcji." });
   }
 });
 
@@ -491,9 +507,7 @@ app.post("/users/adduser", async (req, res) => {
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({
-      error: "Błąd serwera"
-    });
+    res.status(500).json({ error: "Błąd serwera" });
   }
 });
 
