@@ -5,9 +5,9 @@ import { UserContext } from '../user-context/UserContext';
 import OfferItem from './OfferItem';
 
 export default function SaleOffers({ gameId }) {
-  const { userData, logout } = useContext(UserContext);
+  const { userData } = useContext(UserContext);
 
-  const [offersData, GetOffers] = useState(null);
+  const [offersData, setOffersData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [openedOfferId, setOpenedOfferId] = useState(null);
@@ -17,31 +17,53 @@ export default function SaleOffers({ gameId }) {
 
     setLoading(true);
     setError(false);
-
-    console.log("Zaczyna pobierać dane. Id gry nie było puste.");
+    console.log("=== URUCHOMIENIE POBIERANIA DANYCH ===");
 
     axios.get(`${axiosPath}/key_offers/offersForGames`, { params: { id: gameId } })
       .then((res) => {
+        console.log("1. Dane dotarły z backendu:", res.data);
+
         if (res.data && Array.isArray(res.data) && res.data.length > 0) {
           const isAdmin = userData && userData.type === 'admin';
+          console.log("2. Czy zalogowany użytkownik to admin?", isAdmin);
 
-          let validOffers = isAdmin ? res.data : res.data.filter((offer) => offer.status === 'Active' || offer.status === 'Other');
+          // Filtrowanie z uwzględnieniem, że status może być tablicą (np. ['Active'])
+          let filtered = isAdmin ? res.data : res.data.filter((offer) => {
+            const currentStatus = Array.isArray(offer.status) ? offer.status[0] : String(offer.status);
+            return currentStatus.trim() === 'Active' || currentStatus.trim() === 'Other';
+          });
 
+          console.log("3. Dane po przefiltrowaniu:", filtered);
+
+          // Sortowanie (własne oferty na początku)
           if (userData && userData.id) {
-            validOffers = validOffers.sort((a, b) => {
+            filtered = [...filtered].sort((a, b) => {
               const aIsMine = a.seller_id === userData.id ? 1 : 0;
               const bIsMine = b.seller_id === userData.id ? 1 : 0;
               return bIsMine - aIsMine;
             });
           }
 
-          GetOffers(validOffers);
-          console.log("Posortowane oferty (własne na początku):\n", validOffers);
-        } else GetOffers([]);
+          console.log("4. Finalne dane zapisywane do stanu:", filtered);
+          setOffersData(filtered);
+        } else {
+          console.log("1. Backend zwrócił pustą tablicę lub błędny format.");
+          setOffersData([]);
+        }
+
+        // Wyłączamy ładowanie dopiero, gdy cała logika (pobranie + filtry) się zakończyła
         setLoading(false);
       })
-  }, [gameId]);
+      .catch((err) => {
+        console.error("Błąd pobierania ofert dla gry:", err);
+        setError(true);
+        setLoading(false);
+      });
 
+    // Reagujemy zarówno na zmianę oglądanej gry, jak i na zalogowanie/wczytanie profilu użytkownika
+  }, [gameId, userData]);
+
+  // Widok ładowania
   if (loading) {
     return (
       <div className='row m-3 p-3 text-center border border-3 offer'>
@@ -51,7 +73,8 @@ export default function SaleOffers({ gameId }) {
     );
   }
 
-  if (error || !offersData || offersData.length === 0) {
+  // Widok błędu lub braku ofert
+  if (error || offersData.length === 0) {
     return (
       <div className='row m-3 p-3 text-center border border-3 offer'>
         <p className='font fw-bold'>Oferty sklepu</p>
@@ -60,6 +83,7 @@ export default function SaleOffers({ gameId }) {
     );
   }
 
+  // Widok poprawnie wyrenderowanych ofert
   return (
     <div className='row m-3 p-3 text-center border border-3 offer'>
       <p className='font fw-bold'>Oferty sklepu</p>

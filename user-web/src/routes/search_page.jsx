@@ -6,8 +6,6 @@ import { UserContext } from '../components/user-context/UserContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './root.css';
 import { axiosPath } from "../App";
-import Header from '../components/header/Header';
-import Footer from '../components/footer/Footer';
 
 export default function SearchPage() {
   const { userData, logout } = useContext(UserContext);
@@ -19,6 +17,7 @@ export default function SearchPage() {
   const [games, setGames] = useState([]);
   const [tags, setTags] = useState([]);
   const [filterTags, setFilterTags] = useState([]);
+  const [SearchThisTitle, changeTitle] = useState("");
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -74,6 +73,11 @@ export default function SearchPage() {
 
   // Struktura kolumn tabeli
   const columns = useMemo(() => [
+    {
+      header: "ID",
+      accessorKey: "id",
+      cell: (info) => <b>{info.getValue()}</b>
+    },
     { header: "Title", accessorKey: "title" },
     { header: "About", accessorKey: "about", enableSorting: false },
     {
@@ -105,11 +109,55 @@ export default function SearchPage() {
     navigate('/Game', { state: { GameId: gameId } });
   }
 
+  function RedirectToSeaching(genreId) {
+    if (genreId == null) {
+      setGlobalFilter(SearchThisTitle);
+    } else {
+      navigate("/Search", { state: { GenreId: genreId } });
+    }
+  }
+
+  function LogOutUser() {
+    logout();
+    navigate("/", { replace: true });
+  }
+
   return (
     <>
       <div className="container-fluid">
         {/* Nagłówek Strony */}
-        <Header />
+        <div className="row m-3 p-3 text-center">
+          {/* Wyszukiwarka */}
+          <div className='col-4'>
+            <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)} />
+            <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
+          </div>
+
+          {/* Logo */}
+          <div className='col-4 fw-bolder logo'>
+            <h1 onClick={() => navigate('/')}>Keys &apos;R&apos; Us</h1>
+          </div>
+
+          {/* Menu profilu */}
+          <div className='col-4'>
+            <div className="dropdown">
+              {/* Dynamiczne wyświetlanie stanu zalogowania z kontekstu */}
+              <button className="dropbtn font" id="nick">
+                {userData.isLogged ? userData.login : "Gosc"}
+              </button>
+              <div className="dropdown-content fw-bold">
+                {!userData.isLogged ? (
+                  <h5 onClick={() => navigate("/Login")}>Zaloguj sie</h5>
+                ) : (
+                  <>
+                    <h5 onClick={() => navigate("/Wishlist")}>Moja Lista Zyczen</h5>
+                    <h5 onClick={LogOutUser}>Wyloguj sie</h5>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Główna sekcja z tabelą i panelami bocznymi */}
         <h3 className='mx-4 mt-4 p-4 font'>Wyniki Wyszukiwania</h3>
@@ -187,7 +235,12 @@ export default function SearchPage() {
         </div>
 
         {/* Stopka */}
-        <Footer />
+        <div className="row m-3 p-3 text-center">
+          <div className='col'>
+            <p>Kontakt</p>
+            <p>Mail: biurokeysrus@gmail.com</p>
+          </div>
+        </div>
       </div>
     </>
   );

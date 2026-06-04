@@ -5,9 +5,11 @@ export default function OfferItem({ offer, userData, gameId, openedOfferId, setO
     const [forWho, setForWho] = useState(userData ? userData.login : '');
     const isVisible = openedOfferId === offer.id;
 
-    if (!isAdmin && offer.status !== 'Active' && offer.status !== 'Other') {
-        return null;
-    }
+    // POPRAWKA: Bezpiecznie wyciągamy status i usuwamy z niego białe znaki
+    const cleanStatus = (Array.isArray(offer.status) ? offer.status[0] : String(offer.status)).trim();
+
+    // POPRAWKA: Usunęliśmy stąd blokujący warunek "if (!isAdmin && ...)", 
+    // ponieważ rodzic (SaleOffers) już zajął się odrzuceniem złych statusów.
 
     const showButton = () => {
         if (isVisible) {
@@ -44,8 +46,9 @@ export default function OfferItem({ offer, userData, gameId, openedOfferId, setO
 
                 <h5>
                     Status:{' '}
-                    <span className={offer.status === 'Active' ? 'text-primary' : 'text-danger'}>
-                        {offer.status}
+                    {/* POPRAWKA: Używamy cleanStatus, by kolory tekstu działały poprawnie */}
+                    <span className={cleanStatus === 'Active' ? 'text-primary' : 'text-danger'}>
+                        {cleanStatus}
                     </span>
                 </h5>
             </div>

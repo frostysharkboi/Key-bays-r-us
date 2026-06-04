@@ -7,36 +7,57 @@ import ReviewForm from './ReviewForm';
 
 export default function ReviewsSection({ gameId }) {
     const { userData } = useContext(UserContext);
-    console.log("=== DEBUG ADMINA ===", userData);
+
     const [reviews, setReviews] = useState([]);
     const [hasPurchased, setHasPurchased] = useState(false);
     const [editingReview, setEditingReview] = useState(null);
 
-    // Sprawdzamy czy zalogowany użytkownik to administrator
-    const isAdmin = userData.type === 'admin';
-    const myReview = reviews.find(r => r.user_id === userData.id);
+    // 1. Zabezpieczenie na wypadek, gdy userData jest null (użytkownik niezalogowany)
+    const isAdmin = userData?.type === 'admin';
+    const myReview = reviews.find(r => r.user_id === userData?.id);
 
+    // Funkcja pobierająca recenzje dla danej gry
     const fetchReviews = () => {
-        axios.get(`${axiosPath}/api/reviews`, { params: { gameId } })
+        axios.get(`${axiosPath}/api/reviews`, { params: { gameId: Number(gameId) } })
             .then(res => setReviews(res.data))
             .catch(err => console.error("Błąd pobierania recenzji:", err));
     };
 
     useEffect(() => {
         if (!gameId) return;
+
+        // 2. RESET STANÓW: Zapobiega sytuacji, w której uprawnienia z poprzednio oglądanej gry
+        // zostają przypisane do nowo otwartej gry przed zakończeniem strzału do bazy.
+        setHasPurchased(false);
+        setEditingReview(null);
+
         fetchReviews();
 
-        // Szary użytkownik musi mieć sprawdzony zakup, admina to nie obchodzi
-        if (userData.isLogged && userData.id && !isAdmin) {
-            axios.get(`${axiosPath}/transactions/check-purchase`, { params: { userId: userData.id, gameId } })
-                .then(res => setHasPurchased(res.data.hasPurchased))
-                .catch(err => console.error("Błąd sprawdzania zakupu:", err));
+        // 3. BEZPIECZNE SPRAWDZANIE ZAKUPU: Wymuszamy rzutowanie na typ Number na wypadek,
+        // gdyby React próbował wysłać do bazy stringi lub wartości tekstowe typu "null"/"undefined".
+        if (userData?.isLogged && userData?.id && !isAdmin) {
+            axios.get(`${axiosPath}/api/transactions/check-purchase`, {
+                params: {
+                    userId: Number(userData.id),
+                    gameId: Number(gameId)
+                }
+            })
+                .then(res => {
+                    setHasPurchased(res.data.hasPurchased);
+                })
+                .catch(err => {
+                    console.error("Błąd sprawdzania zakupu:", err);
+                    setHasPurchased(false); // W razie błędu sieci bezpiecznie blokujemy formularz
+                });
         }
-    }, [gameId, userData.id, userData.isLogged, isAdmin]);
+    }, [gameId, userData?.id, userData?.isLogged, isAdmin]);
 
+    // Funkcja obsługująca dodawanie oraz edycję recenzji
     const handleCreateOrUpdate = (formData) => {
+        if (!userData?.id) return;
+
         if (myReview) {
-            // AKTUALIZACJA: Wysyłamy body z game_id i user_id zamiast parametru w adresie URL
+            // AKTUALIZACJA: Wysyłamy body z poprawnym typem liczbowym
             axios.put(`${axiosPath}/api/reviews`, {
                 game_id: Number(gameId),
                 user_id: Number(userData.id),
@@ -47,9 +68,9 @@ export default function ReviewsSection({ gameId }) {
                     fetchReviews();
                     setEditingReview(null);
                 })
-                .catch(err => console.error(err));
+                .catch(err => console.error("Błąd podczas aktualizacji recenzji:", err));
         } else {
-            // DODAWANIE: Bez zmian, tabela ratings obsłuży to poprawnie
+            // DODAWANIE: Wysyłamy body z poprawnym typem liczbowym
             axios.post(`${axiosPath}/api/reviews`, {
                 game_id: Number(gameId),
                 user_id: Number(userData.id),
@@ -57,18 +78,19 @@ export default function ReviewsSection({ gameId }) {
                 other: formData.other
             })
                 .then(() => fetchReviews())
-                .catch(err => console.error("Błąd wysyłania Axios:", err));
+                .catch(err => console.error("Błąd podczas dodawania recenzji:", err));
         }
     };
 
+    // Funkcja obsługująca usuwanie recenzji (własnej lub cudzej przez Admina)
     const handleDelete = (reviewTargetUserId) => {
-        // Ponieważ przekazujemy id użytkownika, którego recenzję usuwamy (dla admina to będzie cudze id, dla nas nasze)
+        if (!userData?.id) return;
+
         const message = isAdmin && reviewTargetUserId !== userData.id
             ? "Czy jako Administrator chcesz usunąć recenzję tego użytkownika?"
             : "Czy na pewno chcesz usunąć swoją recenzję?";
 
         if (window.confirm(message)) {
-            // USUWANIE: Wysyłamy parametry w query stringu (gameId i userId)
             axios.delete(`${axiosPath}/api/reviews`, {
                 params: {
                     gameId: Number(gameId),
@@ -79,17 +101,17 @@ export default function ReviewsSection({ gameId }) {
                     fetchReviews();
                     if (editingReview?.user_id === reviewTargetUserId) setEditingReview(null);
                 })
-                .catch(err => console.error(err));
+                .catch(err => console.error("Błąd podczas usuwania recenzji:", err));
         }
     };
 
     return (
         <div className='box-idk row m-3 p-3 text-center border'>
-            <p className='font fw-bold fs-4'>Szczegolowe Recenzje</p>
+            <p className='font fw-bold fs-4'>Szczegółowe Recenzje</p>
             <div className="p-2">
 
-                {/* Warunek wejścia dla formularza: zalogowany i (kupił grę LUB jest adminem) */}
-                {userData.isLogged && (hasPurchased || isAdmin) && (
+                {/* Warunek wejścia: zalogowany i (kupił grę LUB jest adminem) */}
+                {userData?.isLogged && (hasPurchased || isAdmin) && (
                     <div className="mb-4">
                         {myReview && !editingReview ? (
                             <div className="alert alert-info text-start d-flex justify-content-between align-items-center border border-2 border-info">
@@ -99,7 +121,7 @@ export default function ReviewsSection({ gameId }) {
                                 </div>
                                 <div className="btn-group gap-2">
                                     <button className="btn btn-sm btn-primary" onClick={() => setEditingReview(myReview)}>Edytuj</button>
-                                    <button className="btn btn-sm btn-danger" onClick={() => handleDelete(myReview.user_id)}>Usun</button>
+                                    <button className="btn btn-sm btn-danger" onClick={() => handleDelete(myReview.user_id)}>Usuń</button>
                                 </div>
                             </div>
                         ) : (
@@ -117,16 +139,16 @@ export default function ReviewsSection({ gameId }) {
                     {reviews.length > 0 ? (
                         reviews.map(r => (
                             <ReviewItem
-                                key={`${r.game_id}-${r.user_id}`} // bezpieczny unikalny klucz łączony
+                                key={`${r.game_id}-${r.user_id}`}
                                 review={r}
-                                currentUserId={userData.id}
+                                currentUserId={userData?.id}
                                 isAdmin={isAdmin}
                                 onEdit={(rev) => setEditingReview(rev)}
-                                onDelete={handleDelete} // przekazuje r.user_id wewnątrz ReviewItem
+                                onDelete={handleDelete}
                             />
                         ))
                     ) : (
-                        <p className="text-muted font italic">Ta gra nie posiada jeszcze zadnych recenzji.</p>
+                        <p className="text-muted font italic">Ta gra nie posiada jeszcze żadnych recenzji.</p>
                     )}
                 </div>
 

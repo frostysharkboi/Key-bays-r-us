@@ -235,18 +235,20 @@ app.get('/api/reviews', async (req, res) => {
 
 // Sprawdzanie, czy użytkownik kupił grę (Status: Success)
 app.get('/api/transactions/check-purchase', async (req, res) => {
-  const { userId, gameId } = req.query;
+  const userId = Number(req.query.userId);
+  const gameId = Number(req.query.gameId);
+
+  if (isNaN(userId) || isNaN(gameId)) {
+    return res.json({ hasPurchased: false });
+  }
+
   try {
-    const sql = `
-      SELECT t.id FROM transactions t
-      JOIN key_offers ko ON t.offer_id = ko.id
-      WHERE t.user_id = ? AND ko.game_id = ? AND t.status = 'Success'
-      LIMIT 1
-    `;
+    const sql = `SELECT COUNT(t.id) FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.reciever_id = ? AND ko.game_id = ? AND t.status = 'Success' LIMIT 1`;
+
     const result = await db.pool.query(sql, [userId, gameId]);
-    res.json({ hasPurchased: result.length > 0 });
+    res.json({ hasPurchased: result > 0 });
   } catch (err) {
-    console.error(err);
+    console.error("Błąd bazy danych:", err);
     res.status(500).send(err);
   }
 });
