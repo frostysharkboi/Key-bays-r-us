@@ -36,12 +36,15 @@ export default function Root() {
     axios.get(`${axiosPath}/users/getThemAll`).then((res) => {
       getAllUsers(res.data);
     });
+
+    console.log(userData);
   }, []);
 
   useEffect(() => {
     if(allUsers != null){
       allUsers.forEach(user => {
-        if(user.login == userData.login){
+        //Tu nie działa.
+        if(user.id == userData.id){
           GetMainUser(user);
         }
       });
