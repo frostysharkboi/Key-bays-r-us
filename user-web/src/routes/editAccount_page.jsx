@@ -43,7 +43,6 @@ export default function Root() {
   useEffect(() => {
     if(allUsers != null){
       allUsers.forEach(user => {
-        //Tu nie działa.
         if(user.id == userData.id){
           GetMainUser(user);
         }
@@ -60,7 +59,8 @@ export default function Root() {
         pass: mainUser.pass,
         login: mainUser.login,
         phone: mainUser.phone,
-        discord: mainUser.discord_tag
+        discord: mainUser.discord_tag,
+        type: mainUser.type
       })
     }
   }, [mainUser]);
@@ -93,7 +93,16 @@ export default function Root() {
       }).then(() => {
         console.log("Chyba przeszło?");
         alert("Dane użytkownika zostały zaktualizowane");
-        navigate("/Edit-Account", { replace: true });
+        const newSessionData = {
+          id: newUser.id,
+          login: newUser.login,
+          isLogged: true,
+          discord_tag: newUser.discord,
+          type: newUser.type
+        }
+        const jsonData = JSON.stringify(newSessionData);
+        localStorage.setItem("user_session", jsonData);
+        window.location.reload();
       }).catch((err) => {
         alert("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
         console.error(err);
