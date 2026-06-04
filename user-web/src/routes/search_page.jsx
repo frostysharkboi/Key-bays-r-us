@@ -150,7 +150,7 @@ export default function SearchPage(){
                       ) : (
                         <>
                           <h5 onClick={() => navigate('/Wishlist')}>Lista Zyczen</h5>
-                          <h5>Zarzadzaj kontem</h5>
+                          <h5 onClick={() => navigate('/Edit-Account')}>Zarzadzaj kontem</h5>
                           {userData.type == "seller" && (
                             <h5 onClick={() => navigate("/Create-Offer")}>Dodaj oferte</h5>
                           )}

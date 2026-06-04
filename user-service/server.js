@@ -506,6 +506,53 @@ app.post("/users/adduser", async (req, res) => {
   }
 });
 
+//Zmiana danych usera
+app.post("/users/updateUser", async (req, res) => {
+  const {
+    id,
+    login,
+    email,
+    pass,
+    phone,
+    discord_tag
+  } = req.body;
+
+  try {
+    const columns = ["login", "email", "pass", "phone", "discord_tag"];
+    const values = [login, email, pass, phone, discord_tag];
+    const placeholders = ["?", "?", "?", "?", "?"];
+
+
+    let sql = `
+      UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[3]} = "${values[3]}", ${columns[4]} = "${values[4]}" WHERE id = ${id}
+    `;
+
+    if(phone == null && discord_tag == null){
+      sql = `
+        UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}" WHERE id = ${id}
+      `;
+    } else if (discord_tag == null && phone != null){
+      sql = `
+        UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[3]} = "${values[3]}" WHERE id = ${id}
+      `;
+    } else if (phone == null && discord_tag != null){
+      sql = `
+        UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[4]} = "${values[4]}" WHERE id = ${id}
+      `;
+    }
+
+    const result = db.pool.query(sql, values);
+
+    res.json(result);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Błąd serwera"
+    });
+  }
+});
+
 // Create
 
 // dodanie użytkowników

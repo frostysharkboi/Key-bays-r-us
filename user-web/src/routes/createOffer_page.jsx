@@ -154,7 +154,7 @@ export default function Root() {
               ) : (
                 <>
                   <h5 onClick={() => navigate('/Wishlist')}>Lista Zyczen</h5>
-                  <h5>Zarzadzaj kontem</h5>
+                  <h5 onClick={() => navigate('/Edit-Account')}>Zarzadzaj kontem</h5>
                   <h5 onClick={LogOutUser}>Wyloguj sie</h5>
                 </>
               )}
