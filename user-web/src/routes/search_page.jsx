@@ -124,52 +124,12 @@ export default function SearchPage() {
 
   return (
     <>
-        <div className="container-fluid">
-              {/* Nagłówek Strony */}
-              <div className="row m-3 p-3 text-center">
-                {/* Wyszukiwarka */}
-                <div className='col-4'>
-                  <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => changeTitle(e.target.value)}/>
-                  <button className='border border-3 btnsrch' onClick={() => RedirectToSeaching(null)}>SZUKAJ</button>
-                </div>
-        
-                {/* Logo */}
-                <div className='col-4 fw-bolder logo'>
-                  <h1 onClick={() => navigate('/')}>Keys &apos;R&apos; Us</h1>
-                </div>
-
-                {/* Dropdown menu konta */}
-                <div className='col-4'>
-                  <div className="dropdown">
-                    <button className="dropbtn font" id="nick">
-                      {userData.isLogged ? userData.login : "Gosc"}
-                    </button>
-                    <div className="dropdown-content fw-bold">
-                      {!userData.isLogged ? (
-                        <h5 onClick={() => navigate("/Login")}>Zaloguj sie</h5>
-                      ) : (
-                        <>
-                          <h5 onClick={() => navigate('/Wishlist')}>Lista Zyczen</h5>
-                          <h5 onClick={() => navigate('/Edit-Account')}>Zarzadzaj kontem</h5>
-                          {userData.type == "seller" && (
-                            <h5 onClick={() => navigate("/Create-Offer")}>Dodaj oferte</h5>
-                          )}
-                          {userData.type == "admin" && (
-                            <h5>Panel Admina</h5>
-                          )}
-                          <h5 onClick={LogOutUser}>Wyloguj sie</h5>
-                        </>
-                      )}
-                    </div>
-                  </div> 
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="container-fluid">
+        {/* Nagłówek Strony */}
+        <Header />
 
         {/* Główna sekcja z tabelą i panelami bocznymi */}
-        <h3 className='mx-4 mt-4 p-4 font'>Wyniki Wyszukiwania</h3>
+        < h3 className='mx-4 mt-4 p-4 font' > Wyniki Wyszukiwania</h3 >
         <div className="row px-4 pb-4">
           <div className="col-12 col-lg-4 custom-border border-dark">
             <h3 className='mx-4 mt-4 p-3 text-center font'>Filtry:</h3>
@@ -250,7 +210,7 @@ export default function SearchPage() {
             <p>Mail: biurokeysrus@gmail.com</p>
           </div>
         </div>
-      </div>
+      </div >
     </>
   );
 }

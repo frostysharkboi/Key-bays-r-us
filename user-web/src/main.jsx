@@ -26,8 +26,8 @@ const router = createBrowserRouter([
   { path: "Login", element: <LoginPage />, errorElement: <ErrorPage /> },
   { path: "Register", element: <RegistrationPage />, errorElement: <ErrorPage /> },
   { path: "Wishlist", element: <WishlistPage />, errorElement: <ErrorPage /> },
-  { path: "Create-Offer", element: <CreateOfferPage />, errorElement: <ErrorPage />},
-  { path: "Edit-Account", element: <EditAccountPage />, errorElement: <ErrorPage />}
+  { path: "Create-Offer", element: <CreateOfferPage />, errorElement: <ErrorPage /> },
+  { path: "Edit-Account", element: <EditAccountPage />, errorElement: <ErrorPage /> },
   { path: "Offers", element: <OffersPage />, errorElement: <ErrorPage /> },
   { path: "Transactions", element: <TransactionsPage />, errorElement: <ErrorPage /> }
 ]);

@@ -21,7 +21,7 @@ export default function SaleOffers({ gameId }) {
 
     axios.get(`${axiosPath}/key_offers/offersForGames`, { params: { id: gameId } })
       .then((res) => {
-        if(res.data != null && res.data.length > 0){
+        if (res.data != null && res.data.length > 0) {
           if (res.data && res.data[0].id != null) {
             GetOffers(res.data);
             console.log("Dane zostały pobrane\n", res.data);
