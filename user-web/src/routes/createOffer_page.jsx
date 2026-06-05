@@ -231,7 +231,7 @@ export default function Root() {
           <div className="mt-2">
             <label>Podaj sugerowana cene sprzedazy</label>
             <br />
-            <input type="number" min="1" onChange={(e) => setPrice(e.target.value)} value={offerPrice || ""} />
+            <input type="number" min="0.01" step={"0.01"} onChange={(e) => setPrice(e.target.value)} value={offerPrice || ""} />
           </div>
           <div className="mt-2">
             <label>Podaj opis oferty</label>

@@ -38,7 +38,7 @@ export default function OfferItem({ offer, userData, gameId, openedOfferId, setO
         if(allTrans != null){
           allTrans.forEach(element => {
             if(element.reciever_id == receiverId){
-              ifRecieverIsTheSame = true;
+              //ifRecieverIsTheSame = true;
             }
           });
         }
