@@ -234,14 +234,15 @@ app.get('/api/transactions/check-purchase', async (req, res) => {
   const gameId = Number(req.query.gameId);
 
   if (isNaN(userId) || isNaN(gameId)) {
+    console.log(`Błąd: brak danej: ${isNaN(userId) ? "userId" : "gameId"}`);
     return res.json({ hasPurchased: false });
   }
 
   try {
-    const sql = `SELECT COUNT(t.id) FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.reciever_id = ${userId} AND ko.game_id = ${gameId} AND t.status = 'Success'`;
+    const sql = `SELECT COUNT(t.id) AS amount FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.reciever_id = ${userId} AND ko.game_id = ${gameId} AND t.status = 'Success'`;
 
-    const result = await db.pool.query(sql);
-    res.json({ hasPurchased: result > 0 });
+    const [result] = await db.pool.query(sql);
+    res.json({ hasPurchased: parseInt(result.amount) > 0 });
   } catch (err) {
     console.error("Błąd bazy danych:", err);
     res.status(500).send(err);
