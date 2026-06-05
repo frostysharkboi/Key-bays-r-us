@@ -53,10 +53,9 @@ export default function WishlistButton({ gameId, userId, isLogged }) {
   };
 
   return (
-    <button 
-      className={`btn border border-3 w-100 fw-bold transition-all ${
-        isOnWishlist ? 'btn-danger border-danger' : 'btn-success border-success'
-      }`} 
+    <button
+      className={`btn border border-3 w-100 fw-bold transition-all ${isOnWishlist ? 'btn-danger border-danger' : 'btn-success border-success'
+        }`}
       onClick={handleToggle}
       disabled={loading}
     >

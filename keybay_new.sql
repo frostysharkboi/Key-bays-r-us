@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 31, 2026 at 06:12 PM
+-- Generation Time: Jun 03, 2026 at 09:57 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -16,14 +16,14 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
-  
+
 --
--- Database: `41188776_keysrus`
+-- Database: `keybay`
 --
 
-DROP DATABASE IF EXISTS 41188776_keysrus;
-CREATE DATABASE 41188776_keysrus;
-USE 41188776_keysrus;
+DROP DATABASE IF EXISTS `keybay`;
+CREATE DATABASE `keybay`;
+USE `keybay`;
 
 -- --------------------------------------------------------
 
@@ -1035,6 +1035,194 @@ CREATE TABLE `key_offers` (
   `status` set('Active','Closed','Other') NOT NULL DEFAULT 'Active',
   `suggested_price` decimal(60,0) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `key_offers`
+--
+
+INSERT INTO `key_offers` (`id`, `seller_id`, `game_id`, `game_key`, `other`, `status`, `suggested_price`) VALUES
+(1, 2, 10, 'KEY-8624-9312', 'Oferta testowa gry 10', 'Active', 24),
+(2, 3, 10, 'KEY-4220-3017', 'Oferta testowa gry 10', 'Closed', 18),
+(3, 1, 550, 'KEY-7028-7824', 'Oferta testowa gry 550', 'Closed', 158),
+(4, 3, 550, 'KEY-8508-9600', 'Oferta testowa gry 550', 'Active', 62),
+(5, 3, 4000, 'KEY-3637-2661', 'Oferta testowa gry 4000', 'Active', 18),
+(6, 2, 4000, 'KEY-1020-4691', 'Oferta testowa gry 4000', 'Active', 18),
+(7, 3, 12100, 'KEY-1875-2442', 'Oferta testowa gry 12100', 'Active', 106),
+(8, 1, 12100, 'KEY-8160-4988', 'Oferta testowa gry 12100', 'Closed', 167),
+(9, 3, 12120, 'KEY-8103-6745', 'Oferta testowa gry 12120', 'Closed', 166),
+(10, 1, 12120, 'KEY-8928-4209', 'Oferta testowa gry 12120', 'Active', 36),
+(11, 3, 21000, 'KEY-6087-4976', 'Oferta testowa gry 21000', 'Closed', 107),
+(12, 1, 21000, 'KEY-9171-1121', 'Oferta testowa gry 21000', 'Closed', 75),
+(13, 2, 39210, 'KEY-3827-2674', 'Oferta testowa gry 39210', 'Active', 197),
+(14, 2, 39210, 'KEY-9045-8638', 'Oferta testowa gry 39210', 'Closed', 116),
+(15, 3, 47870, 'KEY-3086-4016', 'Oferta testowa gry 47870', 'Closed', 196),
+(16, 1, 47870, 'KEY-4487-8437', 'Oferta testowa gry 47870', 'Active', 194),
+(17, 2, 50130, 'KEY-4649-5008', 'Oferta testowa gry 50130', 'Closed', 12),
+(18, 2, 57300, 'KEY-6205-4866', 'Oferta testowa gry 57300', 'Active', 88),
+(19, 3, 57300, 'KEY-5512-8634', 'Oferta testowa gry 57300', 'Closed', 150),
+(20, 2, 105600, 'KEY-5010-1140', 'Oferta testowa gry 105600', 'Active', 150),
+(21, 1, 108600, 'KEY-3571-4361', 'Oferta testowa gry 108600', 'Closed', 11),
+(22, 1, 108600, 'KEY-9531-8992', 'Oferta testowa gry 108600', 'Closed', 123),
+(23, 2, 203160, 'KEY-4745-1087', 'Oferta testowa gry 203160', 'Active', 162),
+(24, 2, 207140, 'KEY-4611-8664', 'Oferta testowa gry 207140', 'Active', 20),
+(25, 2, 220200, 'KEY-6984-8286', 'Oferta testowa gry 220200', 'Closed', 20),
+(26, 1, 220200, 'KEY-4947-1737', 'Oferta testowa gry 220200', 'Active', 27),
+(27, 1, 221100, 'KEY-2343-8061', 'Oferta testowa gry 221100', 'Closed', 100),
+(28, 3, 227300, 'KEY-1761-6288', 'Oferta testowa gry 227300', 'Closed', 140),
+(29, 2, 227940, 'KEY-6629-4872', 'Oferta testowa gry 227940', 'Active', 62),
+(30, 3, 234140, 'KEY-6006-6046', 'Oferta testowa gry 234140', 'Active', 35),
+(31, 1, 241930, 'KEY-9258-7884', 'Oferta testowa gry 241930', 'Closed', 23),
+(32, 2, 242050, 'KEY-9457-2541', 'Oferta testowa gry 242050', 'Closed', 17),
+(33, 2, 242050, 'KEY-2885-7249', 'Oferta testowa gry 242050', 'Closed', 170),
+(34, 2, 242760, 'KEY-2056-2074', 'Oferta testowa gry 242760', 'Active', 56),
+(35, 3, 242760, 'KEY-2605-7359', 'Oferta testowa gry 242760', 'Active', 199),
+(36, 1, 244210, 'KEY-8854-9177', 'Oferta testowa gry 244210', 'Active', 185),
+(37, 3, 250900, 'KEY-2781-6706', 'Oferta testowa gry 250900', 'Active', 119),
+(38, 2, 251570, 'KEY-4970-1980', 'Oferta testowa gry 251570', 'Active', 52),
+(39, 3, 251570, 'KEY-7478-3049', 'Oferta testowa gry 251570', 'Active', 196),
+(40, 1, 252490, 'KEY-7595-4987', 'Oferta testowa gry 252490', 'Active', 13),
+(41, 3, 252490, 'KEY-9727-8331', 'Oferta testowa gry 252490', 'Active', 41),
+(42, 1, 252950, 'KEY-4472-4684', 'Oferta testowa gry 252950', 'Closed', 179),
+(43, 2, 252950, 'KEY-3732-9188', 'Oferta testowa gry 252950', 'Active', 131),
+(44, 2, 261550, 'KEY-4667-5465', 'Oferta testowa gry 261550', 'Closed', 59),
+(45, 2, 264710, 'KEY-9450-2014', 'Oferta testowa gry 264710', 'Active', 151),
+(46, 2, 264710, 'KEY-3088-7292', 'Oferta testowa gry 264710', 'Active', 161),
+(47, 2, 270880, 'KEY-9499-1132', 'Oferta testowa gry 270880', 'Closed', 55),
+(48, 2, 271590, 'KEY-7399-9253', 'Oferta testowa gry 271590', 'Closed', 95),
+(49, 1, 273350, 'KEY-6282-8445', 'Oferta testowa gry 273350', 'Closed', 81),
+(50, 3, 284160, 'KEY-1843-3055', 'Oferta testowa gry 284160', 'Active', 173),
+(51, 1, 286570, 'KEY-7492-9094', 'Oferta testowa gry 286570', 'Active', 73),
+(52, 2, 286570, 'KEY-8223-6490', 'Oferta testowa gry 286570', 'Active', 131),
+(53, 3, 286690, 'KEY-7444-2749', 'Oferta testowa gry 286690', 'Active', 166),
+(54, 2, 286690, 'KEY-5194-1251', 'Oferta testowa gry 286690', 'Closed', 150),
+(55, 2, 287700, 'KEY-3698-3514', 'Oferta testowa gry 287700', 'Active', 104),
+(56, 3, 289070, 'KEY-6058-4727', 'Oferta testowa gry 289070', 'Closed', 83),
+(57, 2, 289070, 'KEY-7762-6596', 'Oferta testowa gry 289070', 'Active', 172),
+(58, 1, 291480, 'KEY-7776-8198', 'Oferta testowa gry 291480', 'Closed', 150),
+(59, 2, 291480, 'KEY-7513-1586', 'Oferta testowa gry 291480', 'Closed', 39),
+(60, 2, 294100, 'KEY-7293-5610', 'Oferta testowa gry 294100', 'Active', 98),
+(61, 3, 311340, 'KEY-8358-8776', 'Oferta testowa gry 311340', 'Active', 174),
+(62, 3, 311340, 'KEY-4185-4769', 'Oferta testowa gry 311340', 'Active', 16),
+(63, 2, 322170, 'KEY-7964-5095', 'Oferta testowa gry 322170', 'Closed', 191),
+(64, 2, 322170, 'KEY-6372-6072', 'Oferta testowa gry 322170', 'Active', 15),
+(65, 3, 322330, 'KEY-1580-1719', 'Oferta testowa gry 322330', 'Active', 49),
+(66, 3, 322330, 'KEY-9006-4096', 'Oferta testowa gry 322330', 'Active', 19),
+(67, 3, 346110, 'KEY-1476-7109', 'Oferta testowa gry 346110', 'Active', 54),
+(68, 3, 352400, 'KEY-3441-9960', 'Oferta testowa gry 352400', 'Closed', 41),
+(69, 2, 356190, 'KEY-8488-7082', 'Oferta testowa gry 356190', 'Active', 177),
+(70, 1, 365590, 'KEY-8571-6369', 'Oferta testowa gry 365590', 'Closed', 97),
+(71, 3, 370910, 'KEY-1937-5923', 'Oferta testowa gry 370910', 'Closed', 90),
+(72, 1, 381210, 'KEY-9139-9325', 'Oferta testowa gry 381210', 'Closed', 183),
+(73, 1, 391540, 'KEY-5056-2284', 'Oferta testowa gry 391540', 'Active', 78),
+(74, 3, 394360, 'KEY-6529-9023', 'Oferta testowa gry 394360', 'Active', 126),
+(75, 3, 413150, 'KEY-6070-6653', 'Oferta testowa gry 413150', 'Closed', 95),
+(76, 1, 424840, 'KEY-9634-1436', 'Oferta testowa gry 424840', 'Active', 79),
+(77, 3, 431960, 'KEY-5238-4425', 'Oferta testowa gry 431960', 'Closed', 103),
+(78, 3, 433340, 'KEY-9757-7688', 'Oferta testowa gry 433340', 'Closed', 161),
+(79, 1, 440900, 'KEY-4706-9072', 'Oferta testowa gry 440900', 'Active', 57),
+(80, 3, 440900, 'KEY-2405-5213', 'Oferta testowa gry 440900', 'Active', 175),
+(81, 1, 466240, 'KEY-7237-5640', 'Oferta testowa gry 466240', 'Active', 104),
+(82, 1, 466240, 'KEY-3802-5724', 'Oferta testowa gry 466240', 'Active', 141),
+(83, 1, 489830, 'KEY-3817-1467', 'Oferta testowa gry 489830', 'Closed', 70),
+(84, 3, 489830, 'KEY-7836-1497', 'Oferta testowa gry 489830', 'Active', 199),
+(85, 2, 518790, 'KEY-6400-6588', 'Oferta testowa gry 518790', 'Active', 67),
+(86, 2, 553850, 'KEY-6135-5437', 'Oferta testowa gry 553850', 'Active', 153),
+(87, 1, 553850, 'KEY-1371-6962', 'Oferta testowa gry 553850', 'Active', 45),
+(88, 1, 594650, 'KEY-4731-4911', 'Oferta testowa gry 594650', 'Active', 186),
+(89, 2, 594650, 'KEY-2749-2727', 'Oferta testowa gry 594650', 'Closed', 81),
+(90, 3, 646570, 'KEY-1282-1157', 'Oferta testowa gry 646570', 'Active', 198),
+(91, 1, 646910, 'KEY-8874-3754', 'Oferta testowa gry 646910', 'Closed', 182),
+(92, 3, 648350, 'KEY-5006-8481', 'Oferta testowa gry 648350', 'Active', 165),
+(93, 2, 648800, 'KEY-9187-9338', 'Oferta testowa gry 648800', 'Closed', 181),
+(94, 1, 648800, 'KEY-9051-8683', 'Oferta testowa gry 648800', 'Active', 121),
+(95, 3, 739630, 'KEY-5364-9735', 'Oferta testowa gry 739630', 'Active', 85),
+(96, 1, 739630, 'KEY-7651-2007', 'Oferta testowa gry 739630', 'Active', 75),
+(97, 3, 753640, 'KEY-3736-9865', 'Oferta testowa gry 753640', 'Active', 12),
+(98, 2, 787860, 'KEY-6980-6370', 'Oferta testowa gry 787860', 'Active', 198),
+(99, 3, 812140, 'KEY-6726-4238', 'Oferta testowa gry 812140', 'Closed', 179),
+(100, 2, 813780, 'KEY-8572-6701', 'Oferta testowa gry 813780', 'Active', 132),
+(101, 1, 813780, 'KEY-5132-5139', 'Oferta testowa gry 813780', 'Active', 185),
+(102, 2, 814380, 'KEY-8714-9477', 'Oferta testowa gry 814380', 'Active', 36),
+(103, 3, 814380, 'KEY-1328-3910', 'Oferta testowa gry 814380', 'Closed', 106),
+(104, 2, 863550, 'KEY-6594-7665', 'Oferta testowa gry 863550', 'Active', 169),
+(105, 2, 863550, 'KEY-8310-7866', 'Oferta testowa gry 863550', 'Active', 81),
+(106, 3, 892970, 'KEY-8956-2035', 'Oferta testowa gry 892970', 'Active', 185),
+(107, 1, 892970, 'KEY-3425-9689', 'Oferta testowa gry 892970', 'Active', 13),
+(108, 1, 945360, 'KEY-5794-4336', 'Oferta testowa gry 945360', 'Active', 58),
+(109, 1, 960090, 'KEY-6681-7711', 'Oferta testowa gry 960090', 'Closed', 168),
+(110, 3, 1063730, 'KEY-1740-3058', 'Oferta testowa gry 1063730', 'Active', 180),
+(111, 3, 1063730, 'KEY-7383-2555', 'Oferta testowa gry 1063730', 'Active', 149),
+(112, 3, 1086940, 'KEY-9451-6372', 'Oferta testowa gry 1086940', 'Active', 41),
+(113, 3, 1086940, 'KEY-8350-8230', 'Oferta testowa gry 1086940', 'Active', 117),
+(114, 2, 1091500, 'KEY-1749-4211', 'Oferta testowa gry 1091500', 'Closed', 111),
+(115, 1, 1142710, 'KEY-8329-5724', 'Oferta testowa gry 1142710', 'Closed', 44),
+(116, 1, 1142710, 'KEY-8352-5563', 'Oferta testowa gry 1142710', 'Closed', 26),
+(117, 1, 1144200, 'KEY-5913-3806', 'Oferta testowa gry 1144200', 'Closed', 185),
+(118, 2, 1144200, 'KEY-3511-2251', 'Oferta testowa gry 1144200', 'Active', 173),
+(119, 3, 1158310, 'KEY-8130-8700', 'Oferta testowa gry 1158310', 'Active', 181),
+(120, 2, 1158310, 'KEY-5591-6992', 'Oferta testowa gry 1158310', 'Closed', 161),
+(121, 1, 1167630, 'KEY-5717-4836', 'Oferta testowa gry 1167630', 'Closed', 116),
+(122, 3, 1167630, 'KEY-7493-3112', 'Oferta testowa gry 1167630', 'Active', 11),
+(123, 3, 1174180, 'KEY-3568-7821', 'Oferta testowa gry 1174180', 'Closed', 187),
+(124, 3, 1222680, 'KEY-2018-4758', 'Oferta testowa gry 1222680', 'Closed', 152),
+(125, 2, 1222680, 'KEY-2721-4932', 'Oferta testowa gry 1222680', 'Active', 126),
+(126, 3, 1244460, 'KEY-4309-2978', 'Oferta testowa gry 1244460', 'Active', 199),
+(127, 1, 1244460, 'KEY-8370-7181', 'Oferta testowa gry 1244460', 'Active', 195),
+(128, 3, 1245620, 'KEY-5130-2367', 'Oferta testowa gry 1245620', 'Active', 82),
+(129, 1, 1245620, 'KEY-5999-3875', 'Oferta testowa gry 1245620', 'Active', 186),
+(130, 1, 1262540, 'KEY-3453-6263', 'Oferta testowa gry 1262540', 'Active', 30),
+(131, 2, 1262540, 'KEY-2318-9150', 'Oferta testowa gry 1262540', 'Closed', 26),
+(132, 1, 1262560, 'KEY-5285-7312', 'Oferta testowa gry 1262560', 'Active', 24),
+(133, 2, 1293830, 'KEY-7128-2414', 'Oferta testowa gry 1293830', 'Active', 151),
+(134, 1, 1326470, 'KEY-5920-7335', 'Oferta testowa gry 1326470', 'Active', 177),
+(135, 3, 1332010, 'KEY-6568-3624', 'Oferta testowa gry 1332010', 'Closed', 124),
+(136, 3, 1332010, 'KEY-8906-1289', 'Oferta testowa gry 1332010', 'Active', 109),
+(137, 3, 1364780, 'KEY-7947-3053', 'Oferta testowa gry 1364780', 'Closed', 166),
+(138, 1, 1364780, 'KEY-2575-7058', 'Oferta testowa gry 1364780', 'Active', 169),
+(139, 2, 1366800, 'KEY-5818-8018', 'Oferta testowa gry 1366800', 'Closed', 65),
+(140, 2, 1443810, 'KEY-4021-9918', 'Oferta testowa gry 1443810', 'Closed', 190),
+(141, 3, 1458140, 'KEY-2886-8323', 'Oferta testowa gry 1458140', 'Closed', 93),
+(142, 3, 1551360, 'KEY-3360-7136', 'Oferta testowa gry 1551360', 'Active', 128),
+(143, 2, 1623730, 'KEY-2686-9606', 'Oferta testowa gry 1623730', 'Closed', 51),
+(144, 3, 1623730, 'KEY-8135-2011', 'Oferta testowa gry 1623730', 'Closed', 44),
+(145, 3, 1659040, 'KEY-7009-3839', 'Oferta testowa gry 1659040', 'Active', 119),
+(146, 3, 1659040, 'KEY-8935-3380', 'Oferta testowa gry 1659040', 'Closed', 138),
+(147, 1, 1671210, 'KEY-5581-6593', 'Oferta testowa gry 1671210', 'Closed', 120),
+(148, 1, 1817070, 'KEY-6546-9294', 'Oferta testowa gry 1817070', 'Closed', 154),
+(149, 2, 1938090, 'KEY-4317-5537', 'Oferta testowa gry 1938090', 'Active', 88),
+(150, 2, 1938090, 'KEY-1005-6270', 'Oferta testowa gry 1938090', 'Active', 186),
+(151, 3, 1966720, 'KEY-1139-1312', 'Oferta testowa gry 1966720', 'Closed', 34),
+(152, 3, 2050650, 'KEY-4889-7819', 'Oferta testowa gry 2050650', 'Active', 103),
+(153, 1, 2050650, 'KEY-1246-6578', 'Oferta testowa gry 2050650', 'Active', 13),
+(154, 2, 2131630, 'KEY-5667-4623', 'Oferta testowa gry 2131630', 'Active', 96),
+(155, 3, 2131640, 'KEY-5133-5501', 'Oferta testowa gry 2131640', 'Closed', 33),
+(156, 1, 2131650, 'KEY-5192-7895', 'Oferta testowa gry 2131650', 'Active', 92),
+(157, 3, 2215200, 'KEY-2267-7498', 'Oferta testowa gry 2215200', 'Closed', 45),
+(158, 1, 2246340, 'KEY-7467-4084', 'Oferta testowa gry 2246340', 'Active', 116),
+(159, 2, 2246340, 'KEY-5503-2367', 'Oferta testowa gry 2246340', 'Closed', 59),
+(160, 2, 2300320, 'KEY-9851-9215', 'Oferta testowa gry 2300320', 'Active', 126),
+(161, 1, 2300320, 'KEY-4698-5813', 'Oferta testowa gry 2300320', 'Closed', 93),
+(162, 1, 2344520, 'KEY-5948-4240', 'Oferta testowa gry 2344520', 'Active', 38),
+(163, 2, 2344520, 'KEY-7008-6628', 'Oferta testowa gry 2344520', 'Active', 33),
+(164, 2, 2358720, 'KEY-4611-9144', 'Oferta testowa gry 2358720', 'Active', 70),
+(165, 2, 2358720, 'KEY-3243-5825', 'Oferta testowa gry 2358720', 'Closed', 187),
+(166, 2, 2379780, 'KEY-6568-1779', 'Oferta testowa gry 2379780', 'Closed', 119),
+(167, 3, 2417610, 'KEY-3466-6590', 'Oferta testowa gry 2417610', 'Closed', 63),
+(168, 1, 2417610, 'KEY-6087-7739', 'Oferta testowa gry 2417610', 'Active', 19),
+(169, 3, 2483190, 'KEY-9541-8996', 'Oferta testowa gry 2483190', 'Closed', 123),
+(170, 3, 2483190, 'KEY-2279-2995', 'Oferta testowa gry 2483190', 'Active', 139),
+(171, 3, 2622380, 'KEY-7960-4418', 'Oferta testowa gry 2622380', 'Active', 119),
+(172, 3, 2622380, 'KEY-9336-5648', 'Oferta testowa gry 2622380', 'Active', 162),
+(173, 3, 2670630, 'KEY-2022-8142', 'Oferta testowa gry 2670630', 'Closed', 129),
+(174, 2, 2694490, 'KEY-1969-6421', 'Oferta testowa gry 2694490', 'Closed', 140),
+(175, 1, 2958130, 'KEY-5919-6293', 'Oferta testowa gry 2958130', 'Active', 67),
+(176, 2, 2958130, 'KEY-4493-9907', 'Oferta testowa gry 2958130', 'Closed', 158),
+(177, 1, 3164500, 'KEY-9677-9008', 'Oferta testowa gry 3164500', 'Closed', 115),
+(178, 2, 3164500, 'KEY-1945-9862', 'Oferta testowa gry 3164500', 'Active', 125),
+(179, 2, 3240220, 'KEY-1284-4513', 'Oferta testowa gry 3240220', 'Active', 172),
+(180, 3, 3241660, 'KEY-9994-7045', 'Oferta testowa gry 3241660', 'Active', 78),
+(181, 3, 3768760, 'KEY-2795-1362', 'Oferta testowa gry 3768760', 'Closed', 124),
+(182, 2, 3768760, 'KEY-7075-7619', 'Oferta testowa gry 3768760', 'Closed', 133);
 
 -- --------------------------------------------------------
 
@@ -2580,9 +2768,295 @@ CREATE TABLE `transactions` (
   `id` int(10) NOT NULL,
   `offer_id` int(10) NOT NULL,
   `buyer_id` int(10) NOT NULL,
-  `reciever-id` int(10) NOT NULL,
+  `reciever_id` int(10) NOT NULL,
   `status` enum('Pending','Success','Cancelled') NOT NULL DEFAULT 'Pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `transactions`
+--
+
+INSERT INTO `transactions` (`id`, `offer_id`, `buyer_id`, `reciever_id`, `status`) VALUES
+(1, 1, 8, 9, 'Cancelled'),
+(2, 1, 4, 6, 'Cancelled'),
+(3, 2, 7, 8, 'Success'),
+(4, 2, 8, 7, 'Cancelled'),
+(5, 2, 5, 8, 'Cancelled'),
+(6, 3, 8, 9, 'Success'),
+(7, 3, 5, 8, 'Cancelled'),
+(8, 8, 9, 8, 'Success'),
+(9, 8, 7, 9, 'Cancelled'),
+(10, 8, 7, 4, 'Cancelled'),
+(11, 9, 5, 7, 'Success'),
+(12, 9, 5, 4, 'Cancelled'),
+(13, 11, 5, 8, 'Success'),
+(14, 11, 8, 4, 'Cancelled'),
+(15, 11, 9, 7, 'Cancelled'),
+(16, 12, 8, 6, 'Success'),
+(17, 12, 9, 9, 'Cancelled'),
+(18, 12, 7, 4, 'Cancelled'),
+(19, 14, 5, 8, 'Success'),
+(20, 14, 6, 10, 'Cancelled'),
+(21, 14, 7, 8, 'Cancelled'),
+(22, 15, 10, 7, 'Success'),
+(23, 16, 6, 10, 'Pending'),
+(24, 17, 9, 7, 'Success'),
+(25, 19, 4, 7, 'Success'),
+(26, 19, 4, 9, 'Cancelled'),
+(27, 21, 10, 8, 'Success'),
+(28, 22, 6, 9, 'Success'),
+(29, 22, 4, 10, 'Cancelled'),
+(30, 23, 10, 7, 'Cancelled'),
+(31, 23, 8, 9, 'Cancelled'),
+(32, 25, 9, 4, 'Success'),
+(33, 25, 8, 4, 'Cancelled'),
+(34, 25, 6, 6, 'Cancelled'),
+(35, 26, 5, 9, 'Cancelled'),
+(36, 26, 10, 5, 'Pending'),
+(37, 26, 7, 7, 'Cancelled'),
+(38, 27, 4, 8, 'Success'),
+(39, 28, 8, 5, 'Success'),
+(40, 29, 4, 8, 'Pending'),
+(41, 29, 9, 10, 'Cancelled'),
+(42, 30, 10, 7, 'Pending'),
+(43, 30, 6, 6, 'Cancelled'),
+(44, 31, 4, 4, 'Success'),
+(45, 31, 6, 6, 'Cancelled'),
+(46, 32, 8, 5, 'Success'),
+(47, 32, 5, 7, 'Cancelled'),
+(48, 32, 7, 6, 'Cancelled'),
+(49, 33, 4, 4, 'Success'),
+(50, 33, 5, 10, 'Cancelled'),
+(51, 35, 10, 6, 'Cancelled'),
+(52, 35, 8, 9, 'Cancelled'),
+(53, 36, 10, 9, 'Pending'),
+(54, 37, 10, 5, 'Pending'),
+(55, 37, 4, 10, 'Pending'),
+(56, 37, 5, 5, 'Pending'),
+(57, 38, 9, 5, 'Pending'),
+(58, 38, 6, 7, 'Cancelled'),
+(59, 39, 5, 4, 'Pending'),
+(60, 39, 7, 9, 'Cancelled'),
+(61, 39, 7, 4, 'Cancelled'),
+(62, 40, 9, 9, 'Cancelled'),
+(63, 40, 8, 4, 'Cancelled'),
+(64, 41, 6, 6, 'Pending'),
+(65, 42, 5, 7, 'Success'),
+(66, 42, 7, 5, 'Cancelled'),
+(67, 44, 9, 5, 'Success'),
+(68, 44, 9, 6, 'Cancelled'),
+(69, 46, 10, 4, 'Pending'),
+(70, 46, 10, 10, 'Pending'),
+(71, 47, 5, 4, 'Success'),
+(72, 47, 10, 5, 'Cancelled'),
+(73, 47, 5, 8, 'Cancelled'),
+(74, 48, 7, 5, 'Success'),
+(75, 48, 6, 7, 'Cancelled'),
+(76, 48, 4, 6, 'Cancelled'),
+(77, 49, 6, 9, 'Success'),
+(78, 50, 8, 7, 'Pending'),
+(79, 50, 4, 4, 'Pending'),
+(80, 50, 8, 5, 'Pending'),
+(81, 51, 10, 9, 'Cancelled'),
+(82, 52, 6, 10, 'Pending'),
+(83, 52, 9, 7, 'Cancelled'),
+(84, 53, 7, 5, 'Cancelled'),
+(85, 53, 7, 4, 'Cancelled'),
+(86, 53, 5, 10, 'Cancelled'),
+(87, 54, 8, 10, 'Success'),
+(88, 54, 8, 6, 'Cancelled'),
+(89, 54, 10, 8, 'Cancelled'),
+(90, 56, 8, 5, 'Success'),
+(91, 56, 5, 5, 'Cancelled'),
+(92, 56, 7, 10, 'Cancelled'),
+(93, 57, 6, 7, 'Cancelled'),
+(94, 57, 7, 10, 'Cancelled'),
+(95, 57, 10, 8, 'Pending'),
+(96, 58, 6, 6, 'Success'),
+(97, 58, 7, 9, 'Cancelled'),
+(98, 59, 8, 6, 'Success'),
+(99, 59, 6, 8, 'Cancelled'),
+(100, 59, 6, 6, 'Cancelled'),
+(101, 60, 9, 7, 'Cancelled'),
+(102, 60, 8, 5, 'Cancelled'),
+(103, 63, 6, 5, 'Success'),
+(104, 64, 7, 5, 'Cancelled'),
+(105, 65, 9, 6, 'Cancelled'),
+(106, 65, 7, 8, 'Pending'),
+(107, 65, 5, 5, 'Cancelled'),
+(108, 68, 9, 8, 'Success'),
+(109, 68, 10, 6, 'Cancelled'),
+(110, 70, 7, 5, 'Success'),
+(111, 71, 7, 4, 'Success'),
+(112, 72, 9, 5, 'Success'),
+(113, 72, 8, 6, 'Cancelled'),
+(114, 72, 4, 4, 'Cancelled'),
+(115, 74, 6, 4, 'Pending'),
+(116, 74, 5, 6, 'Cancelled'),
+(117, 74, 4, 6, 'Pending'),
+(118, 75, 6, 7, 'Success'),
+(119, 76, 8, 6, 'Cancelled'),
+(120, 77, 6, 4, 'Success'),
+(121, 78, 9, 6, 'Success'),
+(122, 78, 8, 4, 'Cancelled'),
+(123, 79, 7, 4, 'Cancelled'),
+(124, 79, 6, 5, 'Cancelled'),
+(125, 79, 10, 5, 'Cancelled'),
+(126, 81, 10, 5, 'Cancelled'),
+(127, 81, 4, 4, 'Pending'),
+(128, 81, 7, 8, 'Cancelled'),
+(129, 83, 7, 5, 'Success'),
+(130, 83, 4, 5, 'Cancelled'),
+(131, 83, 6, 9, 'Cancelled'),
+(132, 84, 9, 4, 'Cancelled'),
+(133, 85, 8, 6, 'Pending'),
+(134, 85, 8, 4, 'Pending'),
+(135, 89, 6, 6, 'Success'),
+(136, 89, 4, 6, 'Cancelled'),
+(137, 89, 6, 8, 'Cancelled'),
+(138, 90, 10, 8, 'Cancelled'),
+(139, 91, 8, 6, 'Success'),
+(140, 91, 9, 4, 'Cancelled'),
+(141, 91, 5, 6, 'Cancelled'),
+(142, 92, 8, 8, 'Cancelled'),
+(143, 93, 9, 10, 'Success'),
+(144, 93, 8, 6, 'Cancelled'),
+(145, 93, 9, 10, 'Cancelled'),
+(146, 94, 6, 4, 'Cancelled'),
+(147, 99, 6, 5, 'Success'),
+(148, 99, 9, 8, 'Cancelled'),
+(149, 101, 5, 6, 'Cancelled'),
+(150, 101, 5, 5, 'Cancelled'),
+(151, 103, 7, 6, 'Success'),
+(152, 103, 10, 7, 'Cancelled'),
+(153, 103, 8, 10, 'Cancelled'),
+(154, 104, 10, 6, 'Pending'),
+(155, 104, 9, 8, 'Pending'),
+(156, 106, 5, 8, 'Cancelled'),
+(157, 106, 9, 8, 'Cancelled'),
+(158, 107, 5, 10, 'Cancelled'),
+(159, 109, 10, 5, 'Success'),
+(160, 109, 4, 10, 'Cancelled'),
+(161, 109, 6, 5, 'Cancelled'),
+(162, 111, 5, 8, 'Pending'),
+(163, 112, 4, 9, 'Pending'),
+(164, 112, 7, 9, 'Cancelled'),
+(165, 114, 8, 6, 'Success'),
+(166, 114, 5, 10, 'Cancelled'),
+(167, 114, 9, 5, 'Cancelled'),
+(168, 115, 6, 4, 'Success'),
+(169, 115, 8, 7, 'Cancelled'),
+(170, 115, 4, 8, 'Cancelled'),
+(171, 116, 10, 5, 'Success'),
+(172, 117, 8, 8, 'Success'),
+(173, 117, 10, 10, 'Cancelled'),
+(174, 117, 10, 8, 'Cancelled'),
+(175, 119, 10, 10, 'Cancelled'),
+(176, 120, 10, 8, 'Success'),
+(177, 120, 10, 10, 'Cancelled'),
+(178, 120, 4, 6, 'Cancelled'),
+(179, 121, 7, 10, 'Success'),
+(180, 123, 6, 5, 'Success'),
+(181, 124, 7, 5, 'Success'),
+(182, 127, 9, 5, 'Pending'),
+(183, 127, 4, 7, 'Cancelled'),
+(184, 128, 7, 5, 'Cancelled'),
+(185, 129, 8, 8, 'Cancelled'),
+(186, 130, 9, 7, 'Pending'),
+(187, 130, 10, 9, 'Cancelled'),
+(188, 131, 9, 6, 'Success'),
+(189, 131, 8, 4, 'Cancelled'),
+(190, 131, 8, 4, 'Cancelled'),
+(191, 132, 6, 5, 'Cancelled'),
+(192, 132, 5, 9, 'Cancelled'),
+(193, 132, 6, 5, 'Cancelled'),
+(194, 133, 5, 10, 'Cancelled'),
+(195, 134, 5, 9, 'Cancelled'),
+(196, 134, 4, 10, 'Pending'),
+(197, 134, 9, 9, 'Cancelled'),
+(198, 135, 4, 10, 'Success'),
+(199, 135, 10, 4, 'Cancelled'),
+(200, 136, 7, 4, 'Pending'),
+(201, 136, 9, 5, 'Cancelled'),
+(202, 136, 4, 8, 'Pending'),
+(203, 137, 7, 9, 'Success'),
+(204, 137, 6, 6, 'Cancelled'),
+(205, 139, 4, 9, 'Success'),
+(206, 140, 9, 10, 'Success'),
+(207, 140, 8, 5, 'Cancelled'),
+(208, 141, 9, 7, 'Success'),
+(209, 141, 4, 10, 'Cancelled'),
+(210, 141, 8, 4, 'Cancelled'),
+(211, 142, 4, 7, 'Cancelled'),
+(212, 142, 5, 7, 'Pending'),
+(213, 142, 7, 4, 'Cancelled'),
+(214, 143, 5, 7, 'Success'),
+(215, 143, 9, 4, 'Cancelled'),
+(216, 143, 7, 6, 'Cancelled'),
+(217, 144, 8, 6, 'Success'),
+(218, 144, 10, 10, 'Cancelled'),
+(219, 144, 8, 6, 'Cancelled'),
+(220, 146, 8, 10, 'Success'),
+(221, 146, 10, 7, 'Cancelled'),
+(222, 146, 5, 6, 'Cancelled'),
+(223, 147, 4, 7, 'Success'),
+(224, 148, 4, 10, 'Success'),
+(225, 148, 6, 10, 'Cancelled'),
+(226, 150, 10, 8, 'Cancelled'),
+(227, 150, 4, 4, 'Cancelled'),
+(228, 151, 7, 5, 'Success'),
+(229, 151, 9, 4, 'Cancelled'),
+(230, 151, 4, 6, 'Cancelled'),
+(231, 152, 5, 7, 'Pending'),
+(232, 152, 6, 5, 'Cancelled'),
+(233, 153, 5, 4, 'Pending'),
+(234, 154, 4, 4, 'Pending'),
+(235, 154, 6, 10, 'Pending'),
+(236, 154, 9, 8, 'Pending'),
+(237, 155, 4, 5, 'Success'),
+(238, 155, 8, 8, 'Cancelled'),
+(239, 156, 10, 4, 'Pending'),
+(240, 156, 10, 7, 'Cancelled'),
+(241, 156, 6, 10, 'Pending'),
+(242, 157, 9, 6, 'Success'),
+(243, 157, 5, 10, 'Cancelled'),
+(244, 158, 9, 4, 'Cancelled'),
+(245, 159, 9, 6, 'Success'),
+(246, 160, 6, 9, 'Cancelled'),
+(247, 160, 9, 10, 'Cancelled'),
+(248, 161, 8, 8, 'Success'),
+(249, 162, 8, 10, 'Pending'),
+(250, 162, 4, 8, 'Cancelled'),
+(251, 164, 10, 7, 'Pending'),
+(252, 165, 4, 7, 'Success'),
+(253, 165, 5, 9, 'Cancelled'),
+(254, 166, 8, 6, 'Success'),
+(255, 166, 4, 5, 'Cancelled'),
+(256, 167, 7, 10, 'Success'),
+(257, 167, 10, 10, 'Cancelled'),
+(258, 167, 8, 8, 'Cancelled'),
+(259, 168, 10, 9, 'Cancelled'),
+(260, 168, 6, 5, 'Cancelled'),
+(261, 169, 6, 9, 'Success'),
+(262, 173, 9, 10, 'Success'),
+(263, 174, 8, 4, 'Success'),
+(264, 175, 9, 9, 'Pending'),
+(265, 175, 7, 10, 'Pending'),
+(266, 175, 9, 7, 'Pending'),
+(267, 176, 10, 6, 'Success'),
+(268, 176, 5, 7, 'Cancelled'),
+(269, 176, 6, 10, 'Cancelled'),
+(270, 177, 4, 10, 'Success'),
+(271, 177, 4, 10, 'Cancelled'),
+(272, 177, 6, 10, 'Cancelled'),
+(273, 178, 4, 8, 'Pending'),
+(274, 179, 4, 4, 'Pending'),
+(275, 181, 10, 8, 'Success'),
+(276, 181, 8, 5, 'Cancelled'),
+(277, 181, 10, 6, 'Cancelled'),
+(278, 182, 4, 6, 'Success'),
+(279, 182, 7, 5, 'Cancelled'),
+(280, 182, 8, 9, 'Cancelled');
 
 -- --------------------------------------------------------
 
@@ -2657,9 +3131,7 @@ ALTER TABLE `game_tags`
 --
 ALTER TABLE `key_offers`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `UNIQUE` (`id`),
-  ADD KEY `key_offers_ibfk_1` (`seller_id`),
-  ADD KEY `key_offers_ibfk_2` (`game_id`);
+  ADD KEY `fk_offers_games_users` (`game_id`,`seller_id`);
 
 --
 -- Indexes for table `media`
@@ -2702,10 +3174,8 @@ ALTER TABLE `tags`
 --
 ALTER TABLE `transactions`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `UNIQUE` (`id`),
-  ADD UNIQUE KEY `zewnętrzny1` (`offer_id`),
-  ADD UNIQUE KEY `zewnętrzny2` (`buyer_id`),
-  ADD KEY `id_otrzymujący` (`reciever-id`);
+  ADD KEY `fk_tx_offers` (`offer_id`),
+  ADD KEY `fk_tx_buyer_reciever` (`buyer_id`,`reciever_id`);
 
 --
 -- Indexes for table `users`
@@ -2742,7 +3212,7 @@ ALTER TABLE `games`
 -- AUTO_INCREMENT for table `key_offers`
 --
 ALTER TABLE `key_offers`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=183;
 
 --
 -- AUTO_INCREMENT for table `media`
@@ -2760,13 +3230,13 @@ ALTER TABLE `tags`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=281;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- Constraints for dumped tables
@@ -2778,13 +3248,6 @@ ALTER TABLE `users`
 ALTER TABLE `game_tags`
   ADD CONSTRAINT `game_tags_ibfk_1` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`),
   ADD CONSTRAINT `game_tags_ibfk_2` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`);
-
---
--- Constraints for table `key_offers`
---
-ALTER TABLE `key_offers`
-  ADD CONSTRAINT `key_offers_ibfk_1` FOREIGN KEY (`seller_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `key_offers_ibfk_2` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`);
 
 --
 -- Constraints for table `media`
@@ -2810,14 +3273,6 @@ ALTER TABLE `opt_req`
 ALTER TABLE `ratings`
   ADD CONSTRAINT `ratings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `ratings_ibfk_2` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`);
-
---
--- Constraints for table `transactions`
---
-ALTER TABLE `transactions`
-  ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `key_offers` (`id`),
-  ADD CONSTRAINT `transactions_ibfk_2` FOREIGN KEY (`buyer_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `transactions_ibfk_3` FOREIGN KEY (`reciever-id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `wishlist`

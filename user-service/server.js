@@ -22,7 +22,7 @@ async function getTables() { // zwraca liste nazw tabel
 }
 
 async function getColumns(tableName) { // zwraca liste kolumn do danej tabeli
-  const rows = await db.pool.query(`SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?`,[tableName]);
+  const rows = await db.pool.query(`SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?`, [tableName]);
   return rows.map(r => r.COLUMN_NAME).filter(c => c !== "id");
 }
 
@@ -40,7 +40,7 @@ async function loadSchema() { // kombinuje obie listy getTables i getColumns zwr
 // (Wszystkie app.use MUSZĄ być przed definicjami tras app.get / app.post)
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors()); // <-- Ta linijka teraz poprawnie zabezpiecza również poniższy endpoint Steam
 
 // =========================================================================
@@ -48,7 +48,7 @@ app.use(cors()); // <-- Ta linijka teraz poprawnie zabezpiecza również poniżs
 // =========================================================================
 app.get('/api/steam-rating', async (req, res) => {
   const { appid } = req.query;
-  
+
   if (!appid) {
     return res.status(400).json({ error: 'Brak parametru appid' });
   }
@@ -56,14 +56,14 @@ app.get('/api/steam-rating', async (req, res) => {
   try {
     // Odpytujemy oficjalne, publiczne API Steam (User Reviews), które zwraca czyste statystyki ocen
     const reviewsResponse = await axios.get(`https://store.steampowered.com/appreviews/${appid}?json=1&language=all&purchase_type=all`);
-    
+
     const reviewSummary = reviewsResponse.data.query_summary;
-    
+
     if (reviewSummary && reviewSummary.total_reviews > 0) {
       // Obliczamy procent pozytywnych ocen
       const totalReviews = reviewSummary.total_reviews;
       const totalPositive = reviewSummary.total_positive;
-      
+
       // Przeliczamy procent na skalę 0-5
       const percentage = (totalPositive / totalReviews) * 100;
       const ratingScale5 = (percentage / 20).toFixed(1);
@@ -98,6 +98,20 @@ app.listen(port, async () => {
 // IMPLEMENTACJA OPERACJI CRUD
 
 // Read
+
+// Pobieranie wszystkich ofert (dla administratora lub ogólnej listy)
+app.get('/key_offers/allOffers', async (req, res) => {
+  const { userId, userRole } = req.query;
+  var sql = `SELECT ko.id, ko.game_id, g.title, ko.seller_id, u.login AS seller, ko.game_key, ko.other, ko.status, ko.suggested_price, u.login AS seller_login FROM key_offers ko LEFT JOIN games g ON ko.game_id = g.id LEFT JOIN users u ON ko.seller_id = u.id`;
+  if (userRole == "seller") sql += ` WHERE ko.seller_id = ${userId}`;
+  try {
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 //Wyswietlanie gier po kategoriach (by wyszukiwanie wciąż działało osobno);
 
@@ -201,6 +215,39 @@ app.get("/games/reviews", async (req, res) => {
   }
 });
 
+// Pobieranie recenzji wraz z loginami użytkowników dla danej gry
+app.get('/api/reviews', async (req, res) => {
+  const { gameId } = req.query;
+  try {
+    const sql = `SELECT r.*, u.login FROM ratings r JOIN users u ON r.user_id = u.id WHERE r.game_id = ${gameId}`;
+    const result = await db.pool.query(sql, [gameId]);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
+
+// Sprawdzanie, czy użytkownik kupił grę (Status: Success)
+app.get('/api/transactions/check-purchase', async (req, res) => {
+  const userId = Number(req.query.userId);
+  const gameId = Number(req.query.gameId);
+
+  if (isNaN(userId) || isNaN(gameId)) {
+    return res.json({ hasPurchased: false });
+  }
+
+  try {
+    const sql = `SELECT COUNT(t.id) FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.reciever_id = ${userId} AND ko.game_id = ${gameId} AND t.status = 'Success'`;
+
+    const result = await db.pool.query(sql);
+    res.json({ hasPurchased: result > 0 });
+  } catch (err) {
+    console.error("Błąd bazy danych:", err);
+    res.status(500).send(err);
+  }
+});
+
 //pobieranie wszystkich pozostałych danych o grach
 
 // axios.get("http://localhost:3000/games/alldata", { params: { game_id: int }}).then((res) => {setGameData(res.data);});
@@ -261,7 +308,19 @@ app.get("/users/byemail", async (req, res) => {
     res.json(result);
   } catch (err) {
     console.log(err);
-    res.status(500).json({error: err.message});
+    res.status(500).json({ error: err.message });
+  }
+});
+
+//Zapytanie potrzebne do transakcji
+app.get("/users/getThemAll", async (req, res) => {
+  try {
+    const sql = `SELECT * FROM users`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -270,7 +329,7 @@ app.get("/users/byemail", async (req, res) => {
 
 app.get("/wishlist/wishlistData", async (req, res) => {
   const { id } = req.query;
-  
+
   try {
     const sql = `SELECT g.id "id", title, cover_img, developer, about FROM wishlist w JOIN games g ON game_id = g.id WHERE user_id LIKE ${id};`;
     const result = await db.pool.query(sql);
@@ -299,7 +358,7 @@ app.get("/wishlist", async (req, res) => {
 
 app.get("/key_offers/offersForGame", async (req, res) => {
   const { id } = req.query;
-  
+
   try {
     const sql = `SELECT * FROM key_offers WHERE game_id LIKE ${id};`;
     const result = await db.pool.query(sql);
@@ -309,15 +368,42 @@ app.get("/key_offers/offersForGame", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+//Polecenie pobierające dane potrzenych do ofert
+app.get("/key_offers/offersForGames", async (req, res) => {
+  const { id } = req.query;
+
+  try {
+    const sql = `SELECT ko.*, u.login, u.discord_tag FROM key_offers as ko JOIN users u ON ko.seller_id = u.id WHERE game_id LIKE ${id};`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 //POLECENIA DOTYCZĄCE TRANSAKCJI
 //Wybierz dane z tabeli, gdzie id kupującego jest podobne do podanego id.
 
 app.get("/transactions/transactionsByBuyer", async (req, res) => {
   const { id } = req.query;
-  
+
   try {
     const userId = req.query.id;
-    const sql = `SELECT g.id "id", title, cover_img, developer, about FROM wishlist w JOIN games g ON game_id = g.id WHERE user_id LIKE ${userId};`;
+    const sql = `SELECT t.id AS transaction_id, t.status AS transaction_status, t.reciever_id, ko.id AS offer_id, ko.suggested_price, ko.game_key, g.title AS game_title, u.login AS seller_login FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id JOIN users u ON ko.seller_id = u.id JOIN games g ON ko.game_id = g.id WHERE t.buyer_id = ${id};`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/transactions/getAll", async (req, res) => {
+  try {
+    const sql = "SELECT * FROM transactions";
     const result = await db.pool.query(sql);
     res.json(result);
   } catch (err) {
@@ -348,24 +434,124 @@ app.get("/users/:userId/library", async (req, res) => {
 
 // axios.get("http://localhost:3000/table").then((res) => {setTable(res.data)})
 
-app.get("/:table", async (req,res) => {
+app.get("/:table", async (req, res) => {
   const table = req.params.table;
-  if(!schema[table]){
+  if (!schema[table]) {
     return res.status(404).send("Table not found");
   }
   try {
     const sql = `SELECT * FROM ${table}`;
     const result = await db.pool.query(sql);
     res.json(result);
-  } catch(err){
+  } catch (err) {
     console.error(err);
     res.status(500).send(err);
   }
 
 });
 
+// Create
 
-// Reszta bardziej pod stronke admina
+// Zatwierdzenie transakcji
+app.post("/transactions/confirm", async (req, res) => {
+  const { transactionId, enteredKey } = req.body;
+
+  if (!transactionId || !enteredKey) return res.status(400).json({ error: "Brak wymaganych danych transakcji lub klucza." });
+
+  try {
+    const verifySql = `SELECT ko.game_key, t.offer_id FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.id = ${transactionId} AND t.status = 'Pending'`;
+    const rows = await db.pool.query(verifySql);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Nie znaleziono aktywnej transakcji." });
+    }
+
+    const { game_key, offer_id } = rows[0];
+
+    if (enteredKey !== game_key) {
+      return res.status(400).json({ error: "Wprowadzony klucz gry jest niepoprawny!" });
+    }
+
+    await db.pool.query(`UPDATE transactions SET status = 'Success' WHERE id = ${transactionId}`);
+    await db.pool.query(`UPDATE transactions SET status = 'Cancelled' WHERE offer_id = ${offer_id} AND id != ${transactionId}`);
+    await db.pool.query(`UPDATE key_offers SET status = 'Closed' WHERE id = ${offer_id}`);
+
+    res.json({ success: true, message: "Transakcja została pomyślnie zatwierdzona!" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Błąd serwera podczas przetwarzania transakcji." });
+  }
+});
+
+//dodanie recenzji
+app.post('/api/reviews', async (req, res) => {
+  const { game_id, user_id, rating, other } = req.body;
+  try {
+    const sql = 'INSERT INTO ratings (game_id, user_id, rating, other) VALUES (?, ?, ?, ?)';
+    await db.pool.query(sql, [game_id, user_id, String(rating), other]); // rzutujemy rating na String, bo w bazie to ENUM
+    res.sendStatus(201);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
+
+//Dodawanie ofert
+app.post("/key_offers/add", async (req, res) => {
+  const {
+    key,
+    price,
+    other,
+    seller_id,
+    game_id,
+    status,
+  } = req.body;
+
+  try {
+    const columns = ["seller_id", "game_id", "game_key", "other", "status", "suggested_price"];
+    const values = [seller_id, game_id, key, other, String(status), price];
+    const placeholders = ["?", "?", "?", "?", "?", "?"];
+
+    const sql = `INSERT INTO key_offers (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
+
+    const result = db.pool.query(sql, values);
+    res.json(result);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Błąd serwera"
+    });
+  }
+});
+
+//Dodawanie transakcji
+app.post("/transactions/add", async (req, res) => {
+  const {
+    offerId,
+    buyerId,
+    receiverId,
+    status,
+  } = req.body;
+
+  try {
+    const columns = ["offer_id", "buyer_id", "reciever_id", "status"];
+    const values = [offerId, buyerId, receiverId, String(status)];
+    const placeholders = ["?", "?", "?", "?"];
+
+    const sql = `INSERT INTO transactions (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
+
+    const result = db.pool.query(sql, values);
+    res.json(result);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Błąd serwera"
+    });
+  }
+});
 
 // Dodawanie do Rejestracji
 app.post("/users/adduser", async (req, res) => {
@@ -378,28 +564,20 @@ app.post("/users/adduser", async (req, res) => {
   } = req.body;
 
   try {
-    const columns = ["login", "email", "pass"];
-    const values = [login, email, pass];
-    const placeholders = ["?", "?", "?"];
+    const verifySql = `SELECT ko.game_key, t.offer_id FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.id = ${transactionId} AND t.status = 'Pending'`;
+    const rows = await db.pool.query(verifySql);
 
-    if (phone) {
-      columns.push("phone");
-      values.push(phone);
-      placeholders.push("?");
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Nie znaleziono aktywnej transakcji." });
     }
 
-    if (discord_tag) {
-      columns.push("discord_tag");
-      values.push(discord_tag);
-      placeholders.push("?");
+    const { game_key, offer_id } = rows[0];
+
+    if (enteredKey !== game_key) {
+      return res.status(400).json({ error: "Wprowadzony klucz gry jest niepoprawny!" });
     }
 
-    const sql = `
-      INSERT INTO users (${columns.join(", ")})
-      VALUES (${placeholders.join(", ")})
-    `;
-
-    const [result] = await db.pool.query(sql, values);
+    const result = db.pool.query(sql, values);
 
     res.json(result);
 
@@ -411,7 +589,50 @@ app.post("/users/adduser", async (req, res) => {
   }
 });
 
-// Create
+//Zmiana danych usera
+app.post("/users/updateUser", async (req, res) => {
+  const {
+    id,
+    login,
+    email,
+    pass,
+    phone,
+    discord_tag
+  } = req.body;
+
+  try {
+    const columns = ["login", "email", "pass", "phone", "discord_tag"];
+    const values = [login, email, pass, phone, discord_tag];
+    const placeholders = ["?", "?", "?", "?", "?"];
+
+
+    let sql = `
+      UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[3]} = "${values[3]}", ${columns[4]} = "${values[4]}" WHERE id = ${id}
+    `;
+
+    if (phone == null && discord_tag == null) {
+      sql = `
+        UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}" WHERE id = ${id}
+      `;
+    } else if (discord_tag == null && phone != null) {
+      sql = `
+        UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[3]} = "${values[3]}" WHERE id = ${id}
+      `;
+    } else if (phone == null && discord_tag != null) {
+      sql = `
+        UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[4]} = "${values[4]}" WHERE id = ${id}
+      `;
+    }
+
+    const result = db.pool.query(sql, values);
+
+    res.json({ success: true, message: "Transakcja została pomyślnie zatwierdzona!" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Błąd serwera podczas przetwarzania transakcji." });
+  }
+});
 
 // dodanie użytkowników
 
@@ -421,43 +642,39 @@ app.post("/users/adduser", async (req, res) => {
   const { login, email, pass, phone, discord_tag } = req.body;
 
   try {
-    const columns = ["login", "email", "password"];
+    const columns = ["login", "email", "pass"];
     const values = [login, email, pass];
     const placeholders = ["?", "?", "?"];
 
     if (phone) {
       columns.push("phone");
-      values.push(phone);
-      placeholders.push("?");
+      values.push(`"${phone}"`);
     }
 
     if (discord_tag) {
       columns.push("discord_tag");
-      values.push(discord_tag);
-      placeholders.push("?");
+      values.push(`"${discord_tag}"`);
     }
 
-    const sql = `INSERT INTO users (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
+    const sql = `INSERT INTO users (${columns.join(", ")}) VALUES (${values.join(", ")})`;
 
-    const [result] = await db.pool.query(sql, values);
+    const result = db.pool.query(sql);
     res.json(result);
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({
-      error: "Błąd serwera"
-    });
+    res.status(500).json({ error: "Błąd serwera" });
   }
 });
 
 // standardowy do wszystkich kolumn tabeli
 
-app.post("/:table", async (req,res) => {
+app.post("/:table", async (req, res) => {
   const table = req.params.table;
   const data = req.body;
-  if(!schema[table]) return res.status(404).send("Table not found");
+  if (!schema[table]) return res.status(404).send("Table not found");
   const tableColumns = [...schema[table]];
-  if(tableColumns.includes("publisher") && (!data.publisher || data.publisher.length === 0)){
+  if (tableColumns.includes("publisher") && (!data.publisher || data.publisher.length === 0)) {
     data.publisher = data.developer || null;
   }
   const columns = tableColumns.filter(col => col in data);
@@ -469,7 +686,7 @@ app.post("/:table", async (req,res) => {
     const result = await db.pool.query(sql, values);
     const safeResult = JSON.parse(JSON.stringify(result, (_, v) => typeof v === 'bigint' ? v.toString() : v)); // Bo był jakiś problem z BigInt
     res.json(safeResult);
-  } catch(err){
+  } catch (err) {
     console.error(err);
     res.status(500).send(err);
   }
@@ -477,34 +694,86 @@ app.post("/:table", async (req,res) => {
 
 // Update
 
-app.patch("/:table/:id", async (req,res) => {
+// aktualizacja ocen
+app.put('/api/reviews', async (req, res) => {
+  const { game_id, user_id, rating, other } = req.body;
+  try {
+    const sql = 'UPDATE ratings SET rating = ?, other = ? WHERE game_id = ? AND user_id = ?';
+    await db.pool.query(sql, [String(rating), other, game_id, user_id]);
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
+
+// Aktualizacja statusu konkretnej oferty
+app.patch('/key_offers/updateStatus', async (req, res) => {
+  const { offerId, newStatus } = req.body;
+
+  // Walidacja danych wejściowych
+  if (!offerId || !newStatus) {
+    return res.status(400).json({ error: "Brak offerId lub newStatus w żądaniu." });
+  }
+
+  const sql = `UPDATE key_offers SET status = ? WHERE id = ?`;
+
+  try {
+    // UWAGA: Brak nawiasów [ ] wokół result! Przypisujemy bezpośrednio.
+    const result = await db.pool.query(sql, [newStatus, offerId]);
+
+    // Logujemy, żebyś widział w terminalu, co dokładnie zwraca Twoja baza
+    console.log("Status zaktualizowany pomyślnie. Wynik z bazy:", result);
+
+    // Zwracamy czysty sukces do Reacta
+    res.json({ success: true, message: "Status został zaktualizowany." });
+  } catch (err) {
+    console.error("Błąd podczas aktualizacji statusu:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.patch("/:table/:id", async (req, res) => {
   const table = req.params.table;
   const id = Number(req.params.id);
   const data = req.body;
-  if(!schema[table]) return res.status(404).send("Table not found");
+  if (!schema[table]) return res.status(404).send("Table not found");
   const columns = schema[table].filter(col => data[col] !== undefined);
-  try{
+  try {
     const setList = columns.map(col => `${col}=?`).join(", ");
     const sql = `UPDATE ${table} SET ${setList} WHERE id=?`;
 
     // Wartości wraz z wyjątkami
     const values = columns.map(col => {
-        if(col === "publisher"){
-            return (data.publisher && data.publisher.length > 0) ? data.publisher : data.developer;
-        }
-        return data[col];
+      if (col === "publisher") {
+        return (data.publisher && data.publisher.length > 0) ? data.publisher : data.developer;
+      }
+      return data[col];
     });
 
-    const result = await db.pool.query(sql,[...values,id]);
+    const result = await db.pool.query(sql, [...values, id]);
     const safeResult = JSON.parse(JSON.stringify(result, (_, v) => typeof v === 'bigint' ? v.toString() : v));
     res.json(safeResult);
-  } catch(err){
+  } catch (err) {
     console.error(err);
     res.status(500).send(err);
   }
 });
 
 // Destroy
+
+//usuwanie recenzji
+app.delete('/api/reviews', async (req, res) => {
+  const { gameId, userId } = req.query; // przekazujemy w paramsach/query
+  try {
+    const sql = 'DELETE FROM ratings WHERE game_id = ? AND user_id = ?';
+    await db.pool.query(sql, [gameId, userId]);
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
 
 // usuwanie z wishlisty
 app.delete("/wishlist/remove", async (req, res) => {
@@ -520,16 +789,16 @@ app.delete("/wishlist/remove", async (req, res) => {
 });
 
 //domyślny
-app.delete("/:table/:id", async (req,res) => {
+app.delete("/:table/:id", async (req, res) => {
   const table = req.params.table;
   const id = Number(req.params.id);
-  if(!schema[table]) return res.status(404).send("Table not found");
-  try{
+  if (!schema[table]) return res.status(404).send("Table not found");
+  try {
     const sql = `DELETE FROM ${table} WHERE id=?`;
-    const result = await db.pool.query(sql,[id]);
+    const result = await db.pool.query(sql, [id]);
     const safeResult = JSON.parse(JSON.stringify(result, (_, v) => typeof v === 'bigint' ? v.toString() : v));
     res.json(safeResult);
-  } catch(err){
+  } catch (err) {
     console.error(err);
     res.status(500).send(err);
   }

@@ -4,11 +4,13 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './root.css';
 import { axiosPath } from "../App";
+import Header from '../components/header/Header';
+import Footer from '../components/footer/Footer';
 
 export default function Root() {
   const navigate = useNavigate();
   const [Users, GetAllUsersData] = useState([]);
-  
+
   // Stany dla komunikatów walidacji i sukcesu
   const [errorBoxText, setErrorBoxText] = useState("");
   const [successBoxText, setSuccessBoxText] = useState("");
@@ -46,148 +48,139 @@ export default function Root() {
   function AddUserToService() {
     setErrorBoxText("");
     setSuccessBoxText("");
-    
+
     const currentValidationResult = CheckIfDataIsGood();
     let duplicate = false;
 
     // Sprawdzanie czy podane dane nie dublują istniejących rekordów w bazie
     Users.forEach(user => {
-        if(user.login == newUser.login || user.email == newUser.mail || user.phone == newUser.phone || user.discord_tag == newUser.discord){
-            duplicate = true;
-        }
+      if (user.login == newUser.login || user.email == newUser.mail || user.phone == newUser.phone || user.discord_tag == newUser.discord) {
+        duplicate = true;
+      }
     });
 
     if (currentValidationResult === true) {
-        if (duplicate == false) {
-            axios.post(`${axiosPath}/users/adduser`, { 
-              login: newUser.login, 
-              email: newUser.mail, 
-              pass: newUser.pass, 
-              phone: newUser.phone, 
-              discord_tag: newUser.discord 
-            })
-            .then(() => {
-              setSuccessBoxText("Rejestracja zakończona sukcesem! Za chwilę nastąpi przekierowanie do logowania...");
-              
-              changeUserData({ mail: '', pass: '', login: '', phone: '', discord: '' });
-              setTimeout(() => {
-                navigate("/Login", { replace: true }); 
-              }, 2000);
-            })
-            .catch((err) => {
-              setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
-              console.error(err);
-            });
-        } else {
-            setErrorBoxText("Użytkownik o istniejącym mailu bądź nicku już istnieje.");
-        }
+      if (duplicate == false) {
+        axios.post(`${axiosPath}/users/adduser`, {
+          login: newUser.login,
+          email: newUser.mail,
+          pass: newUser.pass,
+          phone: newUser.phone,
+          discord_tag: newUser.discord
+        })
+          .then(() => {
+            setSuccessBoxText("Rejestracja zakończona sukcesem! Za chwilę nastąpi przekierowanie do logowania...");
+
+            changeUserData({ mail: '', pass: '', login: '', phone: '', discord: '' });
+            setTimeout(() => {
+              navigate("/Login", { replace: true });
+            }, 2000);
+          })
+          .catch((err) => {
+            setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
+            console.error(err);
+          });
+      } else {
+        setErrorBoxText("Użytkownik o istniejącym mailu bądź nicku już istnieje.");
+      }
     }
   }
 
   // Funkcja walidująca poprawność wprowadzonych danych (E-mail, Login, Siła hasła)
   function CheckIfDataIsGood() {
     if (newUser.mail && newUser.pass && newUser.login) {
-        const mailArr = newUser.mail.split("");
-        let ifMailIsGood = { itHasAt: false, itHasCom: false, isItEmail: false };
-        
-        mailArr.forEach(char => {
-            if (char === "@") ifMailIsGood.itHasAt = true;
-            if (char === ".") ifMailIsGood.itHasCom = true;
-        });
-        
-        if (ifMailIsGood.itHasAt && ifMailIsGood.itHasCom) {
-            ifMailIsGood.isItEmail = true;
-        }
+      const mailArr = newUser.mail.split("");
+      let ifMailIsGood = { itHasAt: false, itHasCom: false, isItEmail: false };
 
-        let passwordStrenght = {
-            uppercase: false,
-            lowercase: false,
-            number: false,
-            otherChar: false,
-            isLongEnought: false,
-            isPasswordStrongEnought: false
-        };
-        
-        const passArr = newUser.pass.split("");
-        passArr.forEach(char => {
-            if (/[A-Z]/.test(char)) passwordStrenght.uppercase = true;
-            if (/[a-z]/.test(char)) passwordStrenght.lowercase = true;
-            if (char.charCodeAt(0) > 47 && char.charCodeAt(0) < 58) passwordStrenght.number = true;
-            if (char.charCodeAt(0) > 32 && char.charCodeAt(0) < 44) passwordStrenght.otherChar = true;
-        });
-        
-        if (newUser.pass.length >= 8) passwordStrenght.isLongEnought = true;
+      mailArr.forEach(char => {
+        if (char === "@") ifMailIsGood.itHasAt = true;
+        if (char === ".") ifMailIsGood.itHasCom = true;
+      });
 
-        if (!ifMailIsGood.isItEmail) {
-            setErrorBoxText("Email jest nieprawidłowy");
-            return false;
-        }
+      if (ifMailIsGood.itHasAt && ifMailIsGood.itHasCom) {
+        ifMailIsGood.isItEmail = true;
+      }
 
-        if (newUser.login.length < 5) {
-            setErrorBoxText("Nick musi mieć co najmniej pięć znaków.");
-            return false;
-        }
+      let passwordStrenght = {
+        uppercase: false,
+        lowercase: false,
+        number: false,
+        otherChar: false,
+        isLongEnought: false,
+        isPasswordStrongEnought: false
+      };
 
-        if (passwordStrenght.isLongEnought && passwordStrenght.otherChar && passwordStrenght.number && passwordStrenght.lowercase && passwordStrenght.uppercase) {
-            passwordStrenght.isPasswordStrongEnought = true;
-        } else {
-            setErrorBoxText("Hasło musi mieć co najmniej osiem znaków, zawierać jedną dużą i małą literę, cyfrę oraz znak specjalny.");
-            return false;
-        }
+      const passArr = newUser.pass.split("");
+      passArr.forEach(char => {
+        if (/[A-Z]/.test(char)) passwordStrenght.uppercase = true;
+        if (/[a-z]/.test(char)) passwordStrenght.lowercase = true;
+        if (char.charCodeAt(0) > 47 && char.charCodeAt(0) < 58) passwordStrenght.number = true;
+        if (char.charCodeAt(0) > 32 && char.charCodeAt(0) < 44) passwordStrenght.otherChar = true;
+      });
 
-        return true;
-    } else {
-        setErrorBoxText("Formularz nie został wypełniony.");
+      if (newUser.pass.length >= 8) passwordStrenght.isLongEnought = true;
+
+      if (!ifMailIsGood.isItEmail) {
+        setErrorBoxText("Email jest nieprawidłowy");
         return false;
+      }
+
+      if (newUser.login.length < 5) {
+        setErrorBoxText("Nick musi mieć co najmniej pięć znaków.");
+        return false;
+      }
+
+      if (passwordStrenght.isLongEnought && passwordStrenght.otherChar && passwordStrenght.number && passwordStrenght.lowercase && passwordStrenght.uppercase) {
+        passwordStrenght.isPasswordStrongEnought = true;
+      } else {
+        setErrorBoxText("Hasło musi mieć co najmniej osiem znaków, zawierać jedną dużą i małą literę, cyfrę oraz znak specjalny.");
+        return false;
+      }
+
+      return true;
+    } else {
+      setErrorBoxText("Formularz nie został wypełniony.");
+      return false;
     }
   }
 
   return (
     <>
-    <div className="container-fluid">
-      {/* Nagłówek Strony */}
-      <div className="row m-3 p-3 text-center">
-        <div className='col-4'>
-          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => navigate("/Search", { state: { Title: e.target.value } })}/>
-          <button className='border border-3 btnsrch' onClick={() => navigate("/Search")}>SZUKAJ</button>
-        </div>
+      <div className="container-fluid">
+        {/* Nagłówek Strony */}
+        <Header showAccountMenu={false} axiosPath={axiosPath}/>
 
-        <div className='col-4 fw-bolder logo'>
-          <h1 onClick={() => navigate('/')}>Keys &apos;R&apos; Us</h1>
-        </div>
-      </div>
-
-      {/* Formularz Rejestracji */}
-      <div className='row m-1 text-center font'>
+        {/* Formularz Rejestracji */}
+        <div className='row m-1 text-center font'>
           <h3>REJESTRACJA</h3>
           <div>
             <label>E-mail</label>
             <br />
-            <input type="email" name="mail" value={newUser.mail} placeholder='. . .' onChange={handleInputChange}/>
+            <input type="email" name="mail" value={newUser.mail} placeholder='. . .' onChange={handleInputChange} />
           </div>
           <br />
           <div>
             <label>Nick</label>
             <br />
-            <input type="text" name="login" value={newUser.login} placeholder='. . .' onChange={handleInputChange}/>
+            <input type="text" name="login" value={newUser.login} placeholder='. . .' onChange={handleInputChange} />
           </div>
           <br />
           <div>
             <label>Haslo</label>
             <br />
-            <input type="password" name="pass" value={newUser.pass} placeholder='. . .' onChange={handleInputChange}/>
+            <input type="password" name="pass" value={newUser.pass} placeholder='. . .' onChange={handleInputChange} />
           </div>
           <br />
           <div>
             <label>Numer telefonu</label>
             <br />
-            <input type="text" name="phone" value={newUser.phone} placeholder='. . .' onChange={handleInputChange}/>
+            <input type="text" name="phone" value={newUser.phone} placeholder='. . .' onChange={handleInputChange} />
           </div>
           <br />
           <div>
             <label>Tag discord</label>
             <br />
-            <input type="text" name="discord" value={newUser.discord} placeholder='. . .' onChange={handleInputChange}/>
+            <input type="text" name="discord" value={newUser.discord} placeholder='. . .' onChange={handleInputChange} />
           </div>
           <br />
           <div>
@@ -196,16 +189,11 @@ export default function Root() {
           </div>
           <br />
           <button className='border border-3 btnsrch' onClick={AddUserToService}>ZAREJESTRUJ SIE</button>
-      </div>
-
-      {/* Stopka */}
-      <div className="row m-3 p-3 text-center">
-        <div className='col'>
-          <p>Kontakt</p>
-          <p>Mail: biurokeysrus@gmail.com</p>          
         </div>
+
+        {/* Stopka */}
+        <Footer />
       </div>
-    </div>
     </>
   );
 }
