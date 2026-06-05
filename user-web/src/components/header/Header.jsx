@@ -1,11 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from "../user-context/UserContext";
+import axios from 'axios';
 
-export default function Header({ showAccountMenu = true }) {
+export default function Header({ showAccountMenu = true, axiosPath }) {
     const navigate = useNavigate();
     const { userData, logout } = useContext(UserContext);
     const [searchThisTitle, changeTitle] = useState("");
+    const [games, setGames] = useState([]);// Dane gier z bazy danych
 
     function redirectToSearching(genreId) {
         if (genreId == null) {
@@ -20,6 +22,18 @@ export default function Header({ showAccountMenu = true }) {
         navigate("/", { replace: true });
     }
 
+    React.useEffect(() => {
+        const outputTags = "";
+        
+        axios.get(`${axiosPath}/games/tagsort`, { 
+            params: { tags: outputTags }
+            })
+        .then((res) => {
+            setGames(res.data);
+            })
+        .catch(err => console.error("Błąd pobierania gier:", err));
+    }, []);
+
     return (
         <div className="row m-3 p-3 text-center">
             {/* Wyszukiwarka */}
@@ -29,8 +43,14 @@ export default function Header({ showAccountMenu = true }) {
                     id="wyszukiwarka"
                     name="wyszukiwarka"
                     placeholder='szukaj...'
+                    list="availableGames"
                     onChange={(e) => changeTitle(e.target.value)}
                 />
+                <datalist id="availableGames">
+                    {games.map((game) => (
+                        <option key={game.id} value={game.title}/>
+                    ))}
+                </datalist>
                 <button className='border border-3 btnsrch' onClick={() => redirectToSearching(null)}>
                     SZUKAJ
                 </button>

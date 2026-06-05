@@ -127,7 +127,7 @@ export default function SearchPage() {
     <>
       <div className="container-fluid">
         {/* Nagłówek Strony */}
-        <Header />
+        <Header axiosPath={axiosPath}/>
 
         {/* Główna sekcja z tabelą i panelami bocznymi */}
         < h3 className='mx-4 mt-4 p-4 font' > Wyniki Wyszukiwania</h3 >

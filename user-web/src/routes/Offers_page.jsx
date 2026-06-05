@@ -10,6 +10,7 @@ import { axiosPath } from "../App";
 import Footer from '../components/footer/Footer';
 
 export default function OffersPage() {
+
     const navigate = useNavigate();
     const location = useLocation();
     const { userData } = useContext(UserContext);
@@ -158,7 +159,7 @@ export default function OffersPage() {
 
     return (
         <div className="container-fluid">
-            <Header />
+            <Header axiosPath={axiosPath}/>
 
             <h3 className='mx-4 mt-4 p-4 font'>Baza Wystawionych Ofert</h3>
             <div className="row px-4 pb-4">
@@ -176,6 +177,7 @@ export default function OffersPage() {
                             />
                         </div>
                     </div>
+                    <button onClick={() => navigate("/Create-Offer")}>DODAJ OFERTĘ</button>
                 </div>
 
                 <div className="col">

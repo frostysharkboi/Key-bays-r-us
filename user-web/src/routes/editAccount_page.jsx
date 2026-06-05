@@ -6,6 +6,7 @@ import './root.css';
 import { axiosPath } from "../App";
 import { UserContext } from '../components/user-context/UserContext';
 import { main } from '@popperjs/core';
+import Header from '../components/header/Header';
 
 export default function Root() {
   const navigate = useNavigate();
@@ -206,44 +207,7 @@ export default function Root() {
   return (
     <>
     <div className="container-fluid">
-      {/* Nagłówek Strony */}
-      <div className="row m-3 p-3 text-center">
-        <div className='col-4'>
-          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => navigate("/Search", { state: { Title: e.target.value } })}/>
-          <button className='border border-3 btnsrch' onClick={() => navigate("/Search")}>SZUKAJ</button>
-        </div>
-
-        <div className='col-4 fw-bolder logo'>
-          <h1 onClick={() => navigate('/')}>Keys &apos;R&apos; Us</h1>
-        </div>
-
-        {/* Dropdown menu konta */}
-        <div className='col-4'>
-          <div className="dropdown">
-            <button className="dropbtn font" id="nick">
-              {userData.isLogged ? userData.login : "Gosc"}
-            </button>
-            <div className="dropdown-content fw-bold">
-              {!userData.isLogged ? (
-                <h5 onClick={() => navigate("/Login")}>Zaloguj sie</h5>
-              ) : (
-                <>
-                  <h5 onClick={() => navigate('/Wishlist')}>Lista Zyczen</h5>
-                  <h5 onClick={() => navigate('/Edit-Account')}>Zarzadzaj kontem</h5>
-                  {userData.type == "seller" && (
-                    <h5 onClick={() => navigate("/Create-Offer")}>Dodaj oferte</h5>
-                  )}
-                  {userData.type == "admin" && (
-                    <h5>Panel Admina</h5>
-                  )}
-                  <h5 onClick={LogOutUser}>Wyloguj sie</h5>
-                </>
-              )}
-            </div>
-          </div> 
-        </div>
-
-      </div>
+      <Header axiosPath={axiosPath}/>
 
       {/* Formularz Rejestracji */}
       <div className='row m-1 text-center font'>

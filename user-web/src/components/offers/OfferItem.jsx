@@ -9,20 +9,11 @@ export default function OfferItem({ offer, userData, gameId, openedOfferId, setO
   const [AllUsers, getAllUsers] = useState(null);
   const [forWhoButBetter, changeWho] = useState(true);
   const [allTrans, getTrans] = useState(null);
-  /*
-  function showButton(offerId) {
-    let boobies = [...showPurchase];
-    boobies.forEach(element => {
-      if(element.id == offerId){
-        element.isVisible = true;
-      };
-    });
-    changeVisibility(boobies);
-  }
-  */
 
-    // POPRAWKA: Usunęliśmy stąd blokujący warunek "if (!isAdmin && ...)", 
-    // ponieważ rodzic (SaleOffers) już zajął się odrzuceniem złych statusów.
+    
+  // POPRAWKA: Usunęliśmy stąd blokujący warunek "if (!isAdmin && ...)", 
+  // ponieważ rodzic (SaleOffers) już zajął się odrzuceniem złych statusów.
+
   //Dzięki szkot, że usunąłęś funkcję odpowiadającą za pokazywanie szczegółów oferty.
   function showButton() {
     setOpenedOfferId(
@@ -42,6 +33,7 @@ export default function OfferItem({ offer, userData, gameId, openedOfferId, setO
         });
         console.log(`${userData} | ${receiverId} | ${offer.id}`);
 
+        //Ten warunek i bool są potrzebne. Z jakiegoś powodu, baza dostaje pierdolca jak user ma więcej niż jedną transkacje na koncie.
         let ifRecieverIsTheSame = false;
         if(allTrans != null){
           allTrans.forEach(element => {

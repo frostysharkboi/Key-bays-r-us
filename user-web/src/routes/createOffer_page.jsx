@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import './root.css';
 import { axiosPath } from "../App";
 import { UserContext } from '../components/user-context/UserContext';
+import Header from '../components/header/Header';
 
 export default function Root() {
   const navigate = useNavigate();
@@ -71,26 +72,30 @@ export default function Root() {
         key: false,
         title: false
     }
-    console.log(offerAsObject);
+    if(offerChekcs != null && offerKey != null && offerOther != null && offerPrice != null){
+      console.log(offerAsObject);
 
-    games.forEach(game => {
-        if(offerChekcs.title == false){
-            if(game.title == offerAsObject.title){
-                setErrorBoxText("");
-                offerChekcs.title = true;
-        } else {
-            setErrorBoxText("Podana gra nie istnieje");
-        } 
-        }
-    });
+      games.forEach(game => {
+          if(offerChekcs.title == false){
+              if(game.title == offerAsObject.title){
+                  setErrorBoxText("");
+                  offerChekcs.title = true;
+          } else {
+              setErrorBoxText("Podana gra nie istnieje");
+          }}
+      });
 
-    (offerAsObject.key.length > 14 && offerAsObject.key.length < 51) ? offerChekcs.key = true : setErrorBoxText("Klucz jest nieprawidłowy"); 
-    
-    (offerPrice != null)? null : setErrorBoxText("Oferta musi być wycieniona");
-    (offerOther != null)? null : setErrorBoxText("Oferta musi zawierać opis");
+      (offerAsObject.key.length > 14 && offerAsObject.key.length < 51) ? offerChekcs.key = true : setErrorBoxText("Klucz jest nieprawidłowy"); 
+      
+      (offerPrice != null)? null : setErrorBoxText("Oferta musi być wycieniona");
+      (offerOther != null)? null : setErrorBoxText("Oferta musi zawierać opis");
 
-    if(offerChekcs.key == true && offerChekcs.title == true && offerPrice != null && offerOther != null) return true;
-    return false
+      if(offerChekcs.key == true && offerChekcs.title == true && offerPrice != null && offerOther != null) return true;
+      return false
+    } else {
+      alert("Proszę uzupełnić formularz do końca");
+      return false;
+    }
   }
 
   function AddOfferToDb(){
@@ -105,15 +110,17 @@ export default function Root() {
             status: "Active"
         }).then(() => {
             console.log("Chyba przeszło?");
-            let popup = alert("Dodano ofertę", "Twoja oferta właśnie została wystawiona", "ok");
+            let popup = alert("Twoja oferta właśnie została wystawiona", "ok");
             if(popup == true){
-              navigate("/");
+              console.log("Kurwa powinna przekazywać locationState");
+              //Szkot, tu musisz wykminić, by po przekierowaniu na podstronę odświeżyło /Offers.
+              navigate("/Offers");
             }
         }).catch((err) => {
             setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
             console.error(err);
         });
-        navigate("/");
+        navigate("/Offers");
       } else {
         setTitle("");
         setPrice("");
@@ -131,37 +138,7 @@ export default function Root() {
   return (
     <>
     <div className="container-fluid">
-      {/* Nagłówek Strony */}
-      <div className="row m-3 p-3 text-center">
-        <div className='col-4'>
-          <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' onChange={(e) => navigate("/Search", { state: { Title: e.target.value } })}/>
-          <button className='border border-3 btnsrch' onClick={() => navigate("/Search")}>SZUKAJ</button>
-        </div>
-
-        <div className='col-4 fw-bolder logo'>
-          <h1 onClick={() => navigate('/')}>Keys &apos;R&apos; Us</h1>
-        </div>
-
-      {/* Dropdown menu konta */}
-        <div className='col-4'>
-          <div className="dropdown">
-            <button className="dropbtn font" id="nick">
-              {userData.isLogged ? userData.login : "Gosc"}
-            </button>
-            <div className="dropdown-content fw-bold">
-              {!userData.isLogged ? (
-                <h5 onClick={() => navigate("/Login")}>Zaloguj sie</h5>
-              ) : (
-                <>
-                  <h5 onClick={() => navigate('/Wishlist')}>Lista Zyczen</h5>
-                  <h5 onClick={() => navigate('/Edit-Account')}>Zarzadzaj kontem</h5>
-                  <h5 onClick={LogOutUser}>Wyloguj sie</h5>
-                </>
-              )}
-            </div>
-          </div> 
-        </div>
-      </div>
+      <Header axiosPath={axiosPath}/>
 
       {/* Formularz Rejestracji */}
       <div className='row m-1 text-center font'>

@@ -219,7 +219,7 @@ export default function TransactionsPage() {
 
     return (
         <div className="container-fluid">
-            <Header />
+            <Header axiosPath={axiosPath}/>
 
             <h3 className='mx-4 mt-4 p-4 font'>Twoje Zamowienia i Transakcje</h3>
             <div className="row px-4 pb-4">

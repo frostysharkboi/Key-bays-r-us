@@ -18,6 +18,7 @@ import Footer from '../components/footer/Footer';
 export default function GamePage() {
   const { userData, logout } = useContext(UserContext);
 
+  const [searchGamesTitles, setGamesTitles] = useState(null);// Dane gier z bazy danych
   const [game, setGame] = useState([]);
   const [tags, setTags] = useState([]);
   const [connectedTags, updateTags] = useState([]);
@@ -98,7 +99,7 @@ export default function GamePage() {
   return (
     <div className="container-fluid col">
       {/* Nagłówek Strony */}
-      <Header />
+      <Header axiosPath={axiosPath}/>
 
       <div className='row m-3 p-3 text-center'>
         <div className='col'>

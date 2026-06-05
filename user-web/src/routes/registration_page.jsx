@@ -148,7 +148,7 @@ export default function Root() {
     <>
       <div className="container-fluid">
         {/* Nagłówek Strony */}
-        <Header showAccountMenu={false} />
+        <Header showAccountMenu={false} axiosPath={axiosPath}/>
 
         {/* Formularz Rejestracji */}
         <div className='row m-1 text-center font'>
