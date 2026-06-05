@@ -23,6 +23,12 @@ export default function OfferItem({ offer, userData, gameId, openedOfferId, setO
 
     // POPRAWKA: Usunęliśmy stąd blokujący warunek "if (!isAdmin && ...)", 
     // ponieważ rodzic (SaleOffers) już zajął się odrzuceniem złych statusów.
+  //Dzięki szkot, że usunąłęś funkcję odpowiadającą za pokazywanie szczegółów oferty.
+  function showButton() {
+    setOpenedOfferId(
+      openedOfferId === offer.id ? null : offer.id
+    );
+  }
 
   function GetInContact(){
     if(userData.type != "seller") {
