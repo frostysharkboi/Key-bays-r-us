@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import { axiosPath } from '../../App';
+import { UserContext } from '../user-context/UserContext';
 
 export default function OfferItem({ offer, userData, gameId, openedOfferId, setOpenedOfferId }) {
   const [forWho, changePerson] = useState(userData.id);

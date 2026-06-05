@@ -6,6 +6,7 @@ import { UserContext } from '../components/user-context/UserContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './root.css';
 import { axiosPath } from "../App";
+import Header from '../components/header/Header';
 
 export default function SearchPage() {
   const { userData, logout } = useContext(UserContext);

@@ -12,7 +12,7 @@ export default function SaleOffers({ gameId }) {
   const [error, setError] = useState(false);
   const [openedOfferId, setOpenedOfferId] = useState(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!gameId) return;
 
     setLoading(true);
@@ -23,7 +23,7 @@ export default function SaleOffers({ gameId }) {
       .then((res) => {
         if (res.data != null && res.data.length > 0) {
           if (res.data && res.data[0].id != null) {
-            GetOffers(res.data);
+            setOffersData(res.data);
             console.log("Dane zostały pobrane\n", res.data);
           } else {
             setError(true);
