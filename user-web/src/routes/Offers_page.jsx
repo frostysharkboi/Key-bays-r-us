@@ -9,13 +9,23 @@ import './root.css';
 import { axiosPath } from "../App";
 import Footer from '../components/footer/Footer';
 
+import { useDebounce } from '../hooks/UseDebounce';
+
 export default function OffersPage() {
 
     const navigate = useNavigate();
     const location = useLocation();
     const { userData } = useContext(UserContext);
 
-    const [globalFilter, setGlobalFilter] = useState("");
+    // ==========================================
+    // ZMIANA W OBSŁUDZE STANU WYSZUKIWARKI:
+    // ==========================================
+    // ZMIANA: Rozbicie stanu globalFilter na stan natychmiastowy i zdebouncowany
+    const [searchInputValue, setSearchInputValue] = useState(""); // Szybki stan dla inputa HTML
+    const debouncedSearchValue = useDebounce(searchInputValue, 400); // Odczekanie 400ms na koniec pisania
+    const globalFilter = debouncedSearchValue; // TanStack Table bezpośrednio konsumuje stabilną wartość
+    // ==========================================
+
     const [sorting, setSorting] = useState([]);
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 8 });
     const [offers, setOffers] = useState([]);
@@ -30,7 +40,8 @@ export default function OffersPage() {
     // Inicjalizacja filtra początkowego (jeśli nawigujemy z wyszukiwarki)
     useEffect(() => {
         if (location.state?.Title) {
-            setGlobalFilter(location.state.Title);
+            // ZMIANA: Zamiast bezpośrednio modyfikować filtr tabeli, aktualizujemy pole tekstowe
+            setSearchInputValue(location.state.Title);
         }
     }, [location.state]);
 
@@ -60,25 +71,18 @@ export default function OffersPage() {
         // 2. BLOKADA DLA SPRZEDAWCY: Jeśli sprzedawca próbuje ustawić 'Closed', wyrzucamy alert i cofamy zmianę
         if (userData?.role === 'seller' && newStatus === 'Closed') {
             alert("Jako sprzedawca nie masz uprawnień do ręcznego ustawiania statusu 'Closed'.");
-
-            // Wymuszamy ponowne ustawienie starego statusu w stanie (reset wizualny selektu)
             setOffers(prevOffers => [...prevOffers]);
             return;
         }
 
         // 3. ALERT DLA ADMINISTRATORA: Jeśli status zmienia się na 'Closed', pytamy o potwierdzenie
         if (newStatus === 'Closed') {
-            const isConfirmed = window.confirm(
-                `Czy na pewno chcesz zmienić status oferty ID: ${offerId} na "Closed"?\nTej operacji nie można cofnąć.`
-            );
+            const isConfirmed = window.confirm(`Czy na pewno chcesz zmienić status oferty ID: ${offerId} na "Closed"?\nTej operacji nie można cofnąć.`);
 
-            // Jeśli kliknął "Anuluj" (false)
             if (!isConfirmed) {
                 console.log("Zmiana statusu na Closed anulowana przez użytkownika.");
-
-                // Odświeżamy stan tą samą referencją, co zmusi Reacta do powrotu do poprzedniego statusu w <select>
                 setOffers(prevOffers => [...prevOffers]);
-                return; // Przerywamy funkcję, Axios się nie wykona
+                return;
             }
         }
 
@@ -89,18 +93,11 @@ export default function OffersPage() {
         })
             .then(() => {
                 console.log(`Status oferty ${offerId} pomyślnie zmieniony na ${newStatus}`);
-
-                // Aktualizujemy stan nową wartością
-                setOffers(prevOffers =>
-                    prevOffers.map(offer =>
-                        offer.id === offerId ? { ...offer, status: newStatus } : offer
-                    )
-                );
+                setOffers(prevOffers => prevOffers.map(offer => offer.id === offerId ? { ...offer, status: newStatus } : offer));
             })
             .catch(err => {
                 console.error("Błąd zmiany statusu:", err);
                 alert("Nie udało się zapisać zmiany w bazie danych.");
-                // W razie błędu sieciowego również cofamy zmianę wizualną
                 setOffers(prevOffers => [...prevOffers]);
             });
     };
@@ -110,8 +107,7 @@ export default function OffersPage() {
         { header: "Sprzedawca", accessorKey: "seller", cell: (info) => info.getValue() || `User ID: ${info.row.original.seller_id}` },
         { header: "Proponowana Cena", accessorKey: "suggested_price", cell: (info) => <span className="text-success fw-bold">{info.getValue()} zł</span> },
         {
-            header: "Status",
-            accessorKey: "status",
+            header: "Status", accessorKey: "status",
             cell: (info) => {
                 let currentStatus = info.getValue();
                 if (Array.isArray(currentStatus)) currentStatus = currentStatus[0];
@@ -141,7 +137,7 @@ export default function OffersPage() {
         columns,
         state: { sorting, globalFilter, pagination },
         onSortingChange: setSorting,
-        onGlobalFilterChange: setGlobalFilter,
+        onGlobalFilterChange: setSearchInputValue,
         onPaginationChange: setPagination,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
@@ -159,7 +155,8 @@ export default function OffersPage() {
 
     return (
         <div className="container-fluid">
-            <Header axiosPath={axiosPath}/>
+            {/* Nagłówek */}
+            <Header axiosPath={axiosPath} />
 
             <h3 className='mx-4 mt-4 p-4 font'>Baza Wystawionych Ofert</h3>
             <div className="row px-4 pb-4">
@@ -171,8 +168,8 @@ export default function OffersPage() {
                             <input
                                 className='col p-2 inp-srch'
                                 type="text"
-                                value={globalFilter ?? ""}
-                                onChange={(e) => setGlobalFilter(e.target.value)}
+                                value={searchInputValue}
+                                onChange={(e) => setSearchInputValue(e.target.value)}
                                 placeholder='Wpisz frazę...'
                             />
                         </div>
@@ -244,6 +241,7 @@ export default function OffersPage() {
                 </div>
             </div>
 
+            {/* Stópka */}
             <Footer />
         </div>
     );

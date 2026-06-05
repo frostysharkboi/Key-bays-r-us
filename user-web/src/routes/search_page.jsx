@@ -8,24 +8,31 @@ import './root.css';
 import { axiosPath } from "../App";
 import Header from '../components/header/Header';
 
+import { useDebounce } from '../hooks/UseDebounce';
+import Footer from '../components/footer/Footer';
+
 export default function SearchPage() {
   const { userData, logout } = useContext(UserContext);
 
-  const [globalFilter, setGlobalFilter] = useState("");
+  const [searchInputValue, setSearchInputValue] = useState("");
+  const debouncedSearchValue = useDebounce(searchInputValue, 400);
+  const globalFilter = debouncedSearchValue;
+
   const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 8 });
 
   const [games, setGames] = useState([]);
   const [tags, setTags] = useState([]);
   const [filterTags, setFilterTags] = useState([]);
-  const [SearchThisTitle, changeTitle] = useState("");
+
 
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Inicjalizacja filtra początkowego, jeśli przyszedł z innej podstrony przez stan nawigacji
   useEffect(() => {
     if (location.state?.Title) {
-      setGlobalFilter(location.state.Title);
+      setSearchInputValue(location.state.Title);
     }
   }, [location.state]);
 
@@ -95,7 +102,7 @@ export default function SearchPage() {
     columns,
     state: { sorting, globalFilter, pagination },
     onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
+    onGlobalFilterChange: setSearchInputValue,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -112,7 +119,7 @@ export default function SearchPage() {
 
   function RedirectToSeaching(genreId) {
     if (genreId == null) {
-      setGlobalFilter(SearchThisTitle);
+      setSearchInputValue(searchInputValue);
     } else {
       navigate("/Search", { state: { GenreId: genreId } });
     }
@@ -127,7 +134,7 @@ export default function SearchPage() {
     <>
       <div className="container-fluid">
         {/* Nagłówek Strony */}
-        <Header axiosPath={axiosPath}/>
+        <Header axiosPath={axiosPath} />
 
         {/* Główna sekcja z tabelą i panelami bocznymi */}
         < h3 className='mx-4 mt-4 p-4 font' > Wyniki Wyszukiwania</h3 >
@@ -137,7 +144,13 @@ export default function SearchPage() {
             <div className="addpanel box-idk">
               <div className="addpaneldiv row p-2 pe-4">
                 <h2 className='font'>Tytul</h2>
-                <input className='col p-2 inp-srch' type="text" value={globalFilter ?? ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder='Search...' />
+                <input
+                  className='col p-2 inp-srch'
+                  type="text"
+                  value={searchInputValue}
+                  onChange={(e) => setSearchInputValue(e.target.value)}
+                  placeholder='Search...'
+                />
               </div>
               <div className='addpaneldiv col p-2 pe-4'>
                 <h2 className='font'>Gatunki</h2>
@@ -193,7 +206,7 @@ export default function SearchPage() {
                     <div className="d-flex justify-content-between align-items-center">
                       <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.firstPage()} disabled={!table.getCanPreviousPage()}> First </button>
                       <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}> Previous </button>
-                      <span>Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}</span>
+                      <span>Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount() || 1}</span>
                       <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>Next</button>
                       <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.lastPage()} disabled={!table.getCanNextPage()}>Last</button>
                     </div>
@@ -205,12 +218,7 @@ export default function SearchPage() {
         </div>
 
         {/* Stopka */}
-        <div className="row m-3 p-3 text-center">
-          <div className='col'>
-            <p>Kontakt</p>
-            <p>Mail: biurokeysrus@gmail.com</p>
-          </div>
-        </div>
+        <Footer />
       </div >
     </>
   );

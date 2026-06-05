@@ -88,11 +88,11 @@ export default function Root() {
     <>
       <div className="container-fluid">
         {/* Nagłówek Strony */}
-        <Header axiosPath={axiosPath}/>
+        <Header axiosPath={axiosPath} />
 
-        {/* Karuzela sterowana przez Reacta (Pierwszy statyczny obrazek usunięty zgodnie z prośbą) */}
+        {/* Karuzela sterowana przez Reacta */}
         <div className="row m-3 p-3 text-center">
-          <div className="carousel slide carousel-fade w-25">
+          <div className="carousel slide carousel-fade">
             <div className="carousel-inner">
               {formatedGames.map((e, index) => {
                 return (

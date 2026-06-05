@@ -320,7 +320,7 @@ app.get("/users/getThemAll", async (req, res) => {
     res.json(result);
   } catch (err) {
     console.log(err);
-    res.status(500).json({error: err.message});
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -452,6 +452,38 @@ app.get("/:table", async (req, res) => {
 
 // Create
 
+// Zatwierdzenie transakcji
+app.post("/transactions/confirm", async (req, res) => {
+  const { transactionId, enteredKey } = req.body;
+
+  if (!transactionId || !enteredKey) return res.status(400).json({ error: "Brak wymaganych danych transakcji lub klucza." });
+
+  try {
+    const verifySql = `SELECT ko.game_key, t.offer_id FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.id = ${transactionId} AND t.status = 'Pending'`;
+    const rows = await db.pool.query(verifySql);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Nie znaleziono aktywnej transakcji." });
+    }
+
+    const { game_key, offer_id } = rows[0];
+
+    if (enteredKey !== game_key) {
+      return res.status(400).json({ error: "Wprowadzony klucz gry jest niepoprawny!" });
+    }
+
+    await db.pool.query(`UPDATE transactions SET status = 'Success' WHERE id = ${transactionId}`);
+    await db.pool.query(`UPDATE transactions SET status = 'Cancelled' WHERE offer_id = ${offer_id} AND id != ${transactionId}`);
+    await db.pool.query(`UPDATE key_offers SET status = 'Closed' WHERE id = ${offer_id}`);
+
+    res.json({ success: true, message: "Transakcja została pomyślnie zatwierdzona!" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Błąd serwera podczas przetwarzania transakcji." });
+  }
+});
+
 //dodanie recenzji
 app.post('/api/reviews', async (req, res) => {
   const { game_id, user_id, rating, other } = req.body;
@@ -479,13 +511,13 @@ app.post("/key_offers/add", async (req, res) => {
   try {
     const columns = ["seller_id", "game_id", "game_key", "other", "status", "suggested_price"];
     const values = [seller_id, game_id, key, other, String(status), price];
-    const placeholders = ["?", "?", "?", "?", "?", "?"]; 
-    
+    const placeholders = ["?", "?", "?", "?", "?", "?"];
+
     const sql = `INSERT INTO key_offers (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
 
     const result = db.pool.query(sql, values);
     res.json(result);
-    
+
   } catch (err) {
     console.error(err);
     res.status(500).json({
@@ -507,12 +539,12 @@ app.post("/transactions/add", async (req, res) => {
     const columns = ["offer_id", "buyer_id", "reciever_id", "status"];
     const values = [offerId, buyerId, receiverId, String(status)];
     const placeholders = ["?", "?", "?", "?"];
-    
+
     const sql = `INSERT INTO transactions (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
 
     const result = db.pool.query(sql, values);
     res.json(result);
-    
+
   } catch (err) {
     console.error(err);
     res.status(500).json({
@@ -578,15 +610,15 @@ app.post("/users/updateUser", async (req, res) => {
       UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[3]} = "${values[3]}", ${columns[4]} = "${values[4]}" WHERE id = ${id}
     `;
 
-    if(phone == null && discord_tag == null){
+    if (phone == null && discord_tag == null) {
       sql = `
         UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}" WHERE id = ${id}
       `;
-    } else if (discord_tag == null && phone != null){
+    } else if (discord_tag == null && phone != null) {
       sql = `
         UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[3]} = "${values[3]}" WHERE id = ${id}
       `;
-    } else if (phone == null && discord_tag != null){
+    } else if (phone == null && discord_tag != null) {
       sql = `
         UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[4]} = "${values[4]}" WHERE id = ${id}
       `;

@@ -1,20 +1,45 @@
 import { useState, useContext, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import * as React from 'react';
-import {
-    useReactTable,
-    getCoreRowModel,
-    getSortedRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    flexRender
-} from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import { UserContext } from "../components/user-context/UserContext";
 import { useNavigate } from 'react-router-dom';
+import { useDebounce } from '../hooks/UseDebounce';
 import Header from "../components/header/Header";
 import './root.css';
 import { axiosPath } from "../App";
 import Footer from '../components/footer/Footer';
+
+// Wyodrębniony mini-komponent dla akcji, aby izolować stan wpisywania klucza i zapobiegać utracie fokusu
+function TransactionActionCell({ transaction, activeTransactionInput, setActiveTransactionInput, onConfirm }) {
+    const id = transaction.transaction_id;
+    const status = String(transaction.transaction_status || 'Pending').trim();
+    const [localKey, setLocalKey] = useState("");
+
+    if (status !== 'Pending') return <span className="text-muted">-</span>;
+
+    const isInputActive = activeTransactionInput === id;
+
+    if (isInputActive) {
+        return (
+            <div className="d-flex gap-1" onClick={(e) => e.stopPropagation()}>
+                <input type="password" className="form-control form-control-sm rounded-0" placeholder="Klucz gry..." value={localKey} onChange={(e) => setLocalKey(e.target.value)} autoComplete="new-password" style={{ width: "130px" }} autoFocus />
+                <button className="btn btn-primary btn-sm rounded-0 fw-bold" onClick={() => { onConfirm(id, localKey); setLocalKey(""); }}>
+                    OK
+                </button>
+                <button className="btn btn-secondary btn-sm rounded-0 text-white" onClick={() => { setActiveTransactionInput(null); setLocalKey(""); }}>
+                    X
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <button className="btn btn-success btn-sm fw-bold rounded-0 border border-2" onClick={(e) => { e.stopPropagation(); setActiveTransactionInput(id); }}        >
+            Zatwierdź
+        </button>
+    );
+}
 
 export default function TransactionsPage() {
     const navigate = useNavigate();
@@ -26,7 +51,6 @@ export default function TransactionsPage() {
     const [transactions, setTransactions] = useState([]);
 
     const [activeTransactionInput, setActiveTransactionInput] = useState(null);
-    const [enteredKey, setEnteredKey] = useState("");
 
     const [statusFilters, setStatusFilters] = useState([
         { id: 'Pending', label: 'Oczekujące', isSelected: true },
@@ -34,7 +58,7 @@ export default function TransactionsPage() {
         { id: 'Cancelled', label: 'Anulowane', isSelected: false }
     ]);
 
-    // Ochrona routingu - wyrzucenie niezalogowanych na stronę głowną
+    // Ochrona routingu
     useEffect(() => {
         if (userData && userData.isLogged === false) {
             console.warn("Niezalogowany użytkownik nie ma dostępu do transakcji. Przekierowanie...");
@@ -42,17 +66,18 @@ export default function TransactionsPage() {
         }
     }, [userData, navigate]);
 
-    // Wydzielona funkcja pobierania transakcji (wywoływana na start i po zatwierdzeniu klucza)
+    // Pobieranie transakcji z mapowaniem na wartości liczbowe
     const fetchTransactions = () => {
         if (!userData || !userData.isLogged || !userData.id) return;
 
         axios.get(`${axiosPath}/transactions/transactionsByBuyer`, { params: { id: userData.id } })
             .then((res) => {
                 const rawData = Array.isArray(res.data) ? res.data : [];
-
-                // Mapujemy tablicę, aby jawnie przekonwertować typy danych na liczbowe
-                const formattedData = rawData.map(item => ({ ...item, suggested_price: parseFloat(item.suggested_price) || 0, transaction_id: parseInt(item.transaction_id, 10) || 0 }));
-
+                const formattedData = rawData.map(item => ({
+                    ...item,
+                    suggested_price: parseFloat(item.suggested_price) || 0,
+                    transaction_id: parseInt(item.transaction_id, 10) || 0
+                }));
                 setTransactions(formattedData);
             })
             .catch(err => {
@@ -64,23 +89,22 @@ export default function TransactionsPage() {
         fetchTransactions();
     }, [userData]);
 
-    // Obsługa wysyłki formularza z kluczem do backendu
-    const handleConfirmSubmit = (transactionId) => {
-        if (!enteredKey.trim()) {
+    // Obsługa wysyłki formularza
+    const handleConfirmSubmit = (transactionId, keyToSend) => {
+        if (!keyToSend.trim()) {
             alert("Wpisz klucz gry przed zatwierdzeniem!");
             return;
         }
 
         axios.post(`${axiosPath}/transactions/confirm`, {
             transactionId,
-            enteredKey: enteredKey.trim()
+            enteredKey: keyToSend.trim()
         })
             .then((res) => {
                 if (res.data.success) {
                     alert(res.data.message);
                     setActiveTransactionInput(null); // Zamknij input
-                    setEnteredKey(""); // Wyczyść wpisany tekst
-                    fetchTransactions(); // Pobierz świeże statusy z bazy danych
+                    fetchTransactions(); // Odśwież dane
                 }
             })
             .catch((err) => {
@@ -110,7 +134,6 @@ export default function TransactionsPage() {
             sortingFn: (rowA, rowB, columnId) => {
                 const statusA = String(rowA.getValue(columnId) || 'Pending').trim();
                 const statusB = String(rowB.getValue(columnId) || 'Pending').trim();
-
                 const statusOrder = { 'Pending': 1, 'Success': 2, 'Cancelled': 3 };
                 return (statusOrder[statusA] || 99) - (statusOrder[statusB] || 99);
             },
@@ -132,62 +155,16 @@ export default function TransactionsPage() {
         },
         {
             header: "Akcja", id: "actions", enableGlobalFilter: false,
-            cell: (info) => {
-                const transaction = info.row.original;
-                const id = transaction.transaction_id;
-                const status = String(transaction.transaction_status || 'Pending').trim();
-
-                if (status !== 'Pending') return <span className="text-muted">-</span>;
-
-                const isInputActive = activeTransactionInput === id;
-
-                if (isInputActive) {
-                    return (
-                        <div className="d-flex gap-1" onClick={(e) => e.stopPropagation()}>
-                            <input
-                                type="password"
-                                className="form-control form-control-sm rounded-0"
-                                placeholder="Klucz gry..."
-                                value={enteredKey}
-                                onChange={(e) => setEnteredKey(e.target.value)}
-                                // BLOKADA: Zabezpieczenie przed wpychaniem zapisanych haseł przez przeglądarkę
-                                autoComplete="new-password"
-                                style={{ width: "130px" }}
-                            />
-                            <button
-                                className="btn btn-primary btn-sm rounded-0 fw-bold"
-                                onClick={() => handleConfirmSubmit(id)}
-                            >
-                                OK
-                            </button>
-                            <button
-                                className="btn btn-secondary btn-sm rounded-0 text-white"
-                                onClick={() => {
-                                    setActiveTransactionInput(null);
-                                    setEnteredKey("");
-                                }}
-                            >
-                                X
-                            </button>
-                        </div>
-                    );
-                }
-
-                return (
-                    <button
-                        className="btn btn-success btn-sm fw-bold rounded-0 border border-2"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setEnteredKey("");
-                            setActiveTransactionInput(id);
-                        }}
-                    >
-                        Zatwierdź
-                    </button>
-                );
-            }
+            cell: (info) => (
+                <TransactionActionCell
+                    transaction={info.row.original}
+                    activeTransactionInput={activeTransactionInput}
+                    setActiveTransactionInput={setActiveTransactionInput}
+                    onConfirm={handleConfirmSubmit}
+                />
+            )
         }
-    ], [activeTransactionInput, enteredKey]);
+    ], [activeTransactionInput]);
 
     // Wyciąganie tablicy aktywnych statusow z checkboxow
     const selectedStatuses = useMemo(() => {
@@ -219,7 +196,7 @@ export default function TransactionsPage() {
 
     return (
         <div className="container-fluid">
-            <Header axiosPath={axiosPath}/>
+            <Header axiosPath={axiosPath} />
 
             <h3 className='mx-4 mt-4 p-4 font'>Twoje Zamowienia i Transakcje</h3>
             <div className="row px-4 pb-4">
@@ -316,7 +293,7 @@ export default function TransactionsPage() {
                                 </tr>
                             ))}
 
-                            {/* Panel nawigacji stronami (Paginacja) */}
+                            {/* Panel nawigacji stronami */}
                             <tr>
                                 <td colSpan={columns.length}>
                                     <div className="d-flex justify-content-between align-items-center">
