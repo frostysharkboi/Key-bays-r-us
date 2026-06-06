@@ -34,12 +34,9 @@ function TransactionActionCell({ transaction, activeTransactionInput, setActiveT
 
     return (
         <button className="btn btn-success btn-sm fw-bold rounded-0 border border-2" onClick={(e) => { e.stopPropagation(); setActiveTransactionInput(id); }}>
-            Zatwierdź
+            Zatwierdz
         </button>
     );
-}
-function RedirectToGamePage(gameId) {
-    navigate('/Game', { state: { GameId: gameId } });
 }
 
 export default function TransactionsPage() {
@@ -53,29 +50,27 @@ export default function TransactionsPage() {
     const [activeTransactionInput, setActiveTransactionInput] = useState(null);
     const [viewMode, setViewMode] = useState('buyer');
 
-    // POPRAWKA: Wszystkie statusy ustawione na true, żeby wykluczyć błąd ukrywania danych
     const [statusFilters, setStatusFilters] = useState([
-        { id: 'Pending', label: 'Oczekujące', isSelected: true },
+        { id: 'Pending', label: 'Oczekujace', isSelected: true },
         { id: 'Success', label: 'Zakończone', isSelected: false },
         { id: 'Cancelled', label: 'Anulowane', isSelected: false }
     ]);
 
     useEffect(() => {
         if (userData && userData.isLogged === false) {
-            console.warn("Niezalogowany użytkownik nie ma dostępu do transakcji. Przekierowanie...");
+            console.warn("Niezalogowany uzytkownik nie ma dostepu do transakcji. Przekierowanie...");
             navigate('/');
         }
     }, [userData, navigate]);
 
     const fetchTransactions = () => {
         if (!userData || !userData.isLogged || !userData.id) {
-            console.warn("===[DIAGNOSTYKA AXIOS]=== Przerwano fetch: brak userData lub użytkownik niezalogowany.");
+            console.warn("===[DIAGNOSTYKA AXIOS]=== Przerwano fetch: brak userData lub uzytkownik niezalogowany.");
             return;
         }
 
         axios.get(`${axiosPath}/transactions/transactionsByType`, { params: { type: viewMode, id: userData.id } })
             .then((res) => {
-
                 let rawData = [];
 
                 if (Array.isArray(res.data)) {
@@ -83,15 +78,16 @@ export default function TransactionsPage() {
                 } else if (res.data && Array.isArray(res.data.rows)) {
                     rawData = res.data.rows;
                 } else if (res.data && typeof res.data === 'object' && res.data.transaction_id) {
-                    // NOWOŚĆ: Jeśli serwer zwrócił pojedynczy obiekt transakcji, pakujemy go w tablicę jednoelementową!
-                    console.log("👉 Wykryto pojedynczy obiekt transakcji. Pakuję go w tablicę.");
+                    console.log("👉 Wykryto pojedynczy obiekt transakcji. Pakuje go w tablice.");
                     rawData = [res.data];
                 }
+                console.log(rawData);
 
                 const formattedData = rawData.map(item => ({
                     ...item,
                     suggested_price: parseFloat(item.suggested_price) || 0,
                     transaction_id: parseInt(item.transaction_id, 10) || 0,
+                    game_id: parseInt(item.game_id, 10) || null,
                     transaction_status: String(item.transaction_status || 'Pending').trim()
                 }));
 
@@ -119,19 +115,26 @@ export default function TransactionsPage() {
                 }
             })
             .catch((err) => {
-                const errorMsg = err.response?.data?.error || "Wystąpił błąd podczas zatwierdzania.";
+                const errorMsg = err.response?.data?.error || "Wystapil blad podczas zatwierdzania.";
                 alert(errorMsg);
             });
+    };
+
+    const RedirectToGamePage = (gameId) => {
+        if (!gameId) {
+            alert("Nie znaleziono identyfikatora gry dla tej transakcji.");
+            return;
+        }
+        navigate('/Game', { state: { GameId: gameId } });
     };
 
     const anyStatusSelected = statusFilters.some(sf => sf.isSelected);
 
     const columns = useMemo(() => {
-
         const baseColumns = [
             {
-                header: "Tytuł gry", accessorKey: "game_title",
-                cell: (info) => info.getValue() || <span className="text-muted">Nieznany tytuł</span>
+                header: "Tytul gry", accessorKey: "game_title",
+                cell: (info) => info.getValue() || <span className="text-muted">Nieznany tytul</span>
             }
         ];
 
@@ -142,7 +145,7 @@ export default function TransactionsPage() {
                     cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
                 },
                 {
-                    header: "Otrzymujący", accessorKey: "reciever_login",
+                    header: "Otrzymujacy", accessorKey: "reciever_login",
                     cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
                 });
         } else if (viewMode === 'reciever') {
@@ -152,12 +155,12 @@ export default function TransactionsPage() {
                     cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
                 },
                 {
-                    header: "Kupujący", accessorKey: "buyer_login",
+                    header: "Kupujacy", accessorKey: "buyer_login",
                     cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
                 });
         } else if (viewMode === 'seller') {
             baseColumns.push({
-                header: "Kupujący", accessorKey: "buyer_login",
+                header: "Kupujacy", accessorKey: "buyer_login",
                 cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
             });
         } else if (viewMode === 'admin') {
@@ -167,11 +170,11 @@ export default function TransactionsPage() {
                     cell: (info) => info.getValue() || <span className="text-muted">-</span>
                 },
                 {
-                    header: "Kupujący", accessorKey: "buyer_login",
+                    header: "Kupujacy", accessorKey: "buyer_login",
                     cell: (info) => info.getValue() || <span className="text-muted">-</span>
                 },
                 {
-                    header: "Otrzymujący", accessorKey: "reciever_login",
+                    header: "Otrzymujacy", accessorKey: "reciever_login",
                     cell: (info) => info.getValue() || <span className="text-muted">-</span>
                 }
             );
@@ -180,7 +183,7 @@ export default function TransactionsPage() {
         baseColumns.push(
             {
                 header: "Cena", accessorKey: "suggested_price",
-                cell: (info) => <span className="text-success fw-bold">{info.getValue()} zł</span>
+                cell: (info) => <span className="text-success fw-bold">{info.getValue()} zl</span>
             },
             {
                 header: "Status", accessorKey: "transaction_status",
@@ -262,13 +265,13 @@ export default function TransactionsPage() {
                     <div className="addpanel box-idk">
 
                         <div className="addpaneldiv row p-2 pe-4">
-                            <h2 className='font'>Szukaj (Gra / Użytkownik)</h2>
+                            <h2 className='font'>Szukaj (Gra / Uzytkownik)</h2>
                             <input
                                 className='col p-2 inp-srch'
                                 type="text"
                                 value={globalFilter ?? ""}
                                 onChange={(e) => setGlobalFilter(e.target.value)}
-                                placeholder='Wpisz frazę...'
+                                placeholder='Wpisz fraze...'
                             />
                         </div>
 
@@ -292,7 +295,7 @@ export default function TransactionsPage() {
                                         className={`btn rounded-0 text-start border ${viewMode === 'seller' ? 'btn-primary fw-bold' : 'btn-dark'}`}
                                         onClick={() => setViewMode('seller')}
                                     >
-                                        Sprzedaż
+                                        Sprzedaz
                                     </button>
                                 )}
                                 {(userData && userData.type === 'admin') && (
@@ -357,7 +360,7 @@ export default function TransactionsPage() {
                         <tbody>
                             {rows.length > 0 ? (
                                 rows.map((row) => (
-                                    <tr key={row.id} onClick={() => RedirectToGamePage(games.gameId)}>
+                                    <tr key={row.id} onClick={() => RedirectToGamePage(row.original.game_id)} style={{ cursor: 'pointer' }}>
                                         {row.getVisibleCells().map((cell) => (
                                             <td key={cell.id} className="align-middle">
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -368,7 +371,7 @@ export default function TransactionsPage() {
                             ) : (
                                 <tr>
                                     <td colSpan={columns.length} className="text-center py-4 text-muted">
-                                        Brak transakcji spełniających kryteria w wybranym widoku.
+                                        Brak transakcji spelniajacych kryteria w wybranym widoku.
                                     </td>
                                 </tr>
                             )}

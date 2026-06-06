@@ -101,9 +101,9 @@ app.listen(port, async () => {
 
 // Pobieranie wszystkich ofert (dla administratora lub ogólnej listy)
 app.get('/key_offers/allOffers', async (req, res) => {
-  const { userId, userRole } = req.query;
+  const { userId, userRole, scope } = req.query;
   var sql = `SELECT ko.id, ko.game_id, g.title, ko.seller_id, u.login AS seller, ko.game_key, ko.other, ko.status, ko.suggested_price, u.login AS seller_login FROM key_offers ko LEFT JOIN games g ON ko.game_id = g.id LEFT JOIN users u ON ko.seller_id = u.id`;
-  if (userRole == "seller") sql += ` WHERE ko.seller_id = ${userId}`;
+  if (userRole == "seller" || (userRole == "admin" && scope == "my")) sql += ` WHERE ko.seller_id = ${userId}`;
   try {
     const result = await db.pool.query(sql);
     res.json(result);
@@ -284,7 +284,7 @@ app.get("/transactions/transactionsByType", async (req, res) => {
     if (!type) return res.status(400).json({ error: "Parametr 'type' jest wymagany." });
     if (type !== 'admin' && !id) return res.status(400).json({ error: "Parametr 'id' jest wymagany dla tego typu widoku." });
 
-    let sql = `SELECT t.id AS transaction_id, t.status AS transaction_status, t.reciever_id, ko.id AS offer_id, ko.suggested_price, ko.game_key, g.title AS game_title, u_seller.login AS seller_login, u_reciever.login AS reciever_login, u_buyer.login AS buyer_login FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id JOIN users u_seller ON ko.seller_id = u_seller.id JOIN users u_reciever ON t.reciever_id = u_reciever.id JOIN users u_buyer ON t.buyer_id = u_buyer.id JOIN games g ON ko.game_id = g.id `;
+    let sql = `SELECT t.id AS transaction_id, t.status AS transaction_status, t.reciever_id, ko.id AS offer_id, ko.suggested_price, ko.game_key, g.id AS game_id, g.title AS game_title, CONCAT(u_seller.login, " (", u_seller.discord_tag, ")") AS seller_login, CONCAT(u_reciever.login, " (", u_reciever.discord_tag, ")") AS reciever_login, CONCAT(u_buyer.login, " (", u_buyer.discord_tag, ")") AS buyer_login FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id JOIN users u_seller ON ko.seller_id = u_seller.id JOIN users u_reciever ON t.reciever_id = u_reciever.id JOIN users u_buyer ON t.buyer_id = u_buyer.id JOIN games g ON ko.game_id = g.id`;
 
     if (type === 'buyer') sql += ` WHERE t.buyer_id = ${id}`;
     else if (type === 'reciever') sql += ` WHERE t.reciever_id = ${id}`;

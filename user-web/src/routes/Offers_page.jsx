@@ -25,29 +25,37 @@ export default function OffersPage() {
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 8 });
     const [offers, setOffers] = useState([]);
 
+    // NOWOŚĆ: Stan określający zakres ofert ('my' - własne dedykowane, 'all' - wszystkie w systemie)
+    const [viewScope, setViewScope] = useState('my');
+
     useEffect(() => {
         if (!userData || userData.type === 'user') {
             console.warn("Wykryto próbę nieautoryzowanego dostępu. Przekierowanie...");
-            navigate('/'); // Przekierowanie na stronę główną
+            navigate('/');
         }
     }, [userData, navigate]);
 
     // Inicjalizacja filtra początkowego (jeśli nawigujemy z wyszukiwarki)
     useEffect(() => {
         if (location.state?.Title) {
-            // ZMIANA: Zamiast bezpośrednio modyfikować filtr tabeli, aktualizujemy pole tekstowe
             setSearchInputValue(location.state.Title);
         }
     }, [location.state]);
 
     // Pobranie ofert z backendu
     useEffect(() => {
-        // Jeśli userData jeszcze się ładuje lub rola jest niepoprawna, przerywamy strzał
         if (!userData || userData.type === 'user') return;
 
-        axios.get(`${axiosPath}/key_offers/allOffers`, { params: { userId: userData.id, userRole: userData.type } })
+        // NOWOŚĆ: Przekazujemy parametr scope do backendu (viewScope)
+        axios.get(`${axiosPath}/key_offers/allOffers`, {
+            params: {
+                userId: userData.id,
+                userRole: userData.type,
+                scope: viewScope
+            }
+        })
             .then((res) => {
-                console.log("Oferty załadowane dla roli:", userData.type, res.data);
+                console.log("Oferty załadowane dla roli:", userData.type, "Zakres:", viewScope, res.data);
                 setOffers(Array.isArray(res.data) ? res.data : []);
             })
             .catch(err => {
@@ -56,21 +64,18 @@ export default function OffersPage() {
                     navigate('/');
                 }
             });
-    }, [userData, axiosPath, navigate]);
+    }, [userData, axiosPath, navigate, viewScope]); // NOWOŚĆ: Dodano viewScope do tablicy zależności
 
     const handleStatusChange = (offerId, newStatus) => {
-        // 1. Szukamy oferty w obecnym stanie, żeby wiedzieć, jaki miała status PRZED zmianą
         const currentOffer = offers.find(o => o.id === offerId);
         const oldStatus = currentOffer ? currentOffer.status : 'Active';
 
-        // 2. BLOKADA DLA SPRZEDAWCY: Jeśli sprzedawca próbuje ustawić 'Closed', wyrzucamy alert i cofamy zmianę
         if (userData?.role === 'seller' && newStatus === 'Closed') {
             alert("Jako sprzedawca nie masz uprawnień do ręcznego ustawiania statusu 'Closed'.");
             setOffers(prevOffers => [...prevOffers]);
             return;
         }
 
-        // 3. ALERT DLA ADMINISTRATORA: Jeśli status zmienia się na 'Closed', pytamy o potwierdzenie
         if (newStatus === 'Closed') {
             const isConfirmed = window.confirm(`Czy na pewno chcesz zmienić status oferty ID: ${offerId} na "Closed"?\nTej operacji nie można cofnąć.`);
 
@@ -81,7 +86,6 @@ export default function OffersPage() {
             }
         }
 
-        // 4. Jeśli przeszło walidacje i potwierdzenia -> wysyłamy standardowy strzał do bazy
         axios.patch(`${axiosPath}/key_offers/updateStatus`, { offerId: offerId, newStatus: newStatus })
             .then(() => {
                 console.log(`Status oferty ${offerId} pomyślnie zmieniony na ${newStatus}`);
@@ -95,7 +99,7 @@ export default function OffersPage() {
     };
 
     const columns = useMemo(() => [
-        { header: "Tytuł gry", accessorKey: "title", cell: (info) => info.getValue() || <span className="text-muted">Brak tytułu</span> },
+        { header: "Tytul gry", accessorKey: "title", cell: (info) => info.getValue() || <span className="text-muted">Brak tytułu</span> },
         { header: "Sprzedawca", accessorKey: "seller", cell: (info) => info.getValue() || `User ID: ${info.row.original.seller_id}` },
         { header: "Proponowana Cena", accessorKey: "suggested_price", cell: (info) => <span className="text-success fw-bold">{info.getValue()} zł</span> },
         {
@@ -105,7 +109,6 @@ export default function OffersPage() {
                 if (Array.isArray(currentStatus)) currentStatus = currentStatus[0];
                 if (typeof currentStatus === 'object' && currentStatus !== null) currentStatus = currentStatus.value || currentStatus.toString();
 
-                // 3. Zabezpieczenie zanim się załaduje
                 if (!currentStatus) currentStatus = 'Active';
 
                 const offerId = info.row.original.id;
@@ -122,7 +125,7 @@ export default function OffersPage() {
                 );
             }
         }
-    ], [offers]);
+    ], [offers, userData]);
 
     const table = useReactTable({
         data: offers,
@@ -147,16 +150,19 @@ export default function OffersPage() {
 
     return (
         <div className="container-fluid">
-            {/* Nagłówek */}
             <Header />
 
-            <h3 className='mx-4 mt-4 p-4 font'>Baza Wystawionych Ofert</h3>
+            <h3 className='mx-4 mt-4 p-4 font'>
+                {viewScope === 'all' ? "Baza Wszystkich Ofert" : "Baza Wystawionych Ofert"}
+            </h3>
+
             <div className="row px-4 pb-4">
                 <div className="col-12 col-lg-4 custom-border border-dark">
                     <h3 className='mx-4 mt-4 p-3 text-center font'>Filtruj oferty:</h3>
+
                     <div className="addpanel box-idk">
                         <div className="addpaneldiv row p-2 pe-4">
-                            <h2 className='font'>Szukaj (Tytuł / Sprzedawca)</h2>
+                            <h2 className='font'>Szukaj (Tytul / Sprzedawca)</h2>
                             <input
                                 className='col p-2 inp-srch'
                                 type="text"
@@ -165,8 +171,32 @@ export default function OffersPage() {
                                 placeholder='Wpisz frazę...'
                             />
                         </div>
+
+                        {/* NOWOŚĆ: Sekcja filtrów widoku dostępna wyłącznie dla Administratora */}
+                        {userData && userData.type === 'admin' && (
+                            <div className='addpaneldiv col p-2 pe-4 border-top border-secondary mt-3 pt-3'>
+                                <h2 className='font mb-2'>Zakres wyswietlania</h2>
+                                <div className="d-flex flex-column gap-2">
+                                    <button
+                                        className={`btn rounded-0 text-start border ${viewScope === 'my' ? 'btn-primary fw-bold' : 'btn-dark'}`}
+                                        onClick={() => setViewScope('my')}
+                                    >
+                                        Moje oferty
+                                    </button>
+                                    <button
+                                        className={`btn rounded-0 text-start border ${viewScope === 'all' ? 'btn-danger fw-bold' : 'btn-dark'}`}
+                                        onClick={() => setViewScope('all')}
+                                    >
+                                        Wszystkie oferty (Globalnie)
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                    <button onClick={() => navigate("/Create-Offer")}>DODAJ OFERTĘ</button>
+
+                    <button className="btn btn-success rounded-0 w-100 mt-3 border border-3 border-dark fw-bold" onClick={() => navigate("/Create-Offer")}>
+                        DODAJ OFERTĘ
+                    </button>
                 </div>
 
                 <div className="col">
@@ -197,7 +227,7 @@ export default function OffersPage() {
                                         style={{ cursor: 'pointer' }}
                                     >
                                         {row.getVisibleCells().map((cell) => (
-                                            <td key={cell.id}>
+                                            <td key={cell.id} className="align-middle">
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                             </td>
                                         ))}
@@ -233,7 +263,6 @@ export default function OffersPage() {
                 </div>
             </div>
 
-            {/* Stópka */}
             <Footer />
         </div>
     );
