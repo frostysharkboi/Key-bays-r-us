@@ -87,10 +87,10 @@ export default function WishlistPage() {
         <Header />
 
         {/* Sekcja tabeli listy życzeń */}
-        <h3 className='mx-4 mt-4 p-4 font'>Twoja Lista Życzeń</h3>
+        <h3 className='mx-4 mt-4 p-4 font'>Twoja Lista Zyczen</h3>
         <div className="row px-4 pb-4">
           <div className="col-12 col-lg-4 custom-border border-dark">
-            <h3 className='mx-4 mt-4 p-3 text-center font'>Filtruj listę:</h3>
+            <h3 className='mx-4 mt-4 p-3 text-center font'>Filtruj liste:</h3>
             <div className="addpanel box-idk">
               <div className="addpaneldiv row p-2 pe-4">
                 <h2 className='font'>Tytul gier</h2>

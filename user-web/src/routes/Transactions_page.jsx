@@ -84,7 +84,7 @@ export default function TransactionsPage() {
                     rawData = res.data.rows;
                 } else if (res.data && typeof res.data === 'object' && res.data.transaction_id) {
                     // NOWOŚĆ: Jeśli serwer zwrócił pojedynczy obiekt transakcji, pakujemy go w tablicę jednoelementową!
-                    console.log("👉 Wykryto pojedynczy obiekt transakcji. Pakuję go w tablicę.");
+                    console.log("Wykryto pojedynczy obiekt transakcji. Pakuję go w tablicę.");
                     rawData = [res.data];
                 }
 
@@ -130,7 +130,7 @@ export default function TransactionsPage() {
 
         const baseColumns = [
             {
-                header: "Tytuł gry", accessorKey: "game_title",
+                header: "Tytul gry", accessorKey: "game_title",
                 cell: (info) => info.getValue() || <span className="text-muted">Nieznany tytuł</span>
             }
         ];
@@ -142,7 +142,7 @@ export default function TransactionsPage() {
                     cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
                 },
                 {
-                    header: "Otrzymujący", accessorKey: "reciever_login",
+                    header: "Otrzymujacy", accessorKey: "reciever_login",
                     cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
                 });
         } else if (viewMode === 'reciever') {
@@ -152,12 +152,12 @@ export default function TransactionsPage() {
                     cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
                 },
                 {
-                    header: "Kupujący", accessorKey: "buyer_login",
+                    header: "Kupujacy", accessorKey: "buyer_login",
                     cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
                 });
         } else if (viewMode === 'seller') {
             baseColumns.push({
-                header: "Kupujący", accessorKey: "buyer_login",
+                header: "Kupujacy", accessorKey: "buyer_login",
                 cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
             });
         } else if (viewMode === 'admin') {
@@ -167,11 +167,11 @@ export default function TransactionsPage() {
                     cell: (info) => info.getValue() || <span className="text-muted">-</span>
                 },
                 {
-                    header: "Kupujący", accessorKey: "buyer_login",
+                    header: "Kupujacy", accessorKey: "buyer_login",
                     cell: (info) => info.getValue() || <span className="text-muted">-</span>
                 },
                 {
-                    header: "Otrzymujący", accessorKey: "reciever_login",
+                    header: "Otrzymujacy", accessorKey: "reciever_login",
                     cell: (info) => info.getValue() || <span className="text-muted">-</span>
                 }
             );
