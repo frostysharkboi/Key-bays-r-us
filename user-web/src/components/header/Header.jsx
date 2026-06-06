@@ -82,8 +82,7 @@ export default function Header({ showAccountMenu = true, axiosPath }) {
                             {displayedGames.map((game) => (
                                 <div key={game.id} className="d-flex bg-dark align-items-center p-2 border-bottom search-item" style={{ cursor: 'pointer' }}
                                     onClick={() => {
-                                        changeTitle(game.title);
-                                        redirectToSearching(game.title);
+                                        navigate('/Game', { state: { GameId: game.id } });
                                     }}
                                 >
                                     {game.cover_img ? (<img src={game.cover_img} alt={game.title} style={{ width: '35px', height: '45px', objectFit: 'cover', marginRight: '12px', borderRadius: '2px' }} />

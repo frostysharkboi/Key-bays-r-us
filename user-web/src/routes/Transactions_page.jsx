@@ -4,19 +4,17 @@ import * as React from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import { UserContext } from "../components/user-context/UserContext";
 import { useNavigate } from 'react-router-dom';
-import { useDebounce } from '../hooks/UseDebounce';
 import Header from "../components/header/Header";
 import './root.css';
 import { axiosPath } from "../App";
 import Footer from '../components/footer/Footer';
 
-// Wyodrębniony mini-komponent dla akcji, aby izolować stan wpisywania klucza i zapobiegać utracie fokusu
-function TransactionActionCell({ transaction, activeTransactionInput, setActiveTransactionInput, onConfirm }) {
+function TransactionActionCell({ transaction, activeTransactionInput, setActiveTransactionInput, onConfirm, viewMode }) {
     const id = transaction.transaction_id;
     const status = String(transaction.transaction_status || 'Pending').trim();
     const [localKey, setLocalKey] = useState("");
 
-    if (status !== 'Pending') return <span className="text-muted">-</span>;
+    if (status !== 'Pending' || viewMode !== 'buyer') return <span className="text-muted">-</span>;
 
     const isInputActive = activeTransactionInput === id;
 
@@ -35,7 +33,7 @@ function TransactionActionCell({ transaction, activeTransactionInput, setActiveT
     }
 
     return (
-        <button className="btn btn-success btn-sm fw-bold rounded-0 border border-2" onClick={(e) => { e.stopPropagation(); setActiveTransactionInput(id); }}        >
+        <button className="btn btn-success btn-sm fw-bold rounded-0 border border-2" onClick={(e) => { e.stopPropagation(); setActiveTransactionInput(id); }}>
             Zatwierdź
         </button>
     );
@@ -49,16 +47,16 @@ export default function TransactionsPage() {
     const [sorting, setSorting] = useState([{ id: 'suggested_price', desc: false }]);
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 8 });
     const [transactions, setTransactions] = useState([]);
-
     const [activeTransactionInput, setActiveTransactionInput] = useState(null);
+    const [viewMode, setViewMode] = useState('buyer');
 
+    // POPRAWKA: Wszystkie statusy ustawione na true, żeby wykluczyć błąd ukrywania danych
     const [statusFilters, setStatusFilters] = useState([
         { id: 'Pending', label: 'Oczekujące', isSelected: true },
         { id: 'Success', label: 'Zakończone', isSelected: false },
         { id: 'Cancelled', label: 'Anulowane', isSelected: false }
     ]);
 
-    // Ochrona routingu
     useEffect(() => {
         if (userData && userData.isLogged === false) {
             console.warn("Niezalogowany użytkownik nie ma dostępu do transakcji. Przekierowanie...");
@@ -66,30 +64,48 @@ export default function TransactionsPage() {
         }
     }, [userData, navigate]);
 
-    // Pobieranie transakcji z mapowaniem na wartości liczbowe
     const fetchTransactions = () => {
-        if (!userData || !userData.isLogged || !userData.id) return;
+        if (!userData || !userData.isLogged || !userData.id) {
+            console.warn("===[DIAGNOSTYKA AXIOS]=== Przerwano fetch: brak userData lub użytkownik niezalogowany.");
+            return;
+        }
 
-        axios.get(`${axiosPath}/transactions/transactionsByBuyer`, { params: { id: userData.id } })
+        axios.get(`${axiosPath}/transactions/transactionsByType`, {
+            params: {
+                type: viewMode,
+                id: userData.id
+            }
+        })
             .then((res) => {
-                const rawData = Array.isArray(res.data) ? res.data : [];
+
+                let rawData = [];
+
+                if (Array.isArray(res.data)) {
+                    rawData = res.data;
+                } else if (res.data && Array.isArray(res.data.rows)) {
+                    rawData = res.data.rows;
+                } else if (res.data && typeof res.data === 'object' && res.data.transaction_id) {
+                    // NOWOŚĆ: Jeśli serwer zwrócił pojedynczy obiekt transakcji, pakujemy go w tablicę jednoelementową!
+                    console.log("👉 Wykryto pojedynczy obiekt transakcji. Pakuję go w tablicę.");
+                    rawData = [res.data];
+                }
+
                 const formattedData = rawData.map(item => ({
                     ...item,
                     suggested_price: parseFloat(item.suggested_price) || 0,
-                    transaction_id: parseInt(item.transaction_id, 10) || 0
+                    transaction_id: parseInt(item.transaction_id, 10) || 0,
+                    transaction_status: String(item.transaction_status || 'Pending').trim()
                 }));
+
                 setTransactions(formattedData);
             })
-            .catch(err => {
-                console.error("Błąd pobierania transakcji:", err);
-            });
     };
 
     useEffect(() => {
         fetchTransactions();
-    }, [userData]);
+        setActiveTransactionInput(null);
+    }, [userData, viewMode]);
 
-    // Obsługa wysyłki formularza
     const handleConfirmSubmit = (transactionId, keyToSend) => {
         if (!keyToSend.trim()) {
             alert("Wpisz klucz gry przed zatwierdzeniem!");
@@ -103,8 +119,8 @@ export default function TransactionsPage() {
             .then((res) => {
                 if (res.data.success) {
                     alert(res.data.message);
-                    setActiveTransactionInput(null); // Zamknij input
-                    fetchTransactions(); // Odśwież dane
+                    setActiveTransactionInput(null);
+                    fetchTransactions();
                 }
             })
             .catch((err) => {
@@ -115,67 +131,107 @@ export default function TransactionsPage() {
 
     const anyStatusSelected = statusFilters.some(sf => sf.isSelected);
 
-    // Definicja kolumn tabeli TanStack
-    const columns = useMemo(() => [
-        {
-            header: "Tytul gry", accessorKey: "game_title",
-            cell: (info) => info.getValue() || <span className="text-muted">Nieznany tytuł</span>
-        },
-        {
-            header: "Sprzedawca", accessorKey: "seller_login",
-            cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
-        },
-        {
-            header: "Cena", accessorKey: "suggested_price",
-            cell: (info) => <span className="text-success fw-bold">{info.getValue()} zł</span>
-        },
-        {
-            header: "Status", accessorKey: "transaction_status",
-            sortingFn: (rowA, rowB, columnId) => {
-                const statusA = String(rowA.getValue(columnId) || 'Pending').trim();
-                const statusB = String(rowB.getValue(columnId) || 'Pending').trim();
-                const statusOrder = { 'Pending': 1, 'Success': 2, 'Cancelled': 3 };
-                return (statusOrder[statusA] || 99) - (statusOrder[statusB] || 99);
-            },
-            filterFn: (row, columnId, filterValue) => {
-                if (!filterValue || filterValue.length === 0) return true;
-                const rowStatus = String(row.getValue(columnId) || '').trim();
-                return filterValue.includes(rowStatus);
-            },
-            cell: (info) => {
-                const status = String(info.getValue() || 'Pending').trim();
-                let badgeClass = "badge bg-secondary";
+    const columns = useMemo(() => {
 
-                if (status === 'Success') badgeClass = "badge bg-success";
-                if (status === 'Pending') badgeClass = "badge bg-warning text-dark";
-                if (status === 'Cancelled') badgeClass = "badge bg-danger";
-
-                return <span className={`${badgeClass} p-2 fw-bold`}>{status}</span>;
+        const baseColumns = [
+            {
+                header: "Tytuł gry", accessorKey: "game_title",
+                cell: (info) => info.getValue() || <span className="text-muted">Nieznany tytuł</span>
             }
-        },
-        {
-            header: "Akcja", id: "actions", enableGlobalFilter: false,
-            cell: (info) => (
-                <TransactionActionCell
-                    transaction={info.row.original}
-                    activeTransactionInput={activeTransactionInput}
-                    setActiveTransactionInput={setActiveTransactionInput}
-                    onConfirm={handleConfirmSubmit}
-                />
-            )
-        }
-    ], [activeTransactionInput]);
+        ];
 
-    // Wyciąganie tablicy aktywnych statusow z checkboxow
+        if (viewMode === 'buyer') {
+            baseColumns.push(
+                {
+                    header: "Sprzedawca", accessorKey: "seller_login",
+                    cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
+                },
+                {
+                    header: "Otrzymujący", accessorKey: "reciever_login",
+                    cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
+                });
+        } else if (viewMode === 'reciever') {
+            baseColumns.push(
+                {
+                    header: "Sprzedawca", accessorKey: "seller_login",
+                    cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
+                },
+                {
+                    header: "Kupujący", accessorKey: "buyer_login",
+                    cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
+                });
+        } else if (viewMode === 'seller') {
+            baseColumns.push({
+                header: "Kupujący", accessorKey: "buyer_login",
+                cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
+            });
+        } else if (viewMode === 'admin') {
+            baseColumns.push(
+                {
+                    header: "Sprzedawca", accessorKey: "seller_login",
+                    cell: (info) => info.getValue() || <span className="text-muted">-</span>
+                },
+                {
+                    header: "Kupujący", accessorKey: "buyer_login",
+                    cell: (info) => info.getValue() || <span className="text-muted">-</span>
+                },
+                {
+                    header: "Otrzymujący", accessorKey: "reciever_login",
+                    cell: (info) => info.getValue() || <span className="text-muted">-</span>
+                }
+            );
+        }
+
+        baseColumns.push(
+            {
+                header: "Cena", accessorKey: "suggested_price",
+                cell: (info) => <span className="text-success fw-bold">{info.getValue()} zł</span>
+            },
+            {
+                header: "Status", accessorKey: "transaction_status",
+                sortingFn: (rowA, rowB, columnId) => {
+                    const statusA = String(rowA.getValue(columnId) || 'Pending').trim();
+                    const statusB = String(rowB.getValue(columnId) || 'Pending').trim();
+                    const statusOrder = { 'Pending': 1, 'Success': 2, 'Cancelled': 3 };
+                    return (statusOrder[statusA] || 99) - (statusOrder[statusB] || 99);
+                },
+                filterFn: (row, columnId, filterValue) => {
+                    if (!filterValue || filterValue.length === 0) return true;
+                    const rowStatus = String(row.getValue(columnId) || '').trim();
+                    return filterValue.includes(rowStatus);
+                },
+                cell: (info) => {
+                    const status = String(info.getValue() || 'Pending').trim();
+                    let badgeClass = "badge bg-secondary";
+                    if (status === 'Success') badgeClass = "badge bg-success";
+                    if (status === 'Pending') badgeClass = "badge bg-warning text-dark";
+                    if (status === 'Cancelled') badgeClass = "badge bg-danger";
+                    return <span className={`${badgeClass} p-2 fw-bold`}>{status}</span>;
+                }
+            },
+            {
+                header: "Akcja", id: "actions", enableGlobalFilter: false,
+                cell: (info) => (
+                    <TransactionActionCell
+                        transaction={info.row.original}
+                        activeTransactionInput={activeTransactionInput}
+                        setActiveTransactionInput={setActiveTransactionInput}
+                        onConfirm={handleConfirmSubmit}
+                        viewMode={viewMode}
+                    />
+                )
+            }
+        );
+
+        return baseColumns;
+    }, [activeTransactionInput, viewMode]);
+
     const selectedStatuses = useMemo(() => {
         return statusFilters.filter(sf => sf.isSelected).map(sf => sf.id);
     }, [statusFilters]);
 
-    // Przekazanie filtrow do pamięci tabeli
     const columnFilters = useMemo(() => {
-        return selectedStatuses.length > 0
-            ? [{ id: 'transaction_status', value: selectedStatuses }]
-            : [];
+        return selectedStatuses.length > 0 ? [{ id: 'transaction_status', value: selectedStatuses }] : [];
     }, [selectedStatuses]);
 
     const table = useReactTable({
@@ -198,17 +254,20 @@ export default function TransactionsPage() {
         <div className="container-fluid">
             <Header axiosPath={axiosPath} />
 
-            <h3 className='mx-4 mt-4 p-4 font'>Twoje Zamowienia i Transakcje</h3>
-            <div className="row px-4 pb-4">
+            <h3 className='mx-4 mt-4 p-4 font'>
+                {viewMode === 'buyer' && "Gry Zamowione"}
+                {viewMode === 'reciever' && "Gry Otrzymane"}
+                {viewMode === 'seller' && "Gry Sprzedawane"}
+                {viewMode === 'admin' && "Panel Administratora: Transakcje"}
+            </h3>
 
-                {/* Lewy panel filtrow bocznych */}
+            <div className="row px-4 pb-4">
                 <div className="col-12 col-lg-4 custom-border border-dark">
                     <h3 className='mx-4 mt-4 p-3 text-center font'>Filtry transakcji:</h3>
                     <div className="addpanel box-idk">
 
-                        {/* Filtr wyszukiwania tekstowego */}
                         <div className="addpaneldiv row p-2 pe-4">
-                            <h2 className='font'>Szukaj (Gra / Sprzedawca)</h2>
+                            <h2 className='font'>Szukaj (Gra / Użytkownik)</h2>
                             <input
                                 className='col p-2 inp-srch'
                                 type="text"
@@ -218,7 +277,40 @@ export default function TransactionsPage() {
                             />
                         </div>
 
-                        {/* Filtry checkboxow (statusy) */}
+                        <div className='addpaneldiv col p-2 pe-4 border-bottom border-secondary pb-3 mb-3'>
+                            <h2 className='font mb-2'>Widok</h2>
+                            <div className="d-flex flex-column gap-2">
+                                <button
+                                    className={`btn rounded-0 text-start border ${viewMode === 'buyer' ? 'btn-primary fw-bold' : 'btn-dark'}`}
+                                    onClick={() => setViewMode('buyer')}
+                                >
+                                    🛒 Kupione
+                                </button>
+                                <button
+                                    className={`btn rounded-0 text-start border ${viewMode === 'reciever' ? 'btn-primary fw-bold' : 'btn-dark'}`}
+                                    onClick={() => setViewMode('reciever')}
+                                >
+                                    🎁 Otrzymane
+                                </button>
+                                {(userData && userData.type !== 'normal') && (
+                                    <button
+                                        className={`btn rounded-0 text-start border ${viewMode === 'seller' ? 'btn-primary fw-bold' : 'btn-dark'}`}
+                                        onClick={() => setViewMode('seller')}
+                                    >
+                                        💰 Moje oferty (Sprzedaż)
+                                    </button>
+                                )}
+                                {(userData && userData.type === 'admin') && (
+                                    <button
+                                        className={`btn rounded-0 text-start border ${viewMode === 'admin' ? 'btn-danger fw-bold' : 'btn-dark'}`}
+                                        onClick={() => setViewMode('admin')}
+                                    >
+                                        🛡️ Wszystkie transakcje (Admin)
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
                         <div className='addpaneldiv col p-2 pe-4'>
                             <h2 className='font'>Statusy</h2>
                             {statusFilters.map((sf) => (
@@ -248,7 +340,6 @@ export default function TransactionsPage() {
                     </div>
                 </div>
 
-                {/* Prawa strona: Tabela */}
                 <div className="col">
                     <table className='table border border-3 table-sm table-striped table-hover ms-3'>
                         <thead>
@@ -282,7 +373,7 @@ export default function TransactionsPage() {
                             ) : (
                                 <tr>
                                     <td colSpan={columns.length} className="text-center py-4 text-muted">
-                                        Brak transakcji spełniających kryteria.
+                                        Brak transakcji spełniających kryteria w wybranym widoku.
                                     </td>
                                 </tr>
                             )}
@@ -293,7 +384,6 @@ export default function TransactionsPage() {
                                 </tr>
                             ))}
 
-                            {/* Panel nawigacji stronami */}
                             <tr>
                                 <td colSpan={columns.length}>
                                     <div className="d-flex justify-content-between align-items-center">
@@ -309,7 +399,6 @@ export default function TransactionsPage() {
                     </table>
                 </div>
             </div>
-
             <Footer />
         </div>
     );

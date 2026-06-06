@@ -386,18 +386,45 @@ app.get("/key_offers/offersForGames", async (req, res) => {
 
 
 //POLECENIA DOTYCZĄCE TRANSAKCJI
-//Wybierz dane z tabeli, gdzie id kupującego jest podobne do podanego id.
 
-app.get("/transactions/transactionsByBuyer", async (req, res) => {
-  const { id } = req.query;
+//obsługa tabeli transakcji.
+app.get("/transactions/transactionsByType", async (req, res) => {
+  const { type, id } = req.query;
 
   try {
-    const userId = req.query.id;
-    const sql = `SELECT t.id AS transaction_id, t.status AS transaction_status, t.reciever_id, ko.id AS offer_id, ko.suggested_price, ko.game_key, g.title AS game_title, u.login AS seller_login FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id JOIN users u ON ko.seller_id = u.id JOIN games g ON ko.game_id = g.id WHERE t.buyer_id = ${id};`;
-    const result = await db.pool.query(sql);
-    res.json(result);
+    if (!type) return res.status(400).json({ error: "Parametr 'type' jest wymagany." });
+    if (type !== 'admin' && !id) return res.status(400).json({ error: "Parametr 'id' jest wymagany dla tego typu widoku." });
+
+    let sql = `SELECT t.id AS transaction_id, t.status AS transaction_status, t.reciever_id, ko.id AS offer_id, ko.suggested_price, ko.game_key, g.title AS game_title, u_seller.login AS seller_login, u_reciever.login AS reciever_login, u_buyer.login AS buyer_login FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id JOIN users u_seller ON ko.seller_id = u_seller.id JOIN users u_reciever ON t.reciever_id = u_reciever.id JOIN users u_buyer ON t.buyer_id = u_buyer.id JOIN games g ON ko.game_id = g.id `;
+
+    if (type === 'buyer') sql += ` WHERE t.buyer_id = ${id}`;
+    else if (type === 'reciever') sql += ` WHERE t.reciever_id = ${id}`;
+    else if (type === 'seller') sql += ` WHERE ko.seller_id = ${id}`;
+    else if (type !== 'admin') return res.status(400).json({ error: "Nieprawidłowy parametr 'type'." });
+
+    sql += ` GROUP BY t.id;`;
+
+    const dbResponse = await db.pool.query(sql);
+
+    let finalRows = [];
+
+    // coś szwankowało z zwracaniem wyników jako tablica
+    if (Array.isArray(dbResponse)) {
+      if (Array.isArray(dbResponse[0])) {
+        finalRows = dbResponse[0];
+      } else {
+        finalRows = dbResponse;
+      }
+    } else if (dbResponse && Array.isArray(dbResponse.rows)) {
+      finalRows = dbResponse.rows;
+    } else if (dbResponse && typeof dbResponse === 'object') {
+      finalRows = [dbResponse];
+    }
+
+    res.json(finalRows);
+
   } catch (err) {
-    console.error(err);
+    console.error("[BACKEND ERROR] Wystąpił błąd podczas procesowania SQL:", err);
     res.status(500).json({ error: err.message });
   }
 });
