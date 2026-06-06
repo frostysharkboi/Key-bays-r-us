@@ -34,10 +34,11 @@ export default function GamePage() {
   // Pobieranie głównych danych gry
   const getGame = () => {
     if (!GameId) return;
-    axios.get(`${axiosPath}/games/alldata`, { params: { game_id: GameId } }).then((res) => {
-      console.log("Dane pobranej gry z API:", res.data[0]);
-      setGame(res.data);
-    });
+    axios.get(`${axiosPath}/games/alldata`, { params: { game_id: GameId } })
+      .then((res) => {
+        console.log("Dane pobranej gry z API:", res.data[0]);
+        setGame(res.data);
+      });
   };
 
   // Pobieranie multimediów dla karuzeli
@@ -141,7 +142,7 @@ export default function GamePage() {
   return (
     <div className="container-fluid col">
       {/* Nagłówek Strony */}
-      <Header axiosPath={axiosPath} />
+      <Header />
 
       {/* Tytuł gry */}
       <div className='row m-3 p-3 text-center'>

@@ -42,10 +42,7 @@ export default function SearchPage() {
   const getFilteredGames = () => {
     const outputTags = filterTags.filter(tag => tag.isSelected).map(tag => tag.id);
 
-    axios.get(`${axiosPath}/games/tagsort`, {
-      params: { tags: outputTags },
-      paramsSerializer: params => "tags=" + params.tags.join("&tags=")
-    })
+    axios.get(`${axiosPath}/games/tagsort`, { params: { tags: outputTags }, paramsSerializer: params => "tags=" + params.tags.join("&tags=") })
       .then((res) => {
         setGames(res.data);
       })
@@ -134,7 +131,7 @@ export default function SearchPage() {
     <>
       <div className="container-fluid">
         {/* Nagłówek Strony */}
-        <Header axiosPath={axiosPath} />
+        <Header />
 
         {/* Główna sekcja z tabelą i panelami bocznymi */}
         < h3 className='mx-4 mt-4 p-4 font' > Wyniki Wyszukiwania</h3 >

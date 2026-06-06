@@ -84,7 +84,7 @@ export default function WishlistPage() {
     <>
       <div className="container-fluid">
         {/* Nagłówek Strony */}
-        <Header axiosPath={axiosPath} />
+        <Header />
 
         {/* Sekcja tabeli listy życzeń */}
         <h3 className='mx-4 mt-4 p-4 font'>Twoja Lista Życzeń</h3>

@@ -82,10 +82,7 @@ export default function OffersPage() {
         }
 
         // 4. Jeśli przeszło walidacje i potwierdzenia -> wysyłamy standardowy strzał do bazy
-        axios.patch(`${axiosPath}/key_offers/updateStatus`, {
-            offerId: offerId,
-            newStatus: newStatus
-        })
+        axios.patch(`${axiosPath}/key_offers/updateStatus`, { offerId: offerId, newStatus: newStatus })
             .then(() => {
                 console.log(`Status oferty ${offerId} pomyślnie zmieniony na ${newStatus}`);
                 setOffers(prevOffers => prevOffers.map(offer => offer.id === offerId ? { ...offer, status: newStatus } : offer));
@@ -151,7 +148,7 @@ export default function OffersPage() {
     return (
         <div className="container-fluid">
             {/* Nagłówek */}
-            <Header axiosPath={axiosPath} />
+            <Header />
 
             <h3 className='mx-4 mt-4 p-4 font'>Baza Wystawionych Ofert</h3>
             <div className="row px-4 pb-4">

@@ -66,9 +66,7 @@ export default function Root() {
   const getFilteredGames = () => {
     const outputTags = "";
 
-    axios.get(`${axiosPath}/games/tagsort`, {
-      params: { tags: outputTags }
-    })
+    axios.get(`${axiosPath}/games/tagsort`, { params: { tags: outputTags } })
       .then((res) => {
         setGames(Array.isArray(res.data) ? res.data : []);
       })
@@ -130,24 +128,18 @@ export default function Root() {
   function AddOfferToDb() {
     if (CheckIfDataIsGood() == true) {
       if (confirm("Czy na pewno chcesz wystawić tą ofertę?\nWciśnij ok, by wystawić.") == true) {
-        axios.post(`${axiosPath}/key_offers/add`, {
-          key: offerAsObject.key,
-          price: offerAsObject.price,
-          other: offerAsObject.other,
-          game_id: offerAsObject.gameId,
-          seller_id: userData.id,
-          status: "Active"
-        }).then(() => {
-          console.log("Chyba przeszło?");
-          let popup = alert("Twoja oferta właśnie została wystawiona", "ok");
-          if (popup == true) {
-            console.log("Kurwa powinna przekazywać locationState");
-            navigate("/Offers");
-          }
-        }).catch((err) => {
-          setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
-          console.error(err);
-        });
+        axios.post(`${axiosPath}/key_offers/add`, { key: offerAsObject.key, price: offerAsObject.price, other: offerAsObject.other, game_id: offerAsObject.gameId, seller_id: userData.id, status: "Active" })
+          .then(() => {
+            console.log("Chyba przeszło?");
+            let popup = alert("Twoja oferta właśnie została wystawiona", "ok");
+            if (popup == true) {
+              console.log("Kurwa powinna przekazywać locationState");
+              navigate("/Offers");
+            }
+          }).catch((err) => {
+            setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
+            console.error(err);
+          });
         navigate("/Offers");
       } else {
         setTitle("");
@@ -161,7 +153,7 @@ export default function Root() {
   return (
     <>
       <div className="container-fluid">
-        <Header axiosPath={axiosPath} />
+        <Header />
 
         {/* Formularz Rejestracji */}
         <div className='row m-1 text-center font'>

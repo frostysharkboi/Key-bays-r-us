@@ -61,13 +61,7 @@ export default function Root() {
 
     if (currentValidationResult === true) {
       if (duplicate == false) {
-        axios.post(`${axiosPath}/users/adduser`, {
-          login: newUser.login,
-          email: newUser.mail,
-          pass: newUser.pass,
-          phone: newUser.phone,
-          discord_tag: newUser.discord
-        })
+        axios.post(`${axiosPath}/users/adduser`, { login: newUser.login, email: newUser.mail, pass: newUser.pass, phone: newUser.phone, discord_tag: newUser.discord })
           .then(() => {
             setSuccessBoxText("Rejestracja zakończona sukcesem! Za chwilę nastąpi przekierowanie do logowania...");
 
@@ -148,7 +142,7 @@ export default function Root() {
     <>
       <div className="container-fluid">
         {/* Nagłówek Strony */}
-        <Header showAccountMenu={false} axiosPath={axiosPath}/>
+        <Header showAccountMenu={false} />
 
         {/* Formularz Rejestracji */}
         <div className='row m-1 text-center font'>

@@ -147,40 +147,6 @@ app.get("/games/tagsort", async (req, res) => {
   }
 });
 
-//pobieranie tagów do gry po id
-
-// axios.get("http://localhost:3000/games/tagnames", { params: { game_id: int }}).then((res) => {setGameTags(res.data);});
-
-app.get("/games/tagnames", async (req, res) => {
-  const { game_id } = req.query;
-
-  try {
-    const sql = `SELECT DISTINCT t.id "id", t.tag "tag" FROM games g JOIN game_tags gt ON g.id = gt.game_id JOIN tags t ON t.id = gt.tag_id WHERE g.id LIKE ${game_id}`;
-    const result = await db.pool.query(sql);
-    res.json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-//pobieranie ofert do gier po id
-
-// axios.get("http://localhost:3000/games/activeoffers", { params: { game_id: int }}).then((res) => {setGameOffers(res.data);});
-
-app.get("/games/activeoffers", async (req, res) => {
-  const { game_id } = req.query;
-
-  try {
-    const sql = `SELECT DISTINCT o.id "id", s.login "seller", o.suggested_price "price", o.other "other", s.email "email" FROM key_offers o JOIN users s ON o.seller_id = s.id WHERE o.game_id LIKE ${game_id} AND o.status LIKE "Active";`;
-    const result = await db.pool.query(sql);
-    res.json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
 //pobieranie mediów do gier po id
 
 // axios.get("http://localhost:3000/games/media", { params: { game_id: int }}).then((res) => {setGameMedia(res.data);});
@@ -198,29 +164,12 @@ app.get("/games/media", async (req, res) => {
   }
 });
 
-//pobieranie recenzji do gry po id
-
-// axios.get("http://localhost:3000/games/reviews", { params: { game_id: int }}).then((res) => {setGameTags(res.data);});
-
-app.get("/games/reviews", async (req, res) => {
-  const { game_id } = req.query;
-
-  try {
-    const sql = `SELECT DISTINCT u.login "user", r.rating "rating", r.other "other" FROM ratings r JOIN users u ON u.id = r.user_id WHERE game_id LIKE ${game_id}`;
-    const result = await db.pool.query(sql);
-    res.json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // Pobieranie recenzji wraz z loginami użytkowników dla danej gry
 app.get('/api/reviews', async (req, res) => {
   const { gameId } = req.query;
   try {
     const sql = `SELECT r.*, u.login FROM ratings r JOIN users u ON r.user_id = u.id WHERE r.game_id = ${gameId}`;
-    const result = await db.pool.query(sql, [gameId]);
+    const result = await db.pool.query(sql);
     res.json(result);
   } catch (err) {
     console.error(err);
@@ -266,7 +215,7 @@ app.get("/games/alldata", async (req, res) => {
   }
 });
 
-//pobieranie jedynie grafik gier
+//pobieranie grafik gier do karuzeli
 
 // axios.get("http://localhost:3000/games/cover").then((res) => {setGameTags(res.data);});
 
@@ -277,50 +226,6 @@ app.get("/games/cover", async (req, res) => {
     res.json(result);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-//pobieranie danych jednego użytkownika po id
-
-// axios.get("http://localhost:3000/users/byid", { params: { id: int }}).then((res) => {setUserData(res.data);});
-
-app.get("/users/byid", async (req, res) => {
-  const { id } = req.query;
-
-  try {
-    const sql = `SELECT * FROM users WHERE id = "${id}"`;
-    const result = await db.pool.query(sql);
-    res.json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-//Zapytanie wypluwające tabelę users
-
-app.get("/users/byemail", async (req, res) => {
-  const { email } = req.query;
-
-  try {
-    const sql = `SELECT * FROM users WHERE email = "${email}"`;
-    const result = await db.pool.query(sql);
-    res.json(result);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-//Zapytanie potrzebne do transakcji
-app.get("/users/getThemAll", async (req, res) => {
-  try {
-    const sql = `SELECT * FROM users`;
-    const result = await db.pool.query(sql);
-    res.json(result);
-  } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -345,28 +250,12 @@ app.get("/wishlist/wishlistData", async (req, res) => {
 app.get("/wishlist", async (req, res) => {
   const { user_id } = req.query;
   try {
-    const sql = `SELECT game_id FROM wishlist WHERE user_id = ?`;
-    const rows = await db.pool.query(sql, [user_id]);
+    const sql = `SELECT game_id FROM wishlist WHERE user_id = ${user_id}`;
+    const rows = await db.pool.query(sql);
     res.json(rows.map(row => row.game_id));
   } catch (err) {
     console.error(err);
     res.status(500).send(err);
-  }
-});
-
-//POLECENIA DOTYCZĄCE OFERT
-//Wybierz dane z tabeli, gdzie id gry jest podobne do podanego id.
-
-app.get("/key_offers/offersForGame", async (req, res) => {
-  const { id } = req.query;
-
-  try {
-    const sql = `SELECT * FROM key_offers WHERE game_id LIKE ${id};`;
-    const result = await db.pool.query(sql);
-    res.json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
   }
 });
 
@@ -429,35 +318,6 @@ app.get("/transactions/transactionsByType", async (req, res) => {
   }
 });
 
-app.get("/transactions/getAll", async (req, res) => {
-  try {
-    const sql = "SELECT * FROM transactions";
-    const result = await db.pool.query(sql);
-    res.json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// pobranie liste id gier które ma użytkownik
-
-app.get("/users/:userId/library", async (req, res) => {
-  const userId = Number(req.params.userId);
-  try {
-    const sql = `
-      SELECT ko.game_id 
-      FROM transactions t
-      JOIN key_offers ko ON t.offer_id = ko.id
-      WHERE t.reciever_id = ? AND t.status = 'Success' AND ko.status = 'Closed'
-    `;
-    const rows = await db.pool.query(sql, [userId]);
-    res.json(rows.map(row => row.game_id));
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
-  }
-});
 //domyślny select * dowolnej tabeli
 
 // axios.get("http://localhost:3000/table").then((res) => {setTable(res.data)})
@@ -516,8 +376,8 @@ app.post("/transactions/confirm", async (req, res) => {
 app.post('/api/reviews', async (req, res) => {
   const { game_id, user_id, rating, other } = req.body;
   try {
-    const sql = 'INSERT INTO ratings (game_id, user_id, rating, other) VALUES (?, ?, ?, ?)';
-    await db.pool.query(sql, [game_id, user_id, String(rating), other]); // rzutujemy rating na String, bo w bazie to ENUM
+    const sql = `INSERT INTO ratings (game_id, user_id, rating, other) VALUES (${game_id}, ${user_id}, '${rating}', '${other}')`;
+    await db.pool.query(sql);
     res.sendStatus(201);
   } catch (err) {
     console.error(err);
@@ -527,21 +387,13 @@ app.post('/api/reviews', async (req, res) => {
 
 //Dodawanie ofert
 app.post("/key_offers/add", async (req, res) => {
-  const {
-    key,
-    price,
-    other,
-    seller_id,
-    game_id,
-    status,
-  } = req.body;
+  const { key, price, other, seller_id, game_id, status, } = req.body;
 
   try {
     const columns = ["seller_id", "game_id", "game_key", "other", "status", "suggested_price"];
     const values = [seller_id, game_id, key, other, String(status), price];
-    const placeholders = ["?", "?", "?", "?", "?", "?"];
 
-    const sql = `INSERT INTO key_offers (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
+    const sql = `INSERT INTO key_offers (${columns.join(", ")}) VALUES (${values.join(", ")})`;
 
     const result = db.pool.query(sql, values);
     res.json(result);
@@ -556,57 +408,15 @@ app.post("/key_offers/add", async (req, res) => {
 
 //Dodawanie transakcji
 app.post("/transactions/add", async (req, res) => {
-  const {
-    offerId,
-    buyerId,
-    receiverId,
-    status,
-  } = req.body;
+  const { offerId, buyerId, receiverId, status, } = req.body;
 
   try {
     const columns = ["offer_id", "buyer_id", "reciever_id", "status"];
     const values = [offerId, buyerId, receiverId, String(status)];
-    const placeholders = ["?", "?", "?", "?"];
 
-    const sql = `INSERT INTO transactions (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
-
-    const result = db.pool.query(sql, values);
-    res.json(result);
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      error: "Błąd serwera"
-    });
-  }
-});
-
-// Dodawanie do Rejestracji
-app.post("/users/adduser", async (req, res) => {
-  const {
-    login,
-    email,
-    pass,
-    phone,
-    discord_tag
-  } = req.body;
-
-  try {
-    const verifySql = `SELECT ko.game_key, t.offer_id FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.id = ${transactionId} AND t.status = 'Pending'`;
-    const rows = await db.pool.query(verifySql);
-
-    if (rows.length === 0) {
-      return res.status(404).json({ error: "Nie znaleziono aktywnej transakcji." });
-    }
-
-    const { game_key, offer_id } = rows[0];
-
-    if (enteredKey !== game_key) {
-      return res.status(400).json({ error: "Wprowadzony klucz gry jest niepoprawny!" });
-    }
+    const sql = `INSERT INTO transactions (${columns.join(", ")}) VALUES (${values.join(", ")})`;
 
     const result = db.pool.query(sql, values);
-
     res.json(result);
 
   } catch (err) {
@@ -619,40 +429,23 @@ app.post("/users/adduser", async (req, res) => {
 
 //Zmiana danych usera
 app.post("/users/updateUser", async (req, res) => {
-  const {
-    id,
-    login,
-    email,
-    pass,
-    phone,
-    discord_tag
-  } = req.body;
+  const { id, login, email, pass, phone, discord_tag } = req.body;
 
   try {
     const columns = ["login", "email", "pass", "phone", "discord_tag"];
     const values = [login, email, pass, phone, discord_tag];
-    const placeholders = ["?", "?", "?", "?", "?"];
 
-
-    let sql = `
-      UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[3]} = "${values[3]}", ${columns[4]} = "${values[4]}" WHERE id = ${id}
-    `;
+    let sql = `UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[3]} = "${values[3]}", ${columns[4]} = "${values[4]}" WHERE id = ${id};`;
 
     if (phone == null && discord_tag == null) {
-      sql = `
-        UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}" WHERE id = ${id}
-      `;
+      sql = `UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}" WHERE id = ${id}`;
     } else if (discord_tag == null && phone != null) {
-      sql = `
-        UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[3]} = "${values[3]}" WHERE id = ${id}
-      `;
+      sql = `UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[3]} = "${values[3]}" WHERE id = ${id}`;
     } else if (phone == null && discord_tag != null) {
-      sql = `
-        UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[4]} = "${values[4]}" WHERE id = ${id}
-      `;
+      sql = `UPDATE users SET ${columns[0]} = "${values[0]}", ${columns[1]} = "${values[1]}", ${columns[2]} = "${values[2]}", ${columns[4]} = "${values[4]}" WHERE id = ${id}`;
     }
 
-    const result = db.pool.query(sql, values);
+    const result = db.pool.query(sql);
 
     res.json({ success: true, message: "Transakcja została pomyślnie zatwierdzona!" });
 
@@ -672,7 +465,6 @@ app.post("/users/adduser", async (req, res) => {
   try {
     const columns = ["login", "email", "pass"];
     const values = [login, email, pass];
-    const placeholders = ["?", "?", "?"];
 
     if (phone) {
       columns.push("phone");
@@ -726,8 +518,8 @@ app.post("/:table", async (req, res) => {
 app.put('/api/reviews', async (req, res) => {
   const { game_id, user_id, rating, other } = req.body;
   try {
-    const sql = 'UPDATE ratings SET rating = ?, other = ? WHERE game_id = ? AND user_id = ?';
-    await db.pool.query(sql, [String(rating), other, game_id, user_id]);
+    const sql = `UPDATE ratings SET rating = '${rating}', other = '${other}' WHERE game_id = ${game_id} AND user_id = ${user_id}`;
+    await db.pool.query(sql);
     res.sendStatus(200);
   } catch (err) {
     console.error(err);
@@ -739,21 +531,11 @@ app.put('/api/reviews', async (req, res) => {
 app.patch('/key_offers/updateStatus', async (req, res) => {
   const { offerId, newStatus } = req.body;
 
-  // Walidacja danych wejściowych
-  if (!offerId || !newStatus) {
-    return res.status(400).json({ error: "Brak offerId lub newStatus w żądaniu." });
-  }
-
-  const sql = `UPDATE key_offers SET status = ? WHERE id = ?`;
-
+  if (!offerId || !newStatus) return res.status(400).json({ error: "Brak offerId lub newStatus w żądaniu." });
   try {
-    // UWAGA: Brak nawiasów [ ] wokół result! Przypisujemy bezpośrednio.
-    const result = await db.pool.query(sql, [newStatus, offerId]);
+    const sql = `UPDATE key_offers SET status = ${newStatus} WHERE id = ${offerId};`;
+    const result = await db.pool.query(sql);
 
-    // Logujemy, żebyś widział w terminalu, co dokładnie zwraca Twoja baza
-    console.log("Status zaktualizowany pomyślnie. Wynik z bazy:", result);
-
-    // Zwracamy czysty sukces do Reacta
     res.json({ success: true, message: "Status został zaktualizowany." });
   } catch (err) {
     console.error("Błąd podczas aktualizacji statusu:", err);
@@ -769,9 +551,8 @@ app.patch("/:table/:id", async (req, res) => {
   const columns = schema[table].filter(col => data[col] !== undefined);
   try {
     const setList = columns.map(col => `${col}=?`).join(", ");
-    const sql = `UPDATE ${table} SET ${setList} WHERE id=?`;
+    const sql = `UPDATE ${table} SET ${setList} WHERE id=${id}`;
 
-    // Wartości wraz z wyjątkami
     const values = columns.map(col => {
       if (col === "publisher") {
         return (data.publisher && data.publisher.length > 0) ? data.publisher : data.developer;
@@ -792,10 +573,10 @@ app.patch("/:table/:id", async (req, res) => {
 
 //usuwanie recenzji
 app.delete('/api/reviews', async (req, res) => {
-  const { gameId, userId } = req.query; // przekazujemy w paramsach/query
+  const { gameId, userId } = req.query;
   try {
-    const sql = 'DELETE FROM ratings WHERE game_id = ? AND user_id = ?';
-    await db.pool.query(sql, [gameId, userId]);
+    const sql = `DELETE FROM ratings WHERE game_id = ${gameId} AND user_id = ${userId}`;
+    await db.pool.query(sql);
     res.sendStatus(200);
   } catch (err) {
     console.error(err);
@@ -807,8 +588,8 @@ app.delete('/api/reviews', async (req, res) => {
 app.delete("/wishlist/remove", async (req, res) => {
   const { user_id, game_id } = req.query;
   try {
-    const sql = `DELETE FROM wishlist WHERE user_id = ? AND game_id = ?`;
-    await db.pool.query(sql, [user_id, game_id]);
+    const sql = `DELETE FROM wishlist WHERE user_id = ${user_id} AND game_id = ${game_id};`;
+    await db.pool.query(sql);
     res.json({ success: true });
   } catch (err) {
     console.error(err);
@@ -822,8 +603,8 @@ app.delete("/:table/:id", async (req, res) => {
   const id = Number(req.params.id);
   if (!schema[table]) return res.status(404).send("Table not found");
   try {
-    const sql = `DELETE FROM ${table} WHERE id=?`;
-    const result = await db.pool.query(sql, [id]);
+    const sql = `DELETE FROM ${table} WHERE id=${id};`;
+    const result = await db.pool.query(sql);
     const safeResult = JSON.parse(JSON.stringify(result, (_, v) => typeof v === 'bigint' ? v.toString() : v));
     res.json(safeResult);
   } catch (err) {

@@ -6,6 +6,11 @@ Biblioteki forntend:
   Axios - obsługa połączenia z bazą
   Reacttable + Tanstack - formatowanie tabeli
 
+Te instrukcje są przedewszystkim do operowania wersją w pełni lokalną. dla nie lokalnej, wystarczy odpalić tylko kody z terminalu 2
+Wszystko na domenie powinno działać, więc polecamy używanie jej:
+
+https://keysrus.pl/
+
 w zewnętrznym folderze (server-test):
 
   pierwsze uruchomienie:

@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from "../user-context/UserContext";
 import axios from 'axios';
 import { useDebounce } from '../../hooks/UseDebounce';
+import { axiosPath } from '../../App';
 
-export default function Header({ showAccountMenu = true, axiosPath }) {
+export default function Header({ showAccountMenu = true }) {
     const navigate = useNavigate();
     const { userData, logout } = useContext(UserContext);
 
@@ -26,7 +27,6 @@ export default function Header({ showAccountMenu = true, axiosPath }) {
         navigate("/", { replace: true });
     }
 
-    // Przywracamy Twój oryginalny, działający useEffect, który pobiera gry na starcie
     useEffect(() => {
         const outputTags = "";
         axios.get(`${axiosPath}/games/tagsort`, { params: { tags: outputTags } })
@@ -36,7 +36,6 @@ export default function Header({ showAccountMenu = true, axiosPath }) {
             .catch(err => console.error("Błąd pobierania gier:", err));
     }, [axiosPath]);
 
-    // Zamykanie podglądu po kliknięciu poza obszar wyszukiwarki
     useEffect(() => {
         function handleClickOutside(event) { if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsDropdownOpen(false); }
         document.addEventListener("mousedown", handleClickOutside);
@@ -56,7 +55,6 @@ export default function Header({ showAccountMenu = true, axiosPath }) {
             {/* Wyszukiwarka */}
             <div className='col-4 text-center' ref={dropdownRef}>
 
-                {/* Ten kontener dopasowuje się idealnie do naturalnego rozmiaru Twojego inputa i przycisku */}
                 <div className="position-relative d-inline-block">
                     <div className="d-flex">
                         <input type="text" id="wyszukiwarka" name="wyszukiwarka" placeholder='szukaj...' autoComplete="off"
@@ -66,14 +64,12 @@ export default function Header({ showAccountMenu = true, axiosPath }) {
                                 setIsDropdownOpen(true);
                             }}
                             onFocus={() => setIsDropdownOpen(true)}
-                        /* Twój oryginalny input - bez żadnych klas form-control */
                         />
                         <button className='border border-3 btnsrch ms-2' onClick={() => redirectToSearching(null)}>
                             SZUKAJ
                         </button>
                     </div>
 
-                    {/* Panel podglądu - dzięki d-inline-block powyżej, w-100 rozciągnie go IDEALNIE na szerokość (input + button + margines) */}
                     {isDropdownOpen && displayedGames.length > 0 && (
                         <div
                             className="position-absolute bg-white border border-secondary text-start mt-1 w-100 shadow-lg custom-search-dropdown"

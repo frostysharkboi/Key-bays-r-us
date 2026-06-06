@@ -53,12 +53,7 @@ export default function ReviewsSection({ gameId }) {
 
         if (myReview) {
             // AKTUALIZACJA: Wysyłamy body z poprawnym typem liczbowym
-            axios.put(`${axiosPath}/api/reviews`, {
-                game_id: Number(gameId),
-                user_id: Number(userData.id),
-                rating: formData.rating,
-                other: formData.other
-            })
+            axios.put(`${axiosPath}/api/reviews`, { game_id: Number(gameId), user_id: Number(userData.id), rating: formData.rating, other: formData.other })
                 .then(() => {
                     fetchReviews();
                     setEditingReview(null);
@@ -66,12 +61,7 @@ export default function ReviewsSection({ gameId }) {
                 .catch(err => console.error("Błąd podczas aktualizacji recenzji:", err));
         } else {
             // DODAWANIE: Wysyłamy body z poprawnym typem liczbowym
-            axios.post(`${axiosPath}/api/reviews`, {
-                game_id: Number(gameId),
-                user_id: Number(userData.id),
-                rating: formData.rating,
-                other: formData.other
-            })
+            axios.post(`${axiosPath}/api/reviews`, { game_id: Number(gameId), user_id: Number(userData.id), rating: formData.rating, other: formData.other })
                 .then(() => fetchReviews())
                 .catch(err => console.error("Błąd podczas dodawania recenzji:", err));
         }
@@ -86,12 +76,7 @@ export default function ReviewsSection({ gameId }) {
             : "Czy na pewno chcesz usunąć swoją recenzję?";
 
         if (window.confirm(message)) {
-            axios.delete(`${axiosPath}/api/reviews`, {
-                params: {
-                    gameId: Number(gameId),
-                    userId: Number(reviewTargetUserId)
-                }
-            })
+            axios.delete(`${axiosPath}/api/reviews`, { params: { gameId: Number(gameId), userId: Number(reviewTargetUserId) } })
                 .then(() => {
                     fetchReviews();
                     if (editingReview?.user_id === reviewTargetUserId) setEditingReview(null);

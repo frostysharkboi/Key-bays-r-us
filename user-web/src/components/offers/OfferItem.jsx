@@ -58,11 +58,11 @@ export default function OfferItem({ offer, gameId, openedOfferId, setOpenedOffer
   }
 
   useEffect(() => {
-    axios.get(`${axiosPath}/users/getThemAll`).then((res) => {
+    axios.get(`${axiosPath}/users`).then((res) => {
       getAllUsers(res.data);
       console.log("Dane userów\n", res.data);
     });
-    axios.get(`${axiosPath}/transactions/getAll`).then((res) => {
+    axios.get(`${axiosPath}/transactions`).then((res) => {
       getTrans(res.data);
       console.log("Transakcje\n", res.data);
     })

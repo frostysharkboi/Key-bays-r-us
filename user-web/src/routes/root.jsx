@@ -86,7 +86,7 @@ export default function Root() {
     <>
       <div className="container-fluid">
         {/* Nagłówek Strony */}
-        <Header axiosPath={axiosPath} />
+        <Header />
 
         {/* Karuzela sterowana przez Reacta */}
         <div className="row m-3 p-3 text-center">

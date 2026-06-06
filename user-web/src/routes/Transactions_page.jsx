@@ -38,6 +38,9 @@ function TransactionActionCell({ transaction, activeTransactionInput, setActiveT
         </button>
     );
 }
+function RedirectToGamePage(gameId) {
+    navigate('/Game', { state: { GameId: gameId } });
+}
 
 export default function TransactionsPage() {
     const navigate = useNavigate();
@@ -70,12 +73,7 @@ export default function TransactionsPage() {
             return;
         }
 
-        axios.get(`${axiosPath}/transactions/transactionsByType`, {
-            params: {
-                type: viewMode,
-                id: userData.id
-            }
-        })
+        axios.get(`${axiosPath}/transactions/transactionsByType`, { params: { type: viewMode, id: userData.id } })
             .then((res) => {
 
                 let rawData = [];
@@ -112,10 +110,7 @@ export default function TransactionsPage() {
             return;
         }
 
-        axios.post(`${axiosPath}/transactions/confirm`, {
-            transactionId,
-            enteredKey: keyToSend.trim()
-        })
+        axios.post(`${axiosPath}/transactions/confirm`, { transactionId, enteredKey: keyToSend.trim() })
             .then((res) => {
                 if (res.data.success) {
                     alert(res.data.message);
@@ -252,7 +247,7 @@ export default function TransactionsPage() {
 
     return (
         <div className="container-fluid">
-            <Header axiosPath={axiosPath} />
+            <Header />
 
             <h3 className='mx-4 mt-4 p-4 font'>
                 {viewMode === 'buyer' && "Gry Zamowione"}
@@ -284,20 +279,20 @@ export default function TransactionsPage() {
                                     className={`btn rounded-0 text-start border ${viewMode === 'buyer' ? 'btn-primary fw-bold' : 'btn-dark'}`}
                                     onClick={() => setViewMode('buyer')}
                                 >
-                                    🛒 Kupione
+                                    Zamowione
                                 </button>
                                 <button
                                     className={`btn rounded-0 text-start border ${viewMode === 'reciever' ? 'btn-primary fw-bold' : 'btn-dark'}`}
                                     onClick={() => setViewMode('reciever')}
                                 >
-                                    🎁 Otrzymane
+                                    Otrzymane
                                 </button>
                                 {(userData && userData.type !== 'normal') && (
                                     <button
                                         className={`btn rounded-0 text-start border ${viewMode === 'seller' ? 'btn-primary fw-bold' : 'btn-dark'}`}
                                         onClick={() => setViewMode('seller')}
                                     >
-                                        💰 Moje oferty (Sprzedaż)
+                                        Sprzedaż
                                     </button>
                                 )}
                                 {(userData && userData.type === 'admin') && (
@@ -305,7 +300,7 @@ export default function TransactionsPage() {
                                         className={`btn rounded-0 text-start border ${viewMode === 'admin' ? 'btn-danger fw-bold' : 'btn-dark'}`}
                                         onClick={() => setViewMode('admin')}
                                     >
-                                        🛡️ Wszystkie transakcje (Admin)
+                                        Wszystkie (Admin)
                                     </button>
                                 )}
                             </div>
@@ -362,7 +357,7 @@ export default function TransactionsPage() {
                         <tbody>
                             {rows.length > 0 ? (
                                 rows.map((row) => (
-                                    <tr key={row.id}>
+                                    <tr key={row.id} onClick={() => RedirectToGamePage(games.gameId)}>
                                         {row.getVisibleCells().map((cell) => (
                                             <td key={cell.id} className="align-middle">
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}

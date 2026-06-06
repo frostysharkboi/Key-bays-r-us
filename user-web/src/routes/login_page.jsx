@@ -70,7 +70,7 @@ export default function Root() {
     <>
       <div className="container-fluid">
         {/* Nagłówek Strony */}
-        <Header showAccountMenu={false} axiosPath={axiosPath}/>
+        <Header showAccountMenu={false} />
 
         {/* Box z loginem */}
         <div className='row m-1 text-center font'>
