@@ -33,5 +33,15 @@ By zaktualizować baze:
     cd steamdb-connection
     pip install -r requirements.txt
     python main.py
+nie chcieliśmy cały czas łączyć się z bazą steam na dane gier szczególnie że wiele z nich wymaga dosyć ciężkiej edycji
+
+By działać na lokalnej wersji bazy (z keybay.sql) trzeba zamienić komentarze w plikach:
+  user-web/src/App.jsx (linijka 7 i 8)
+    //export const axiosPath = "https://keysrus-backend.onrender.com";
+    export const axiosPath = "http://localhost:3000";
+  user-service/db/db.js (linijka 7 i 18)
+    /*Wersja Lokalnie*/
+    /* Wersja Na Hoscie * /
+
 
 NA RAZIE NIE DO KOŃCA DZIAŁA ALE ZAKTUALIZUJCIE BO FORMAT DANYCH RACZEJ JUŻ BĘDZIE TAKI JAK TU I STRONA Z TYMI DANYMI DZIAŁAJĄ
