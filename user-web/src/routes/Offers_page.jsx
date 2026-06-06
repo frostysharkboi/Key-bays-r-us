@@ -17,14 +17,9 @@ export default function OffersPage() {
     const location = useLocation();
     const { userData } = useContext(UserContext);
 
-    // ==========================================
-    // ZMIANA W OBSŁUDZE STANU WYSZUKIWARKI:
-    // ==========================================
-    // ZMIANA: Rozbicie stanu globalFilter na stan natychmiastowy i zdebouncowany
-    const [searchInputValue, setSearchInputValue] = useState(""); // Szybki stan dla inputa HTML
-    const debouncedSearchValue = useDebounce(searchInputValue, 400); // Odczekanie 400ms na koniec pisania
-    const globalFilter = debouncedSearchValue; // TanStack Table bezpośrednio konsumuje stabilną wartość
-    // ==========================================
+    const [searchInputValue, setSearchInputValue] = useState("");
+    const debouncedSearchValue = useDebounce(searchInputValue, 400);
+    const globalFilter = debouncedSearchValue;
 
     const [sorting, setSorting] = useState([]);
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 8 });

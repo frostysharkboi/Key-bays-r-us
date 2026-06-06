@@ -25,6 +25,12 @@ export default function SaleOffers({ gameId }) {
           if (res.data && res.data[0].id != null) {
             setOffersData(res.data);
             console.log("Dane zostały pobrane\n", res.data);
+            if (userData.type == 'normal') {
+              setOffersData(offersData.filter(offer => offer.status != 'Closed'));
+            }
+            if (userData.type == 'seller') {
+              setOffersData(offersData.filter(offer => offer.status != 'Closed' || offer.seller_id == userData.id));
+            }
           } else {
             setError(true);
           }
@@ -69,14 +75,7 @@ export default function SaleOffers({ gameId }) {
       <div className="container-fluid">
         <div className="row flex-row flex-nowrap overflow-auto">
           {offersData.map((offer) => (
-            <OfferItem
-              key={offer.id}
-              offer={offer}
-              userData={userData}
-              gameId={gameId}
-              openedOfferId={openedOfferId}
-              setOpenedOfferId={setOpenedOfferId}
-            />
+            <OfferItem key={offer.id} offer={offer} gameId={gameId} openedOfferId={openedOfferId} setOpenedOfferId={setOpenedOfferId} />
           ))}
         </div>
       </div>

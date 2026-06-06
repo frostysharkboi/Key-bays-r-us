@@ -62,11 +62,9 @@ export default function Root() {
       );
     }, 5000);
 
-    // Czyszczenie interwału, by zapobiec wyciekom pamięci przy przełączaniu podstron
     return () => clearInterval(interval);
   }, [formatedGames]);
 
-  // Czyste funkcje nawigacyjne bez przesyłania stanów usera
   function RedirectToSeaching(genreId) {
     if (genreId == null) {
       navigate("/Search", { state: { Title: SearchThisTitle } });
@@ -96,12 +94,7 @@ export default function Root() {
             <div className="carousel-inner">
               {formatedGames.map((e, index) => {
                 return (
-                  <div
-                    key={e.id}
-                    className={index === activeIndex ? "carousel-item active" : "carousel-item"}
-                    onClick={() => RedirectToGamePage(e.id)}
-                    style={{ cursor: 'pointer' }}
-                  >
+                  <div key={e.id} className={index === activeIndex ? "carousel-item active" : "carousel-item"} onClick={() => RedirectToGamePage(e.id)} style={{ cursor: 'pointer' }}>
                     <img src={e.cover_img} className="mx-auto d-block w-50 h-50" alt={e.title} />
                     <div className="carousel-caption d-none d-md-block">
                       <h5 className="opacity-50 bg-dark d-inline-block px-2 py-1">{e.title}</h5>
