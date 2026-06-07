@@ -110,9 +110,9 @@ export default function Header({ showAccountMenu = true }) {
                                 <h5 onClick={() => navigate("/Login", { replace: true })}>Zaloguj sie</h5>
                             ) : (
                                 <>
-                                    <h5 onClick={() => navigate("/Edit-Account")}>Konto</h5>
-                                    <h5 onClick={() => navigate("/Wishlist")}>Lista Zyczen</h5>
-                                    {userData.type != "normal" ? <h5 onClick={() => navigate("/Offers")}>Oferty Sprzedazy</h5> : ""}
+                                    <h5 onClick={() => navigate(`/User/${userData.id}`, { state: { uId: userData.id } })}>Konto</h5>
+                                    <h5 onClick={() => navigate("/Wishlist")}>Lista Życzeń</h5>
+                                    {userData.type != "normal" ? <h5 onClick={() => navigate("/Offers")}>Oferty Sprzedaży</h5> : ""}
                                     <h5 onClick={() => navigate("/Transactions")}>Aktualne Transakcje</h5>
                                     <h5 onClick={logOutUser}>Wyloguj sie</h5>
                                 </>

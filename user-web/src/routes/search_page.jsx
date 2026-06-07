@@ -106,7 +106,7 @@ export default function SearchPage() {
   const emptyRowCount = pagination.pageSize - rows.length;
 
   function RedirectToGamePage(gameId) {
-    navigate('/Game', { state: { GameId: gameId } });
+    navigate(`/Game/${gameId}`, { state: { GameId: gameId } });
   }
 
   function RedirectToSeaching(genreId) {
