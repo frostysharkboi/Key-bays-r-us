@@ -97,7 +97,7 @@ export default function Root() {
   }
 
   function RedirectToGamePage(gameId) {
-    navigate('/Game', { state: { GameId: gameId } });
+    navigate(`/Game/${gameId}`, { state: { GameId: gameId } });
   }
 
   return (

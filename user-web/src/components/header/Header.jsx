@@ -78,7 +78,7 @@ export default function Header({ showAccountMenu = true }) {
                             {displayedGames.map((game) => (
                                 <div key={game.id} className="d-flex bg-dark align-items-center p-2 border-bottom search-item" style={{ cursor: 'pointer' }}
                                     onClick={() => {
-                                        navigate('/Game', { state: { GameId: game.id } });
+                                        navigate(`/Game/${game.id}`, { state: { GameId: game.id } });
                                     }}
                                 >
                                     {game.cover_img ? (<img src={game.cover_img} alt={game.title} style={{ width: '35px', height: '45px', objectFit: 'cover', marginRight: '12px', borderRadius: '2px' }} />
@@ -110,9 +110,9 @@ export default function Header({ showAccountMenu = true }) {
                                 <h5 onClick={() => navigate("/Login", { replace: true })}>Zaloguj sie</h5>
                             ) : (
                                 <>
-                                    <h5 onClick={() => navigate("/Edit-Account")}>Konto</h5>
-                                    <h5 onClick={() => navigate("/Wishlist")}>Lista Zyczen</h5>
-                                    {userData.type != "normal" ? <h5 onClick={() => navigate("/Offers")}>Oferty Sprzedazy</h5> : ""}
+                                    <h5 onClick={() => navigate(`/User/${userData.id}`, { state: { uId: userData.id } })}>Konto</h5>
+                                    <h5 onClick={() => navigate("/Wishlist")}>Lista Życzeń</h5>
+                                    {userData.type != "normal" ? <h5 onClick={() => navigate("/Offers")}>Oferty Sprzedaży</h5> : ""}
                                     <h5 onClick={() => navigate("/Transactions")}>Aktualne Transakcje</h5>
                                     <h5 onClick={logOutUser}>Wyloguj sie</h5>
                                 </>
