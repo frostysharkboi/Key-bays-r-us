@@ -23,7 +23,7 @@ import UserPage from './routes/userPage.jsx';
 const router = createBrowserRouter([
   { path: "/", element: <Root />, errorElement: <ErrorPage /> },
   { path: "Search", element: <SearchPage />, errorElement: <ErrorPage /> },
-  { path: "Game", element: <GamePage />, errorElement: <ErrorPage /> },
+  { path: "Game/:id", element: <GamePage />, errorElement: <ErrorPage /> },
   { path: "Login", element: <LoginPage />, errorElement: <ErrorPage /> },
   { path: "Register", element: <RegistrationPage />, errorElement: <ErrorPage /> },
   { path: "Wishlist", element: <WishlistPage />, errorElement: <ErrorPage /> },
@@ -31,7 +31,7 @@ const router = createBrowserRouter([
   { path: "Edit-Account", element: <EditAccountPage />, errorElement: <ErrorPage /> },
   { path: "Offers", element: <OffersPage />, errorElement: <ErrorPage /> },
   { path: "Transactions", element: <TransactionsPage />, errorElement: <ErrorPage /> },
-  { path: "User/:id", element: <UserPage />, errorElement: <ErrorPage />}
+  { path: "User/:id", element: <UserPage />, errorElement: <ErrorPage /> }
 ]);
 
 createRoot(document.getElementById('root')).render(

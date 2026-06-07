@@ -50,12 +50,12 @@ export default function Header({ showAccountMenu = true }) {
             .slice(0, 5); // Ograniczenie do maksymalnie 5 pozycji
     }, [debouncedSearchTitle, games]);
 
-      function chooseRandomUser(){
-        const rand = Math.floor(Math.random() * 11);
-        if(rand == 0) rand += 1;
-    
-        navigate(`User/${rand}`, {state: {uId: rand}});
-      }
+    function chooseRandomUser() {
+        var rand = Math.floor(Math.random() * 11);
+        if (rand == 0) rand += 1;
+
+        navigate(`/User/${rand}`, { state: { uId: rand } });
+    }
 
     return (
         <div className="row m-3 p-3 text-center align-items-center">
