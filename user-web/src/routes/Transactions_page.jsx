@@ -78,7 +78,8 @@ export default function TransactionsPage() {
                 } else if (res.data && Array.isArray(res.data.rows)) {
                     rawData = res.data.rows;
                 } else if (res.data && typeof res.data === 'object' && res.data.transaction_id) {
-                    console.log("👉 Wykryto pojedynczy obiekt transakcji. Pakuje go w tablice.");
+                    // NOWOŚĆ: Jeśli serwer zwrócił pojedynczy obiekt transakcji, pakujemy go w tablicę jednoelementową!
+                    console.log("Wykryto pojedynczy obiekt transakcji. Pakuję go w tablicę.");
                     rawData = [res.data];
                 }
                 console.log(rawData);
@@ -88,6 +89,9 @@ export default function TransactionsPage() {
                     suggested_price: parseFloat(item.suggested_price) || 0,
                     transaction_id: parseInt(item.transaction_id, 10) || 0,
                     game_id: parseInt(item.game_id, 10) || null,
+                    seller_id: parseInt(item.seller_id, 10) || null,
+                    buyer_id: parseInt(item.buyer_id, 10) || null,
+                    reciever_id: parseInt(item.reciever_id, 10) || null,
                     transaction_status: String(item.transaction_status || 'Pending').trim()
                 }));
 
@@ -125,7 +129,17 @@ export default function TransactionsPage() {
             alert("Nie znaleziono identyfikatora gry dla tej transakcji.");
             return;
         }
-        navigate('/Game', { state: { GameId: gameId } });
+        navigate(`/Game/${gameId}`, { state: { GameId: gameId } });
+    };
+
+    // Pomocnicza funkcja przekierowania do użytkownika
+    const RedirectToUserPage = (e, userId) => {
+        e.stopPropagation(); // Zatrzymuje event, by nie kliknąć całego wiersza (strony gry)
+        if (!userId) {
+            alert("Nie znaleziono identyfikatora użytkownika.");
+            return;
+        }
+        navigate(`/User/${userId}`, { replace: true, state: { uId: userId } });
     };
 
     const anyStatusSelected = statusFilters.some(sf => sf.isSelected);
@@ -138,44 +152,50 @@ export default function TransactionsPage() {
             }
         ];
 
+        // Definicje komórek użytkowników z podpiętą funkcją nawigacji i klasą CSS stylującą kursor
+        const sellerColumn = {
+            header: "Sprzedawca", accessorKey: "seller_login",
+            cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
+        };
+
+        const buyerColumn = {
+            header: "Kupujacy", accessorKey: "buyer_login",
+            cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
+        };
+
+        const receiverColumn = {
+            header: "Otrzymujacy", accessorKey: "reciever_login",
+            cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
+        };
+
         if (viewMode === 'buyer') {
-            baseColumns.push(
-                {
-                    header: "Sprzedawca", accessorKey: "seller_login",
-                    cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
-                },
-                {
-                    header: "Otrzymujacy", accessorKey: "reciever_login",
-                    cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
-                });
+            baseColumns.push(sellerColumn, receiverColumn);
         } else if (viewMode === 'reciever') {
-            baseColumns.push(
-                {
-                    header: "Sprzedawca", accessorKey: "seller_login",
-                    cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
-                },
-                {
-                    header: "Kupujacy", accessorKey: "buyer_login",
-                    cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
-                });
+            baseColumns.push(sellerColumn, buyerColumn);
         } else if (viewMode === 'seller') {
-            baseColumns.push({
-                header: "Kupujacy", accessorKey: "buyer_login",
-                cell: (info) => info.getValue() || <span className="text-muted">Brak danych</span>
-            });
+            baseColumns.push(buyerColumn);
         } else if (viewMode === 'admin') {
             baseColumns.push(
                 {
                     header: "Sprzedawca", accessorKey: "seller_login",
-                    cell: (info) => info.getValue() || <span className="text-muted">-</span>
+                    cell: (info) => {
+                        const login = info.getValue();
+                        return login ? <span className="text-primary text-decoration-underline" style={{ cursor: 'pointer' }} onClick={(e) => RedirectToUserPage(e, info.row.original.seller_id)}>{login}</span> : <span className="text-muted">-</span>;
+                    }
                 },
                 {
                     header: "Kupujacy", accessorKey: "buyer_login",
-                    cell: (info) => info.getValue() || <span className="text-muted">-</span>
+                    cell: (info) => {
+                        const login = info.getValue();
+                        return login ? <span className="text-primary text-decoration-underline" style={{ cursor: 'pointer' }} onClick={(e) => RedirectToUserPage(e, info.row.original.buyer_id)}>{login}</span> : <span className="text-muted">-</span>;
+                    }
                 },
                 {
                     header: "Otrzymujacy", accessorKey: "reciever_login",
-                    cell: (info) => info.getValue() || <span className="text-muted">-</span>
+                    cell: (info) => {
+                        const login = info.getValue();
+                        return login ? <span className="text-primary text-decoration-underline" style={{ cursor: 'pointer' }} onClick={(e) => RedirectToUserPage(e, info.row.original.reciever_id)}>{login}</span> : <span className="text-muted">-</span>;
+                    }
                 }
             );
         }
@@ -313,23 +333,8 @@ export default function TransactionsPage() {
                             <h2 className='font'>Statusy</h2>
                             {statusFilters.map((sf) => (
                                 <div className='row' key={sf.id}>
-                                    <input
-                                        className='btn-check col'
-                                        type="checkbox"
-                                        name={`Stat_${sf.id}`}
-                                        id={`Stat_${sf.id}`}
-                                        checked={sf.isSelected}
-                                        onChange={(e) => {
-                                            setStatusFilters(prev => prev.map(
-                                                item => item.id === sf.id ? { ...item, isSelected: e.target.checked } : item
-                                            ));
-                                        }}
-                                    />
-                                    <label
-                                        htmlFor={`Stat_${sf.id}`}
-                                        className={`p-2 m-1 btn-kirk border border-6 ${sf.isSelected || !anyStatusSelected ? "btn-zaz" : "btn-odz"}`}
-                                        style={{ cursor: 'pointer' }}
-                                    >
+                                    <input className='btn-check col' type="checkbox" name={`Stat_${sf.id}`} id={`Stat_${sf.id}`} checked={sf.isSelected} onChange={(e) => { setStatusFilters(prev => prev.map(item => item.id === sf.id ? { ...item, isSelected: e.target.checked } : item)); }} />
+                                    <label htmlFor={`Stat_${sf.id}`} className={`p-2 m-1 btn-kirk border border-6 ${sf.isSelected || !anyStatusSelected ? "btn-zaz" : "btn-odz"}`} style={{ cursor: 'pointer' }} >
                                         {sf.label}
                                     </label>
                                 </div>
@@ -361,11 +366,40 @@ export default function TransactionsPage() {
                             {rows.length > 0 ? (
                                 rows.map((row) => (
                                     <tr key={row.id} onClick={() => RedirectToGamePage(row.original.game_id)} style={{ cursor: 'pointer' }}>
-                                        {row.getVisibleCells().map((cell) => (
-                                            <td key={cell.id} className="align-middle">
-                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                            </td>
-                                        ))}
+                                        {row.getVisibleCells().map((cell) => {
+                                            // 1. Sprawdzamy ID kolumny, aby przypisać odpowiednie zachowanie i ID użytkownika
+                                            const columnId = cell.column.id;
+                                            const transactionData = row.original;
+
+                                            let cellClickHander = null;
+                                            let hasCustomClick = false;
+
+                                            if (columnId === 'seller_login') {
+                                                cellClickHander = (e) => RedirectToUserPage(e, transactionData.seller_id);
+                                                hasCustomClick = true;
+                                            } else if (columnId === 'buyer_login') {
+                                                cellClickHander = (e) => RedirectToUserPage(e, transactionData.buyer_id);
+                                                hasCustomClick = true;
+                                            } else if (columnId === 'reciever_login') {
+                                                cellClickHander = (e) => RedirectToUserPage(e, transactionData.reciever_id);
+                                                hasCustomClick = true;
+                                            } else if (columnId === 'actions') {
+                                                // Blokujemy kliknięcie wiersza (grę) przy interakcji z przyciskami akcji/inputem
+                                                cellClickHander = (e) => e.stopPropagation();
+                                                hasCustomClick = true;
+                                            }
+
+                                            return (
+                                                <td
+                                                    key={cell.id}
+                                                    className={`align-middle ${hasCustomClick && columnId !== 'actions' ? 'text-primary text-decoration-underline' : ''}`}
+                                                    style={{ cursor: hasCustomClick ? 'pointer' : 'inherit' }}
+                                                    onClick={cellClickHander}
+                                                >
+                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                </td>
+                                            );
+                                        })}
                                     </tr>
                                 ))
                             ) : (
@@ -398,6 +432,6 @@ export default function TransactionsPage() {
                 </div>
             </div>
             <Footer />
-        </div>
+        </div >
     );
 }

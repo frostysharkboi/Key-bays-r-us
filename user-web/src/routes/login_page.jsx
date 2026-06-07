@@ -94,7 +94,7 @@ export default function Root() {
             <p id="Error_box" className='text-center fs-3 text-danger'>{errorBoxText}</p>
           </div>
           <br></br>
-          <button className='border border-3' onClick={CheckIfLoginIsInDb}>ZALOGUJ SIE</button>
+          <button className='border border-3' onClick={CheckIfLoginIsInDb}>ZALOGUJ SIE</button><br/><br/>
           <h5 className='noaccount' onClick={() => navigate("/Register", { replace: true })}>Nie mam konta</h5>
         </div>
 

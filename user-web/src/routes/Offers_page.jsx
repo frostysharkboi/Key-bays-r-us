@@ -145,7 +145,7 @@ export default function OffersPage() {
 
     function RedirectToGamePage(gameId) {
         if (!gameId) return;
-        navigate('/Game', { state: { GameId: gameId } });
+        navigate(`/Game/${gameId}`, { state: { GameId: gameId } });
     }
 
     return (

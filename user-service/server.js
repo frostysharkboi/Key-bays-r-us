@@ -221,9 +221,38 @@ app.get("/games/alldata", async (req, res) => {
 
 app.get("/games/cover", async (req, res) => {
   try {
-    const sql = `SELECT id, title, about, cover_img FROM games ORDER BY RAND() LIMIT 5;`;
+    const sql = `SELECT id, title, about, cover_img FROM games ORDER BY RAND() LIMIT 10;`;
     const result = await db.pool.query(sql);
     res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/games/byRandomGenres", async (req, res) => {
+  try {
+    const tagsSql = `SELECT DISTINCT t.id, t.tag FROM tags t JOIN game_tags gt ON t.id = gt.tag_id ORDER BY RAND() LIMIT 3;`;
+    const randomTags = await db.pool.query(tagsSql);
+
+    if (!randomTags || randomTags.length === 0) {
+      return res.json([]);
+    }
+
+    const finalResult = [];
+
+    for (const tagRow of randomTags) {
+      const gamesSql = `SELECT g.id, g.title, g.about, g.cover_img FROM games g JOIN game_tags gt ON g.id = gt.game_id WHERE gt.tag_id = ${parseInt(tagRow.id)} ORDER BY RAND() LIMIT 10;`;
+
+      const games = await db.pool.query(gamesSql);
+
+      finalResult.push({
+        genreName: tagRow.tag,
+        games: games
+      });
+    }
+    res.json(finalResult);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
@@ -279,7 +308,7 @@ app.get("/key_offers/offersForGames", async (req, res) => {
 //Polecenia do UserPage.jsx
 app.get("/transactions/getByUser", async (req, res) => {
 
-  const {id} = req.query
+  const { id } = req.query
 
   try {
     const sql = `SELECT o.id, o.seller_id, g.title, o.game_id, o.other, u.login, t.reciever_id, ( SELECT u2.login FROM users u2 WHERE u2.id = t.reciever_id ) AS receiver_login, t.status FROM key_offers AS o JOIN transactions AS t ON o.id = t.offer_id JOIN users AS u on o.seller_id = u.id JOIN games AS g ON o.game_id = g.id WHERE t.buyer_id = ${id};`
@@ -293,7 +322,7 @@ app.get("/transactions/getByUser", async (req, res) => {
 
 app.get("/ratings/getByUser", async (req, res) => {
 
-  const {id} = req.query
+  const { id } = req.query
 
   try {
     const sql = `SELECT r.rating, g.title, g.id, r.other FROM ratings AS r JOIN games AS g ON g.id = r.game_id WHERE r.user_id = ${id};`
@@ -307,7 +336,7 @@ app.get("/ratings/getByUser", async (req, res) => {
 
 app.get("/users/getOneById", async (req, res) => {
 
-  const {id} = req.query
+  const { id } = req.query
 
   try {
     const sql = `SELECT login FROM users WHERE id = ${id};`
@@ -327,7 +356,7 @@ app.get("/transactions/transactionsByType", async (req, res) => {
     if (!type) return res.status(400).json({ error: "Parametr 'type' jest wymagany." });
     if (type !== 'admin' && !id) return res.status(400).json({ error: "Parametr 'id' jest wymagany dla tego typu widoku." });
 
-    let sql = `SELECT t.id AS transaction_id, t.status AS transaction_status, t.reciever_id, ko.id AS offer_id, ko.suggested_price, ko.game_key, g.id AS game_id, g.title AS game_title, CONCAT(u_seller.login, " (", u_seller.discord_tag, ")") AS seller_login, CONCAT(u_reciever.login, " (", u_reciever.discord_tag, ")") AS reciever_login, CONCAT(u_buyer.login, " (", u_buyer.discord_tag, ")") AS buyer_login FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id JOIN users u_seller ON ko.seller_id = u_seller.id JOIN users u_reciever ON t.reciever_id = u_reciever.id JOIN users u_buyer ON t.buyer_id = u_buyer.id JOIN games g ON ko.game_id = g.id`;
+    let sql = `SELECT t.id AS transaction_id, t.status AS transaction_status, t.reciever_id, t.buyer_id, ko.seller_id, ko.id AS offer_id, ko.suggested_price, ko.game_key, g.id AS game_id, g.title AS game_title, CONCAT(u_seller.login, " (", u_seller.discord_tag, ")") AS seller_login, CONCAT(u_reciever.login, " (", u_reciever.discord_tag, ")") AS reciever_login, CONCAT(u_buyer.login, " (", u_buyer.discord_tag, ")") AS buyer_login FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id JOIN users u_seller ON ko.seller_id = u_seller.id JOIN users u_reciever ON t.reciever_id = u_reciever.id JOIN users u_buyer ON t.buyer_id = u_buyer.id JOIN games g ON ko.game_id = g.id`;
 
     if (type === 'buyer') sql += ` WHERE t.buyer_id = ${id}`;
     else if (type === 'reciever') sql += ` WHERE t.reciever_id = ${id}`;
