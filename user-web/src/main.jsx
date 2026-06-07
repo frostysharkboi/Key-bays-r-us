@@ -18,6 +18,7 @@ import CreateOfferPage from "./routes/createOffer_page.jsx";
 import EditAccountPage from "./routes/editAccount_page.jsx";
 import OffersPage from './routes/Offers_page.jsx';
 import TransactionsPage from './routes/Transactions_page.jsx';
+import UserPage from './routes/userPage.jsx';
 
 const router = createBrowserRouter([
   { path: "/", element: <Root />, errorElement: <ErrorPage /> },
@@ -29,7 +30,8 @@ const router = createBrowserRouter([
   { path: "Create-Offer", element: <CreateOfferPage />, errorElement: <ErrorPage /> },
   { path: "Edit-Account", element: <EditAccountPage />, errorElement: <ErrorPage /> },
   { path: "Offers", element: <OffersPage />, errorElement: <ErrorPage /> },
-  { path: "Transactions", element: <TransactionsPage />, errorElement: <ErrorPage /> }
+  { path: "Transactions", element: <TransactionsPage />, errorElement: <ErrorPage /> },
+  { path: "User/:id", element: <UserPage />, errorElement: <ErrorPage />}
 ]);
 
 createRoot(document.getElementById('root')).render(

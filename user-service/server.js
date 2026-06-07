@@ -276,6 +276,49 @@ app.get("/key_offers/offersForGames", async (req, res) => {
 
 //POLECENIA DOTYCZĄCE TRANSAKCJI
 
+//Polecenia do UserPage.jsx
+app.get("/transactions/getByUser", async (req, res) => {
+
+  const {id} = req.query
+
+  try {
+    const sql = `SELECT o.id, o.seller_id, g.title, o.game_id, o.other, u.login, t.reciever_id, ( SELECT u2.login FROM users u2 WHERE u2.id = t.reciever_id ) AS receiver_login, t.status FROM key_offers AS o JOIN transactions AS t ON o.id = t.offer_id JOIN users AS u on o.seller_id = u.id JOIN games AS g ON o.game_id = g.id WHERE t.buyer_id = ${id};`
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+})
+
+app.get("/ratings/getByUser", async (req, res) => {
+
+  const {id} = req.query
+
+  try {
+    const sql = `SELECT r.rating, g.title, g.id, r.other FROM ratings AS r JOIN games AS g ON g.id = r.game_id WHERE r.user_id = ${id};`
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+})
+
+app.get("/users/getOneById", async (req, res) => {
+
+  const {id} = req.query
+
+  try {
+    const sql = `SELECT login FROM users WHERE id = ${id};`
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+})
+
 //obsługa tabeli transakcji.
 app.get("/transactions/transactionsByType", async (req, res) => {
   const { type, id } = req.query;

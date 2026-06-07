@@ -50,6 +50,13 @@ export default function Header({ showAccountMenu = true }) {
             .slice(0, 5); // Ograniczenie do maksymalnie 5 pozycji
     }, [debouncedSearchTitle, games]);
 
+      function chooseRandomUser(){
+        const rand = Math.floor(Math.random() * 11);
+        if(rand == 0) rand += 1;
+    
+        navigate(`User/${rand}`, {state: {uId: rand}});
+      }
+
     return (
         <div className="row m-3 p-3 text-center align-items-center">
             {/* Wyszukiwarka */}
@@ -114,6 +121,7 @@ export default function Header({ showAccountMenu = true }) {
                                     <h5 onClick={() => navigate("/Wishlist")}>Lista Życzeń</h5>
                                     {userData.type != "normal" ? <h5 onClick={() => navigate("/Offers")}>Oferty Sprzedaży</h5> : ""}
                                     <h5 onClick={() => navigate("/Transactions")}>Aktualne Transakcje</h5>
+                                    <h5 onClick={() => chooseRandomUser()}>Debug wypierdalaj</h5>
                                     <h5 onClick={logOutUser}>Wyloguj się</h5>
                                 </>
                             )}
