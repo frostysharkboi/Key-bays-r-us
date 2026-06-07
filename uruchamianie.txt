@@ -1,15 +1,32 @@
-Biblioteki backend:
-  Mariadb - host bazy Mysql
-  Bodyparser - ułatwienie przetwarzania danych przesyłanych
-  Cors - Cross-Origin Resource Sharing, w skrócie obsuga danych przesyanych i ich dostépów
-Biblioteki forntend:
-  Axios - obsługa połączenia z bazą
-  Reacttable + Tanstack - formatowanie tabeli
 
+==============================================================================
 Te instrukcje są przedewszystkim do operowania wersją w pełni lokalną. dla nie lokalnej, wystarczy odpalić tylko kody z terminalu 2
 Wszystko na domenie powinno działać, więc polecamy używanie jej:
 
 https://keysrus.pl/
+
+dla potrzeb demonstracji pod spodem są przykłądowi użytkownicy:
+
+  ADMIN
+    mail: admin@keybay.com
+    hasło: admin123
+
+  SPRZEDAWCA
+    mail: seller01@mail.com
+    hasło: pass
+
+  UŻYTKOWNIK
+    mail: p1@mail.com
+    hasło: pass
+==============================================================================
+
+Biblioteki backend:
+  Mariadb - host bazy Mysql
+  Bodyparser - ułatwienie przetwarzania danych przesyłanych
+  Cors - Cross-Origin Resource Sharing, w skrócie obsuga danych przesyanych i ich dostépów
+Biblioteki frontend:
+  Axios - obsługa połączenia z bazą
+  Reacttable + Tanstack - formatowanie tabeli
 
 w zewnętrznym folderze (server-test):
 
@@ -31,14 +48,16 @@ w zewnętrznym folderze (server-test):
       cd user-web
       npm run dev
 
-by aktualizować git: git fetch --all
-
 By zaktualizować baze:
   wykonajcie w nowej konsoli kod python:
     cd steamdb-connection
     pip install -r requirements.txt
     python main.py
-nie chcieliśmy cały czas łączyć się z bazą steam na dane gier szczególnie że wiele z nich wymaga dosyć ciężkiej edycji
+nie chcieliśmy cały czas łączyć się z bazą steam na dane gier szczególnie że wiele z nich wymaga dosyć ciężkiej edycji.
+Znajduje się także kod pod dodawanie jednej gry po jej id w steam wykonywany tak:
+  zmień wartość TARGET_APPID na chciany klucz gry (jest w linku strony danej gry na steam). póżniej w konsoli:
+    cd steamdb-connection
+    python import_single.py
 
 By działać na lokalnej wersji bazy (z keybay.sql) trzeba ją zaimportować i zamienić komentarze w plikach:
   user-web/src/App.jsx (linijka 7 i 8)
@@ -47,6 +66,3 @@ By działać na lokalnej wersji bazy (z keybay.sql) trzeba ją zaimportować i z
   user-service/db/db.js (linijka 7 i 18)
     /*Wersja Lokalnie*/
     /* Wersja Na Hoscie * /
-
-
-NA RAZIE NIE DO KOŃCA DZIAŁA ALE ZAKTUALIZUJCIE BO FORMAT DANYCH RACZEJ JUŻ BĘDZIE TAKI JAK TU I STRONA Z TYMI DANYMI DZIAŁAJĄ

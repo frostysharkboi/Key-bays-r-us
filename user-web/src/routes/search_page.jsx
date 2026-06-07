@@ -76,13 +76,8 @@ export default function SearchPage() {
     }
   }, [filterTags]);
 
-  // Struktura kolumn tabeli
+  // Struktura kolumn tabeli (Kolumna ID została pomyślnie usunięta z widoku)
   const columns = useMemo(() => [
-    {
-      header: "ID",
-      accessorKey: "id",
-      cell: (info) => <b>{info.getValue()}</b>
-    },
     { header: "Title", accessorKey: "title" },
     { header: "About", accessorKey: "about", enableSorting: false },
     {
@@ -185,7 +180,8 @@ export default function SearchPage() {
               </thead>
               <tbody>
                 {rows.map((row) => (
-                  <tr key={row.id} onClick={() => RedirectToGamePage(parseInt(row.getVisibleCells()[0].getValue()))} style={{ cursor: 'pointer' }}>
+                  /* MODYFIKACJA: id wyciągamy bezpośrednio z surowego obiektu row.original, a nie z widoku HTML */
+                  <tr key={row.id} onClick={() => RedirectToGamePage(row.original.id)} style={{ cursor: 'pointer' }}>
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

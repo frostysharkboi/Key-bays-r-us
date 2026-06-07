@@ -44,17 +44,10 @@ export default function WishlistPage() {
 
   // Definicja kolumn tabeli gier
   const columns = useMemo(() => [
-    {
-      header: "ID",
-      accessorKey: "id",
-      cell: (info) => <b>{info.getValue()}</b>
-    },
     { header: "Title", accessorKey: "title" },
     { header: "About", accessorKey: "about", enableSorting: false },
     {
-      header: "Image",
-      accessorKey: "cover_img",
-      enableSorting: false,
+      header: "Image", accessorKey: "cover_img", enableSorting: false,
       cell: (info) => <img src={info.getValue()} alt={`Cover of ${info.row.original.title}`} width={200} />
     }
   ], []);
@@ -116,7 +109,7 @@ export default function WishlistPage() {
               </thead>
               <tbody>
                 {rows.map((row) => (
-                  <tr key={row.id} onClick={() => RedirectToGamePage(parseInt(row.getVisibleCells()[0].getValue()))} style={{ cursor: 'pointer' }}>
+                  <tr key={row.id} onClick={() => RedirectToGamePage(row.original.id)} style={{ cursor: 'pointer' }}>
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
