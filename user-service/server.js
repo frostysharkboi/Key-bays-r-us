@@ -381,6 +381,19 @@ app.get("/:table", async (req, res) => {
 
 });
 
+//Do Admina dla wniosków j3g0 j3b4n4 m4c
+
+app.get("/applications/getAll", async (req, res) => {
+  try {
+    const sql = "Select u.login, a.id, a.request, a.status FROM applications as a JOIN users AS u ON a.sender_id = u.id;";
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
+
 // Create
 
 // Zatwierdzenie transakcji
@@ -499,6 +512,8 @@ app.post("/users/updateUser", async (req, res) => {
 });
 
 //Dodawanie aplikacji
+
+
 
 app.post("/applications/addAplication", async (req, res) => {
   const {sender_id, request} = req.body;

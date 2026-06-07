@@ -33,6 +33,9 @@ export default function Root() {
   // Zunifikowany obiekt danych nowego użytkownika
   const [newUser, changeUserData] = useState(null);
 
+  //Dla Admina
+  const [AdminTable, getAdminTable] = useState(null);
+
   // Pobranie danych użytkowników z bazy w celu lokalnej weryfikacji duplikatów
   const LoadUsersData = () => {
     axios.get(`${axiosPath}/users`).then((res) => {
@@ -43,7 +46,8 @@ export default function Root() {
   React.useEffect(() => {
     LoadUsersData();
     console.log(location.state.uId);
-    axios.get("http://localhost:3000/applications").then((res) => {setTable(res.data)})
+    axios.get("http://localhost:3000/applications").then((res) => {setTable(res.data)});
+    axios.get("http://localhost:3000/applications/getAll").then((res) => {getAdminTable(res.data)});
   }, []);
 
   useEffect(() => {
@@ -105,6 +109,14 @@ export default function Root() {
     }
   }
 
+  function AcceptRequest(){
+
+  }
+
+  function DenialRequest(){
+    
+  }
+
   return (
     <>
       <div className="container-fluid">
@@ -124,6 +136,9 @@ export default function Root() {
                   <button className='m-3' onClick={() => changeShowing(1)}>Pokaż Recenzje</button>
                   {MeinUsser == true && SelectedUser.type == "normal" && (
                     <button className='m-3' onClick={() => changeShowing(2)}>Aplikuj na sprzedawcę</button>
+                  )}
+                  {MeinUsser == true && SelectedUser.type == "admin" && (
+                    <button className='m-3' onClick={() => {changeShowing(3); console.log(AppTable)}}>Sprawdź wnioski o zmianę statusu</button>
                   )}
                   {MeinUsser == true && (
                     <button className='m-3' onClick={() => navigate("/Edit-Account")}>Edytuj Konto</button>
@@ -189,6 +204,28 @@ export default function Root() {
                       <h3>Proszę podaj powód, dla którego chcesz zostać sprzedawcą?</h3>
                       <input type="text" onChange={(e) => changeReason(e.target.value)}/>
                       <button onClick={() => BecomeSeller()}>DODAJ WNIOSEK</button>
+                    </div>
+                  )}
+                  {whatToShow == 3 && (
+                    <div>
+                      <h2>WNIOSKI</h2>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Użytkownik</th><th rowSpan={2}>Wniosek</th><th>Status oczekiwania wniosku</th><th>Dostępne operacje</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {AdminTable.map((App) => (
+                            <tr key={App.id} className='p-4'>
+                              <td>{App.login}</td>
+                              <td>{App.request}</td>
+                              <td>{App.status}</td>
+                              <td><button>Zatwierdź</button><button>Odrzuć</button></td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   )}
                 </div>
