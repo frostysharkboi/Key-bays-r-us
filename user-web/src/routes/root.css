@@ -57,6 +57,7 @@ a{
 .dropdown:hover .dropbtn {
     background-color: #403B2D;
 }
+/* Tu się zaczynają wypociny trzymające tą stronę w jako tako oglądalnym stanie*/
 .border-3{
     border: #DDDDD5;
     background-color: #C51515;
@@ -188,4 +189,23 @@ input:focus {
 }
 .tag:hover{
     background-color: #d31717;
+}
+.noWishlistBtn{
+    background-color: #C51515;
+    border-color: #DDDDD5;
+    color: #DDDDD5;
+    border-width: 5px;
+}
+.noWishlistBtn:hover{
+    background-color:#d31717;
+    border:5px #DDDDD5;
+}
+.WishlistBtn{
+    background-color: #C51515;
+    border:5px #C51515;
+    color: #DDDDD5;
+}
+.WishlistBtn:hover{
+    background-color:#d31717;
+    border-color: #d31717;
 }

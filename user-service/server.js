@@ -221,9 +221,38 @@ app.get("/games/alldata", async (req, res) => {
 
 app.get("/games/cover", async (req, res) => {
   try {
-    const sql = `SELECT id, title, about, cover_img FROM games ORDER BY RAND() LIMIT 5;`;
+    const sql = `SELECT id, title, about, cover_img FROM games ORDER BY RAND() LIMIT 10;`;
     const result = await db.pool.query(sql);
     res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/games/byRandomGenres", async (req, res) => {
+  try {
+    const tagsSql = `SELECT DISTINCT t.id, t.tag FROM tags t JOIN game_tags gt ON t.id = gt.tag_id ORDER BY RAND() LIMIT 3;`;
+    const randomTags = await db.pool.query(tagsSql);
+
+    if (!randomTags || randomTags.length === 0) {
+      return res.json([]);
+    }
+
+    const finalResult = [];
+
+    for (const tagRow of randomTags) {
+      const gamesSql = `SELECT g.id, g.title, g.about, g.cover_img FROM games g JOIN game_tags gt ON g.id = gt.game_id WHERE gt.tag_id = ${parseInt(tagRow.id)} ORDER BY RAND() LIMIT 10;`;
+
+      const games = await db.pool.query(gamesSql);
+
+      finalResult.push({
+        genreName: tagRow.tag,
+        games: games
+      });
+    }
+    res.json(finalResult);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
