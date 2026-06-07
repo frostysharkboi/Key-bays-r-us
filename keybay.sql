@@ -2769,7 +2769,8 @@ CREATE TABLE `transactions` (
   `offer_id` int(10) NOT NULL,
   `buyer_id` int(10) NOT NULL,
   `reciever_id` int(10) NOT NULL,
-  `status` enum('Pending','Success','Cancelled') NOT NULL DEFAULT 'Pending'
+  `status` enum('Pending','Success','Cancelled') NOT NULL DEFAULT 'Pending',
+  `other` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
