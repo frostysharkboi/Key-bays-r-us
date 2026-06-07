@@ -279,6 +279,11 @@ export default function GamePage() {
                 userId={userData.id}
                 isLogged={userData.isLogged}
               />
+              {(userData.type === 'seller' || userData.type === 'admin') && (
+                <button className="btn border mt-2 border-3 w-100 fw-bold transition-all btn-danger border-danger" onClick={() => navigate("/Create-Offer", { state: { initialTitle: gameData.title } })}                >
+                  DODAJ OFERTE
+                </button>
+              )}
             </div>
           )}
         </div>

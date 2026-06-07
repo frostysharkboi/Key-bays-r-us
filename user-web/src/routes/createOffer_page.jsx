@@ -1,15 +1,19 @@
 import { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import axios from 'axios';
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
+// ZMIANA: Dodano useLocation obok useNavigate
+import { useNavigate, useLocation } from 'react-router-dom';
 import './root.css';
 import { axiosPath } from "../App";
 import { UserContext } from '../components/user-context/UserContext';
 import Header from '../components/header/Header';
 import { useDebounce } from '../hooks/UseDebounce';
+import Footer from '../components/footer/Footer';
 
 export default function Root() {
   const navigate = useNavigate();
+  // NOWOŚĆ: Przechwytywanie stanu przekazanego podczas nawigacji
+  const location = useLocation();
 
   const { userData, logout } = useContext(UserContext);
   const [games, setGames] = useState([]);
@@ -17,10 +21,9 @@ export default function Root() {
   const [offerPrice, setPrice] = useState(null);
   const [offerOther, setOther] = useState(null);
 
-  // ZMIANA: Inicjalizujemy tytuł jako pusty string, by kontrolowany input działał prawidłowo
-  const [offerTitle, setTitle] = useState("");
+  // ZMIANA: Stan początkowy sprawdza, czy przyszedł tytuł z poprzedniej strony, jeśli nie - daje pusty string
+  const [offerTitle, setTitle] = useState(location.state?.initialTitle || "");
 
-  // NOWOŚĆ: Stan debounce oraz sterowanie panelem podpowiedzi
   const debouncedOfferTitle = useDebounce(offerTitle, 400);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -45,7 +48,7 @@ export default function Root() {
       games.forEach(game => {
         if (game.title == offerTitle) {
           gameId2 = game.id;
-        };
+        }
       });
     }
 
@@ -56,7 +59,7 @@ export default function Root() {
       other: offerOther,
       gameId: gameId2
     });
-  }, [offerKey, offerPrice, offerOther, offerTitle, games])
+  }, [offerKey, offerPrice, offerOther, offerTitle, games]);
 
   function getTitleAndId(e) {
     setTitle(e.target.value);
@@ -73,7 +76,6 @@ export default function Root() {
       .catch(err => console.error("Błąd pobierania gier:", err));
   };
 
-  // NOWOŚĆ: Automatyczne zamykanie panelu podpowiedzi gier po kliknięciu poza obszar
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -84,7 +86,6 @@ export default function Root() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // NOWOŚĆ: Filtrowanie gier na podstawie opóźnionej frazy (dokładnie jak w Headerze, max 10 sztuk)
   const displayedGames = useMemo(() => {
     if (!debouncedOfferTitle.trim()) return [];
     return games
@@ -92,13 +93,12 @@ export default function Root() {
       .slice(0, 5);
   }, [debouncedOfferTitle, games]);
 
-  // Funkcja walidująca poprawność wprowadzonych danych
   function CheckIfDataIsGood() {
     const offerChekcs = {
       key: false,
       title: false
-    }
-    if (offerChekcs != null && offerKey != null && offerOther != null && offerPrice != null) {
+    };
+    if (offerAsObject != null && offerKey != null && offerOther != null && offerPrice != null) {
       console.log(offerAsObject);
 
       games.forEach(game => {
@@ -113,12 +113,11 @@ export default function Root() {
       });
 
       (offerAsObject.key.length > 14 && offerAsObject.key.length < 51) ? offerChekcs.key = true : setErrorBoxText("Klucz jest nieprawidłowy");
-
       (offerPrice != null) ? null : setErrorBoxText("Oferta musi być wycieniona");
       (offerOther != null) ? null : setErrorBoxText("Oferta musi zawierać opis");
 
       if (offerChekcs.key == true && offerChekcs.title == true && offerPrice != null && offerOther != null) return true;
-      return false
+      return false;
     } else {
       alert("Proszę uzupełnić formularz do końca");
       return false;
@@ -130,17 +129,12 @@ export default function Root() {
       if (confirm("Czy na pewno chcesz wystawić tą ofertę?\nWciśnij ok, by wystawić.") == true) {
         axios.post(`${axiosPath}/key_offers/add`, { key: offerAsObject.key, price: offerAsObject.price, other: offerAsObject.other, game_id: offerAsObject.gameId, seller_id: userData.id, status: "Active" })
           .then(() => {
-            console.log("Chyba przeszło?");
-            let popup = alert("Twoja oferta właśnie została wystawiona", "ok");
-            if (popup == true) {
-              console.log("Kurwa powinna przekazywać locationState");
-              navigate("/Offers");
-            }
+            alert("Twoja oferta właśnie została wystawiona");
+            navigate("/Offers");
           }).catch((err) => {
             setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
             console.error(err);
           });
-        navigate("/Offers");
       } else {
         setTitle("");
         setPrice("");
@@ -155,16 +149,13 @@ export default function Root() {
       <div className="container-fluid">
         <Header />
 
-        {/* Formularz Rejestracji */}
         <div className='row m-1 text-center font'>
-          <h3>DODAWANIE OFERTY</h3>
+          <h3 className="my-3">DODAWANIE OFERTY</h3>
 
           <div className="mt-2" ref={dropdownRef}>
-            {/* Label i br stoją luźno – nie wpływają na szerokość listy */}
             <label>Podaj gre, jaka chcesz wystawic</label>
             <br />
 
-            {/* NOWOŚĆ: Ta otoczka pilnuje, by podgląd dopasował się TYLKO do szerokości tego konkretnego inputa */}
             <div className="position-relative d-inline-block">
               <input
                 type="text"
@@ -172,10 +163,8 @@ export default function Root() {
                 onChange={(e) => getTitleAndId(e)}
                 onFocus={() => setIsDropdownOpen(true)}
                 value={offerTitle}
-              /* Twój styl inputa jest w 100% bezpieczny i nienaruszony */
               />
 
-              {/* Podgląd listy wyświetli się dokładnie pod krawędziami inputa */}
               {isDropdownOpen && displayedGames.length > 0 && (
                 <div
                   className="position-absolute bg-white border border-secondary text-start mt-1 w-100 shadow-lg custom-search-dropdown"
@@ -230,19 +219,13 @@ export default function Root() {
             <br />
             <textarea rows="4" cols="50" onChange={(e) => setOther(e.target.value)} value={offerOther || ""} />
           </div>
-          <div className="mt-3">
-            <button className="btn btn-primary" onClick={() => AddOfferToDb()}>Dodaj Oferte</button>
+          <div className="mt-3 text-center d-flex flex-column align-items-center">
+            <button className="btn btn-primary" style={{ width: '200px' }} onClick={() => AddOfferToDb()}>Dodaj Oferte</button>
             {errorBoxText && <p id="Error_box" className='text-center fs-3 text-danger mt-2'>{errorBoxText}</p>}
           </div>
         </div>
 
-        {/* Stopka */}
-        <div className="row m-3 p-3 text-center">
-          <div className='col'>
-            <p>Kontakt</p>
-            <p>Mail: biurokeysrus@gmail.com</p>
-          </div>
-        </div>
+        <Footer />
       </div>
     </>
   );
