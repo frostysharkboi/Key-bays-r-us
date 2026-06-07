@@ -114,3 +114,8 @@ button:focus-visible {
 .dropdown:hover .dropbtn {
   background-color: #454031;
 }
+
+@font-face {
+  font-family: 'akira';
+  src: url('./assets/fonts/AODFont.otf') format('opentype');
+}

@@ -48,11 +48,26 @@ w zewnętrznym folderze (server-test):
       cd user-web
       npm run dev
 
+By przygotować stronę do wrzucenia na serwer:
+  w root.css zmienic:
+    font-face {
+      font-family: akira;
+      src: url('src/assets/fonts/AODFont.otf');
+    }
+    na:
+    font-face {
+      font-family: akira;
+      src: url('./assets/fonts/AODFont.otf');
+    }
+  cd user-web
+  npm run build
+
 By zaktualizować baze:
   wykonajcie w nowej konsoli kod python:
     cd steamdb-connection
     pip install -r requirements.txt
     python main.py
+
 nie chcieliśmy cały czas łączyć się z bazą steam na dane gier szczególnie że wiele z nich wymaga dosyć ciężkiej edycji.
 Znajduje się także kod pod dodawanie jednej gry po jej id w steam wykonywany tak:
   zmień wartość TARGET_APPID na chciany klucz gry (jest w linku strony danej gry na steam). póżniej w konsoli:

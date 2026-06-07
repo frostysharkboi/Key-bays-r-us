@@ -43,8 +43,8 @@ export default function GameCarousel({
                 {/* LEWA STRZAŁKA */}
                 {displayArrows && (
                     <button
-                        className="btn btn-dark border border-secondary position-absolute start-0 h-50 d-flex align-items-center justify-content-center"
-                        style={{ zIndex: 10, opacity: canGoPrev ? 0.8 : 0.2, width: '40px', transform: 'translateX(-15px)' }}
+                        className="btn btnCarousel noRound border border-3 position-absolute start-0 h-50 d-flex align-items-center justify-content-center"
+                        style={{ zIndex: 10, opacity: canGoPrev ? 1 : 0, width: '40px', transform: 'translateX(-15px)' }}
                         onClick={handlePrev}
                         disabled={!canGoPrev}
                     >
@@ -56,11 +56,11 @@ export default function GameCarousel({
                 <div className="row g-3 w-100 m-0 row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 flex-grow-1 justify-content-start transition-all">
                     {visibleGames.map((game) => (
                         <div key={game.id} className="col">
-                            <div className="card h-100 bg-black border border-secondary rounded-0 overflow-hidden shadow custom-game-card" onClick={() => onGameClick && onGameClick(game.id)} style={{ cursor: 'pointer', transition: 'transform 0.2s' }}>
+                            <div className="card h-100 border border-3 rounded-0 overflow-hidden shadow custom-game-card" onClick={() => onGameClick && onGameClick(game.id)} style={{ cursor: 'pointer', transition: 'transform 0.2s' }}>
                                 <div className="w-100 position-relative overflow-hidden bg-secondary" style={{ aspectRatio: '7/4', display: 'block' }}>
                                     <img src={game.cover_img} alt={game.title} className="w-100 h-100" style={{ objectFit: 'cover', display: 'block' }} onError={(e) => { e.target.style.display = 'none'; }} />
                                 </div>
-                                <div className="card-body p-2 bg-dark border-top border-secondary text-center">
+                                <div className="card-body cardText p-2 border-3 border-top text-center">
                                     <p className="card-text text-truncate font fw-bold text-light m-0 small">
                                         {game.title}
                                     </p>
@@ -73,8 +73,8 @@ export default function GameCarousel({
                 {/* PRAWA STRZAŁKA */}
                 {displayArrows && (
                     <button
-                        className="btn btn-dark border border-secondary position-absolute end-0 h-50 d-flex align-items-center justify-content-center"
-                        style={{ zIndex: 10, opacity: canGoNext ? 0.8 : 0.2, width: '40px', transform: 'translateX(15px)' }}
+                        className="btn btnCarousel noRound border border-3 position-absolute end-0 h-50 d-flex align-items-center justify-content-center"
+                        style={{ zIndex: 10, opacity: canGoNext ? 1 : 0, width: '40px', transform: 'translateX(15px)' }}
                         onClick={handleNext}
                         disabled={!canGoNext}
                     >
