@@ -207,9 +207,9 @@ export default function Root() {
         <div className='row m-1 text-center font'>
           <h3>EDYCJA KONTA</h3>
           <div>
-            <h4>Wybierz, co chcesz zmienić</h4>
-            <select value={Changed} onChange={(e) => { setChanged(e.target.value); console.log(e.target.value) }}>
-              <option value>Wybierz jaką chcesz wykonać akcję</option>
+            <h4 className='noFont'>Wybierz, co chcesz zmienić:</h4>
+            <select className="noFont" value={Changed} onChange={(e) => { setChanged(e.target.value); console.log(e.target.value) }}>
+              <option value>Wybierz jaką chcesz wykonać akcję:</option>
               <option value="1" name="login">Nick</option>
               <option value="2" name="pass">Hasło</option>
               <option value="3" name="mail">E-mail</option>
@@ -221,35 +221,35 @@ export default function Root() {
             <div>
               <label>Nick</label>
               <br />
-              <input type="text" name="login" value={newUser.login} placeholder='. . .' onChange={handleInputChange} />
+              <input className='noFont' type="text" name="login" value={newUser.login} placeholder='. . .' onChange={handleInputChange} />
             </div>
           )}
           {Changed == 2 && (
             <div>
               <label>Haslo</label>
               <br />
-              <input type="password" name="pass" value={newUser.pass} placeholder='. . .' onChange={handleInputChange} />
+              <input className='noFont' type="password" name="pass" value={newUser.pass} placeholder='. . .' onChange={handleInputChange} />
             </div>
           )}
           {Changed == 3 && (
             <div>
               <label>E-mail</label>
               <br />
-              <input type="email" name="mail" value={newUser.mail} placeholder='. . .' onChange={handleInputChange} />
+              <input className='noFont' type="email" name="mail" value={newUser.mail} placeholder='. . .' onChange={handleInputChange} />
             </div>
           )}
           {Changed == 4 && (
             <div>
               <label>Numer telefonu</label>
               <br />
-              <input type="text" name="phone" value={newUser.phone} placeholder='. . .' onChange={handleInputChange} />
+              <input className='noFont' type="text" name="phone" value={newUser.phone} placeholder='. . .' onChange={handleInputChange} />
             </div>
           )}
           {Changed == 5 && (
             <div>
               <label>Tag discord</label>
               <br />
-              <input type="text" name="discord" value={newUser.discord} placeholder='. . .' onChange={handleInputChange} />
+              <input className='noFont' type="text" name="discord" value={newUser.discord} placeholder='. . .' onChange={handleInputChange} />
             </div>
           )}
           {Changed > 0 && (

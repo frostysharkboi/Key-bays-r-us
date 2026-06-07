@@ -118,7 +118,7 @@ export default function Root() {
                 >
                   <img src={e.cover_img} className="w-100 h-100" alt={e.title} style={{ objectFit: "contain" }} />
                   <div className="carousel-caption">
-                    <h4 className="bg-dark bg-opacity-75 d-inline-block px-3 py-2 border border-secondary font">
+                    <h4 className=" bg-opacity-75 d-inline-block px-3 py-2 bg-dark font">
                       {e.title}
                     </h4>
                   </div>
@@ -132,7 +132,7 @@ export default function Root() {
         {userData?.isLogged && wishlistGames.length > 0 && (
           <div className="position-relative">
             <GameCarousel
-              title={`Twoja Lista Życzeń (${wishlistGames.length})`}
+              title={`Twoja Lista Zyczen (${wishlistGames.length})`}
               games={wishlistGames}
               showArrows={true}
               onGameClick={RedirectToGamePage}
@@ -141,10 +141,10 @@ export default function Root() {
             {/* NAPRAWIONE: Wyciągnięty styl inline z cudzysłowu klas Bootstrapa */}
             <div className="text-end mx-4 px-4" style={{ marginTop: '-20px' }}>
               <button
-                className="btn btn-outline-danger rounded-0 border-2 font fw-bold px-4"
+                className="btn noRound noWishlistBtn font px-4"
                 onClick={() => navigate("/Wishlist")}
               >
-                PRZEJDŹ DO PEŁNEJ WISHLISTY →
+                PRZEJDZ DO PELNEJ WISHLISTY →
               </button>
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function Root() {
         <div className="row row-cols-2 row-cols-md-4 justify-content-center mx-4 my-3 p-3 text-center">
           {tags.map((row) => (
             <div
-              className="card rounded-0 border tag border-3 font col p-3 m-2 bg-dark text-light"
+              className="card border noRound tag border-3 font col p-3 m-2"
               key={row.id}
               onClick={() => RedirectToSeaching(parseInt(row.id))}
               style={{ cursor: 'pointer' }}
