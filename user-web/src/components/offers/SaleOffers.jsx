@@ -22,21 +22,35 @@ export default function SaleOffers({ gameId }) {
     axios.get(`${axiosPath}/key_offers/offersForGames`, { params: { id: gameId } })
       .then((res) => {
         if (res.data != null && res.data.length > 0) {
-          if (res.data && res.data[0].id != null) {
-            setOffersData(res.data);
-            console.log("Dane zostały pobrane\n", res.data);
-            if (userData.type == 'normal') {
-              setOffersData(offersData.filter(offer => offer.status != 'Closed'));
+          if (res.data[0].id != null) {
+            console.log("Dane zostały pobrane z serwera:\n", res.data);
+
+            let filteredOffers = res.data;
+
+            if (userData?.type === 'normal') {
+              filteredOffers = filteredOffers.filter(offer => {
+                const currentStatus = offer.status ? offer.status.toString().trim().toLowerCase() : '';
+                return currentStatus !== 'closed';
+              });
+              console.log("Dane po filtracji dla Normal:", filteredOffers);
+
+            } else if (userData?.type === 'seller') {
+              filteredOffers = filteredOffers.filter(offer => {
+                const currentStatus = offer.status ? offer.status.toString().trim().toLowerCase() : '';
+                const isOwnOffer = String(offer.seller_id) === String(userData.id);
+                return currentStatus !== 'closed' || isOwnOffer;
+              });
+              console.log("Dane po filtracji dla Seller:", filteredOffers);
             }
-            if (userData.type == 'seller') {
-              setOffersData(offersData.filter(offer => offer.status != 'Closed' || offer.seller_id == userData.id));
-            }
+            setOffersData(filteredOffers);
+
           } else {
             setError(true);
           }
+        } else {
+          setOffersData([]);
         }
 
-        // Wyłączamy ładowanie dopiero, gdy cała logika (pobranie + filtry) się zakończyła
         setLoading(false);
       })
       .catch((err) => {
@@ -44,8 +58,6 @@ export default function SaleOffers({ gameId }) {
         setError(true);
         setLoading(false);
       });
-
-    // Reagujemy zarówno na zmianę oglądanej gry, jak i na zalogowanie/wczytanie profilu użytkownika
   }, [gameId, userData]);
 
   // Widok ładowania

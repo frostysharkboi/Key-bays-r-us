@@ -543,9 +543,9 @@ app.post("/users/updateUser", async (req, res) => {
 //Dodawanie aplikacji
 
 app.post("/applications/addAplication", async (req, res) => {
-  const {sender_id, request} = req.body;
+  const { sender_id, request } = req.body;
 
-  try{
+  try {
     const cols = ["sender_id", "request", "status"];
     const status = "awaiting";
 
@@ -633,7 +633,7 @@ app.put('/api/reviews', async (req, res) => {
 
 //Zatwierdzenie wniosku
 app.put('/applications/AcceptApp', async (req, res) => {
-  const {id, handler_id} = req.body;
+  const { id, handler_id } = req.body;
   try {
     const sql = `UPDATE applications SET status = "accepted", handler_id = ${handler_id} WHERE id = ${id}`;
     await db.pool.query(sql);
@@ -646,7 +646,7 @@ app.put('/applications/AcceptApp', async (req, res) => {
 
 //Zmiana statusu usera
 app.put("/users/PromoteToSeller", async (req, res) => {
-  const {id} = req.body;
+  const { id } = req.body;
   try {
     const sql = `UPDATE users SET type = "seller" WHERE id = ${id}`;
     await db.pool.query(sql);
@@ -659,7 +659,7 @@ app.put("/users/PromoteToSeller", async (req, res) => {
 
 //Odrzucenie wniosku
 app.put('/applications/DenialApp', async (req, res) => {
-  const {id, handler_id} = req.body;
+  const { id, handler_id } = req.body;
   try {
     const sql = `UPDATE applications SET status = "dismissed", handler_id = ${handler_id} WHERE id = ${id}`;
     await db.pool.query(sql);
