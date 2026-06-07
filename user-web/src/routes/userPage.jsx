@@ -35,6 +35,7 @@ export default function Root() {
 
   //Dla Admina
   const [AdminTable, getAdminTable] = useState(null);
+  const [AdminTableFiltred, setTableRight] = useState(null);
 
   // Pobranie danych użytkowników z bazy w celu lokalnej weryfikacji duplikatów
   const LoadUsersData = () => {
@@ -71,6 +72,18 @@ export default function Root() {
       });
     }
   }, [Users]);
+
+  useEffect(() => {
+    let arr = [];
+    if(AdminTable != null && AdminTable.length > 0){
+      AdminTable.forEach(element => {
+        if(element.status == "awaiting"){
+          arr.push(element);
+        }
+      });
+    };
+    setTableRight(arr);
+  }, [AdminTable]);
 
   function RedirectToGamePage(gameId) {
     navigate('/Game', { state: { GameId: gameId } });
@@ -109,12 +122,37 @@ export default function Root() {
     }
   }
 
-  function AcceptRequest(){
-
+  function AcceptRequest(App_id, senderId){
+    axios.put(`${axiosPath}/applications/AcceptApp`, {id: App_id, handler_id: SelectedUser.id})
+      .then(() => {
+        axios.get("http://localhost:3000/applications/getAll").then((res) => {getAdminTable(res.data)});
+        console.log(`Wniosek ${App_id} został potwierdzony`);
+      })
+      .catch((err) => {
+        setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
+        console.error(err);
+      });
+    axios.put(`${axiosPath}/users/PromoteToSeller`, {id: senderId})
+      .then(() => {
+        console.log(`User ${senderId} został sprzedawcą`);
+        alert(`Wniosek #${App_id} został potwierdzony`);
+      })
+      .catch((err) => {
+        setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
+        console.error(err);
+      });
   }
 
-  function DenialRequest(){
-    
+  function DenialRequest(App_id){
+    axios.put(`${axiosPath}/applications/DenialApp`, {id: App_id, handler_id: SelectedUser.id})
+      .then(() => {
+        axios.get("http://localhost:3000/applications/getAll").then((res) => {getAdminTable(res.data)});
+        alert(`Wniosek #${App_id} został odrzucony`);
+      })
+      .catch((err) => {
+        setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
+        console.error(err);
+      });
   }
 
   return (
@@ -209,23 +247,28 @@ export default function Root() {
                   {whatToShow == 3 && (
                     <div>
                       <h2>WNIOSKI</h2>
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>Użytkownik</th><th rowSpan={2}>Wniosek</th><th>Status oczekiwania wniosku</th><th>Dostępne operacje</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {AdminTable.map((App) => (
-                            <tr key={App.id} className='p-4'>
-                              <td>{App.login}</td>
-                              <td>{App.request}</td>
-                              <td>{App.status}</td>
-                              <td><button>Zatwierdź</button><button>Odrzuć</button></td>
+                      {(AdminTableFiltred.length > 0)? (
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Użytkownik</th><th rowSpan={2}>Wniosek</th><th>Status oczekiwania wniosku</th><th>Dostępne operacje</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {AdminTableFiltred.map((App) => (
+                              <tr key={App.id} className='p-4'>
+                                <td>{App.login}</td>
+                                <td>{App.request}</td>
+                                <td>{App.status}</td>
+                                <td><button onClick={() => {console.log(App, "\n", SelectedUser); AcceptRequest(App.id, App.sender_id)}}>Zatwierdź</button>
+                                <button onClick={() => {console.log(App, "\n", SelectedUser); DenialRequest(App.id)}}>Odrzuć</button></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <p>Brak wniosków.</p>
+                      )}
                     </div>
                   )}
                 </div>
