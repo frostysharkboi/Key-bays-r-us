@@ -78,7 +78,8 @@ export default function TransactionsPage() {
                 } else if (res.data && Array.isArray(res.data.rows)) {
                     rawData = res.data.rows;
                 } else if (res.data && typeof res.data === 'object' && res.data.transaction_id) {
-                    console.log("👉 Wykryto pojedynczy obiekt transakcji. Pakuje go w tablice.");
+                    // NOWOŚĆ: Jeśli serwer zwrócił pojedynczy obiekt transakcji, pakujemy go w tablicę jednoelementową!
+                    console.log("Wykryto pojedynczy obiekt transakcji. Pakuję go w tablicę.");
                     rawData = [res.data];
                 }
                 console.log(rawData);
