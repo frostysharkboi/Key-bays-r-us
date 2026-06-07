@@ -146,8 +146,8 @@ export default function GamePage() {
 
       {/* Tytuł gry */}
       <div className='row m-3 p-3 text-center'>
-        <div className='col'>
-          <h2 className='font'>{gameData ? gameData.title : "Ładowanie..."}</h2>
+        <div className='col box-idk border p-3'>
+          <h2 className='font m-0'>{gameData ? gameData.title : "Ładowanie..."}</h2>
         </div>
       </div>
 
@@ -155,7 +155,7 @@ export default function GamePage() {
       <div className='row m-3 p-3 text-center justify-content-center'>
 
         {/* Lewa kolumna - Karuzela multimediów */}
-        <div className='col-7'>
+        <div className='col-7 border'>
           {allMediaItems.length > 0 ? (
             /* Główny kontener izolujący pozycjonowanie */
             <div className="position-relative w-100 overflow-hidden rounded shadow bg-black">
@@ -180,7 +180,6 @@ export default function GamePage() {
                 </div>
               </div>
 
-              {/* STRZAŁKI WYCIĄGNIĘTE POZA RATIO - Teraz pozycjonują się prawidłowo na krawędziach całego czarnego boxu */}
               <button
                 className="carousel-control-prev"
                 type="button"
@@ -239,72 +238,64 @@ export default function GamePage() {
         </div>
 
         {/* Prawa kolumna - Statystyki i metadane gry */}
-        <div className='box-idk col-5 p-3 border d-flex flex-column justify-content-between'>
-          {/* Sekcja ocen */}
-          <div className="row align-items-center g-0">
-            <div className="col-6 border-end">
-              <SiteRating gameId={GameId} />
-            </div>
-            <div className="col-6">
-              <SteamRating gameId={GameId} />
-            </div>
-          </div>
+        <div className='col-5 px-3 justify-content-between'>
+          <div className='box-idk border h-100'>
+            <div className='p-3'>
+              {/* Sekcja ocen */}
+              <div className="row align-items-center g-0">
+                <div className="col-6 border-end">
+                  <SiteRating gameId={GameId} />
+                </div>
+                <div className="col-6">
+                  <SteamRating gameId={GameId} />
+                </div>
+              </div>
 
-          <br />
-          <div>
-            <p className='font fw-bold m-0'>Tagi:</p>
-            <p className="m-0">| {WypiszTagi()}</p>
-          </div>
-          <br />
-          <div>
-            <p className="m-0"><b>Data Wydania:</b> {gameData ? gameData.release_date : "---"}</p>
-            <p className="m-0"><b>Developer:</b> {gameData ? gameData.publisher : "---"}</p>
+              <br />
+              <div className='py-3'>
+                <p className='font fw-bold m-0'>Tagi:</p>
+                <p className="m-0">| {WypiszTagi()}</p>
+              </div>
+              <br />
+              <div className='py-3'>
+                <p className="m-0 pb-3"><b>Data Wydania:</b> {gameData ? gameData.release_date : "---"}</p>
+                <p className="m-0"><b>Developer:</b> {gameData ? gameData.publisher : "---"}</p>
+              </div>
+            </div>
+            <div className='text-start p-3'>
+              <div>
+                <p className="fw-bold font">O grze:</p>
+                <p>{gameData ? gameData.about : "Brak opisu gry."}</p>
+              </div>
+
+              {/* Blok przycisku listy życzeń */}
+              {userData.isLogged && gameData && (
+                <div className="mt-3 text-center">
+                  <WishlistButton
+                    gameId={gameData.id}
+                    userId={userData.id}
+                    isLogged={userData.isLogged}
+                  />
+                  {(userData.type === 'seller' || userData.type === 'admin') && (
+                    <button className="btn border mt-2 border-3 w-100 fw-bold transition-all btn-danger border-danger" onClick={() => navigate("/Create-Offer", { state: { initialTitle: gameData.title } })}                >
+                      DODAJ OFERTE
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Sekcja dolna: Opis Gry oraz Wymagania Sprzętowe */}
       <div className='row m-3 p-3 text-center'>
-        <div className='box-idk col-5 p-3 border text-start d-flex flex-column justify-content-between'>
-          <div>
-            <p className="fw-bold font">O grze:</p>
-            <p>{gameData ? gameData.about : "Brak opisu gry."}</p>
-          </div>
 
-          {/* Blok przycisku listy życzeń */}
-          {userData.isLogged && gameData && (
-            <div className="mt-3 text-center">
-              <WishlistButton
-                gameId={gameData.id}
-                userId={userData.id}
-                isLogged={userData.isLogged}
-              />
-              {(userData.type === 'seller' || userData.type === 'admin') && (
-                <button className="btn border mt-2 border-3 w-100 fw-bold transition-all btn-danger border-danger" onClick={() => navigate("/Create-Offer", { state: { initialTitle: gameData.title } })}                >
-                  DODAJ OFERTE
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className='col-7 d-flex'>
+        <div className='col d-flex gx-0'>
           {gameData && (
             <>
-              {/* Zalecane Wymagania */}
-              <div className='box-idk m-2 p-3 border flex-fill text-start'>
-                <h3 className='font fs-5 text-center mb-3'>Zalecane Wymagania:</h3>
-                <p>
-                  {gameData.opt_os && <><b>System:</b> {gameData.opt_os}<br /></>}
-                  {gameData.opt_gpu && <><b>Grafika:</b> {gameData.opt_gpu}<br /></>}
-                  {gameData.opt_cpu && <><b>Procesor:</b> {gameData.opt_cpu}<br /></>}
-                  {gameData.opt_ram && <><b>RAM:</b> {gameData.opt_ram} GB<br /></>}
-                  {gameData.opt_size && <><b>Miejsce:</b> {gameData.opt_size} GB<br /></>}
-                </p>
-              </div>
-
               {/* Minimalne Wymagania */}
-              <div className='box-idk m-2 p-3 border flex-fill text-start'>
+              <div className='box-idk p-3 me-3 border flex-fill text-start'>
                 <h3 className='font fs-5 text-center mb-3'>Minimalne Wymagania:</h3>
                 <p>
                   {gameData.min_os && <><b>System:</b> {gameData.min_os}<br /></>}
@@ -312,6 +303,18 @@ export default function GamePage() {
                   {gameData.min_cpu && <><b>Procesor:</b> {gameData.min_cpu}<br /></>}
                   {gameData.min_ram && <><b>RAM:</b> {gameData.min_ram} GB<br /></>}
                   {gameData.min_size && <><b>Miejsce:</b> {gameData.min_size} GB<br /></>}
+                </p>
+              </div>
+
+              {/* Zalecane Wymagania */}
+              <div className='box-idk p-3 ms-3 border flex-fill text-start'>
+                <h3 className='font fs-5 text-center mb-3'>Zalecane Wymagania:</h3>
+                <p>
+                  {gameData.opt_os && <><b>System:</b> {gameData.opt_os}<br /></>}
+                  {gameData.opt_gpu && <><b>Grafika:</b> {gameData.opt_gpu}<br /></>}
+                  {gameData.opt_cpu && <><b>Procesor:</b> {gameData.opt_cpu}<br /></>}
+                  {gameData.opt_ram && <><b>RAM:</b> {gameData.opt_ram} GB<br /></>}
+                  {gameData.opt_size && <><b>Miejsce:</b> {gameData.opt_size} GB<br /></>}
                 </p>
               </div>
             </>
