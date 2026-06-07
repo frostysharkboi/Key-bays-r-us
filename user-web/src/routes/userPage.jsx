@@ -72,6 +72,21 @@ export default function Root() {
     if (!currentUserId) return;
     setLoading(true);
 
+  const [SelectedUser, SetMainUser] = useState(null);
+  const [SelectedUserTrans, SetUsersTrans] = useState(null);
+  const [SelectedUserReviews, SetUsersReviews] = useState(null);
+  const [whatToShow, changeShowing] = useState(0);
+
+  const [AppTable, setTable] = useState(null);
+  const [reason, changeReason] = useState(null);
+
+  // Stany dla komunikatów walidacji i sukcesu
+  const [errorBoxText, setErrorBoxText] = useState("");
+  const [successBoxText, setSuccessBoxText] = useState("");
+  const [Changed, setChanged] = useState(0);
+  const [mainUser, GetMainUser] = useState(null);
+  const { userData, logout } = useContext(UserContext);
+  const [MeinUsser, isUserLogged] = useState(false);
     // Pobranie listy aplikacji w celu późniejszej weryfikacji duplikatów wniosków
     axios.get("http://localhost:3000/applications")
       .then((res) => setApplicationsTable(res.data || []))
@@ -112,6 +127,126 @@ export default function Root() {
     navigate(`/User/${userId}`, { replace: true, state: { uId: userId } });
   };
 
+  //Dla Admina
+  const [AdminTable, getAdminTable] = useState(null);
+  const [AdminTableFiltred, setTableRight] = useState(null);
+
+  // Pobranie danych użytkowników z bazy w celu lokalnej weryfikacji duplikatów
+  const LoadUsersData = () => {
+    axios.get(`${axiosPath}/users`).then((res) => {
+      GetAllUsersData(res.data);
+    });
+  };
+
+  React.useEffect(() => {
+    LoadUsersData();
+    console.log(location.state.uId);
+    axios.get("http://localhost:3000/applications").then((res) => {setTable(res.data)});
+    axios.get("http://localhost:3000/applications/getAll").then((res) => {getAdminTable(res.data)});
+  }, []);
+
+  useEffect(() => {
+    if(Users != null){
+      Users.forEach(user => {
+        if(user.id == location.state.uId){
+          SetMainUser(user);
+          if(user.id == userData.id){
+            isUserLogged(true);
+          }
+          console.log(user);
+          axios.get(`${axiosPath}/transactions/getByUser`, {params: {id: user.id}} ).then((res) => {
+            SetUsersTrans(res.data);
+            console.log(res.data);
+          });
+          axios.get(`${axiosPath}/ratings/getByUser`, {params: {id: user.id}} ).then((res) => {
+            SetUsersReviews(res.data);
+            console.log(res.data);
+          });
+        };
+      });
+    }
+  }, [Users]);
+
+  useEffect(() => {
+    let arr = [];
+    if(AdminTable != null && AdminTable.length > 0){
+      AdminTable.forEach(element => {
+        if(element.status == "awaiting"){
+          arr.push(element);
+        }
+      });
+    };
+    setTableRight(arr);
+  }, [AdminTable]);
+
+  function RedirectToGamePage(gameId) {
+    navigate('/Game', { state: { GameId: gameId } });
+  }
+
+  function BecomeSeller(){
+    let AppInBase = false;
+    if(SelectedUser.type == "normal"){
+      
+      if(AppTable != null){
+        AppTable.forEach(element => {
+          console.log(element);
+          if(element.sender_id == SelectedUser.id){
+            AppInBase = true;
+          }
+        });
+      }
+
+      if(AppInBase == false && reason != null){
+        axios.post(`${axiosPath}/applications/addAplication`, {sender_id: SelectedUser.id, request: reason})
+          .then(() => {
+            setSuccessBoxText("Twój wniosek został dodany.");
+            window.location.reload();
+          })
+          .catch((err) => {
+            setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
+            console.error(err);
+          });
+        alert("Twój wniosek został przesłany do rozpatrzenia");
+      } else {
+        if(reason == null){
+          alert("Proszę podać powód.");
+        }
+        alert("Twój wniosek został już wcześniej przesłany.\nProszę już ich więcej nie przesyłać.");
+      }
+    }
+  }
+
+  function AcceptRequest(App_id, senderId){
+    axios.put(`${axiosPath}/applications/AcceptApp`, {id: App_id, handler_id: SelectedUser.id})
+      .then(() => {
+        axios.get("http://localhost:3000/applications/getAll").then((res) => {getAdminTable(res.data)});
+        console.log(`Wniosek ${App_id} został potwierdzony`);
+      })
+      .catch((err) => {
+        setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
+        console.error(err);
+      });
+    axios.put(`${axiosPath}/users/PromoteToSeller`, {id: senderId})
+      .then(() => {
+        console.log(`User ${senderId} został sprzedawcą`);
+        alert(`Wniosek #${App_id} został potwierdzony`);
+      })
+      .catch((err) => {
+        setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
+        console.error(err);
+      });
+  }
+
+  function DenialRequest(App_id){
+    axios.put(`${axiosPath}/applications/DenialApp`, {id: App_id, handler_id: SelectedUser.id})
+      .then(() => {
+        axios.get("http://localhost:3000/applications/getAll").then((res) => {getAdminTable(res.data)});
+        alert(`Wniosek #${App_id} został odrzucony`);
+      })
+      .catch((err) => {
+        setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
+        console.error(err);
+      });
   const redirectToGamePage = (gameId) => {
     if (!gameId) return;
     navigate(`/Game/${gameId}`, { state: { GameId: gameId } });
@@ -171,6 +306,21 @@ export default function Root() {
             <div className='row my-4'>
               {/* Lewy panel informacyjny */}
               <div className='col-4'>
+                <div className='d-flex flex-column mb-3 p-2'>
+                  <h2>{SelectedUser.login}</h2>
+                  <h3>{SelectedUser.type}</h3>
+                  <h4>{SelectedUser.discord_tag}</h4>
+                  <h4>{SelectedUser.phone}</h4>
+                  <button className='m-3' onClick={() => changeShowing(0)}>Pokaż transkacje</button>
+                  <button className='m-3' onClick={() => changeShowing(1)}>Pokaż Recenzje</button>
+                  {MeinUsser == true && SelectedUser.type == "normal" && (
+                    <button className='m-3' onClick={() => changeShowing(2)}>Aplikuj na sprzedawcę</button>
+                  )}
+                  {MeinUsser == true && SelectedUser.type == "admin" && (
+                    <button className='m-3' onClick={() => {changeShowing(3); console.log(AppTable)}}>Sprawdź wnioski o zmianę statusu</button>
+                  )}
+                  {MeinUsser == true && (
+                    <button className='m-3' onClick={() => navigate("/Edit-Account")}>Edytuj Konto</button>
                 <div className="profile-sidebar p-3 border rounded">
                   <h2>{selectedUser.login}</h2>
                   <span className="badge bg-secondary mb-3">{selectedUser.type}</span>
@@ -209,6 +359,94 @@ export default function Root() {
 
               {/* Prawy panel dynamiczny (Tabela lub Formularz) */}
               <div className='col-8'>
+                <div>
+                  {whatToShow == 0 && (
+                    <div className="overflow-auto">
+                      {SelectedUserTrans != null && SelectedUserTrans.length > 0 ? (
+                        <table className='mw-90 mh-50'>
+                          <thead>
+                            <tr>
+                              <th>Sprzedawca</th><th>Gra</th><th>Opis</th><th>Odbiorca</th><th>Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {SelectedUserTrans.map((trans) => (
+                              <tr>
+                                <td onClick={() => {navigate(`/User/${trans.seller_id}`, {replace: true, state: {uId: trans.seller_id}}); window.location.reload()}}>{trans.login}</td>
+                                <td onClick={() => RedirectToGamePage(trans.game_id)}>{trans.title}</td>
+                                <td>{trans.other}</td>
+                                <td onClick={() => {navigate(`/User/${trans.reciever_id}`, {replace: true, state: {uId: trans.reciever_id}}); window.location.reload()}}>{trans.receiver_login}</td>
+                                <td>{trans.status}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <p>użytkownik nie ma żadnej historii transakcji</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  {whatToShow == 1 && (
+                    <div>
+                      {SelectedUserReviews != null && SelectedUserReviews.length > 0  ? (
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Ocena</th><th>Gra</th><th>Opis</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {SelectedUserReviews.map((rev) => (
+                              <tr>
+                                <td>{rev.rating}</td>
+                                <td onClick={() => RedirectToGamePage(rev.id)}>{rev.title}</td>
+                                <td>{rev.other}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <p>użytkownik nie ma żadnej historii receznji</p>
+                      )}
+                    </div>
+                  )}
+                  {whatToShow == 2 && (
+                    <div>
+                      <h3>Proszę podaj powód, dla którego chcesz zostać sprzedawcą?</h3>
+                      <input type="text" onChange={(e) => changeReason(e.target.value)}/>
+                      <button onClick={() => BecomeSeller()}>DODAJ WNIOSEK</button>
+                    </div>
+                  )}
+                  {whatToShow == 3 && (
+                    <div>
+                      <h2>WNIOSKI</h2>
+                      {(AdminTableFiltred.length > 0)? (
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Użytkownik</th><th rowSpan={2}>Wniosek</th><th>Status oczekiwania wniosku</th><th>Dostępne operacje</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {AdminTableFiltred.map((App) => (
+                              <tr key={App.id} className='p-4'>
+                                <td>{App.login}</td>
+                                <td>{App.request}</td>
+                                <td>{App.status}</td>
+                                <td><button onClick={() => {console.log(App, "\n", SelectedUser); AcceptRequest(App.id, App.sender_id)}}>Zatwierdź</button>
+                                <button onClick={() => {console.log(App, "\n", SelectedUser); DenialRequest(App.id)}}>Odrzuć</button></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <p>Brak wniosków.</p>
+                      )}
+                    </div>
+                  )}
+                </div>
                 {showApplicationForm ? (
                   // WIDOK 2: Formularz aplikowania na sprzedawcę
                   <div>

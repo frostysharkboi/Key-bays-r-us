@@ -410,6 +410,19 @@ app.get("/:table", async (req, res) => {
 
 });
 
+//Do Admina dla wniosków j3g0 j3b4n4 m4c
+
+app.get("/applications/getAll", async (req, res) => {
+  try {
+    const sql = "Select u.login, a.id, a.request, a.status, a.sender_id FROM applications as a JOIN users AS u ON a.sender_id = u.id;";
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
+
 // Create
 
 // Zatwierdzenie transakcji
@@ -527,6 +540,25 @@ app.post("/users/updateUser", async (req, res) => {
   }
 });
 
+//Dodawanie aplikacji
+
+app.post("/applications/addAplication", async (req, res) => {
+  const {sender_id, request} = req.body;
+
+  try{
+    const cols = ["sender_id", "request", "status"];
+    const status = "awaiting";
+
+    const sql = `INSERT INTO applications (${cols.join(", ")}) VALUES (${sender_id}, "${request}", "${status}")`;
+    const result = db.pool.query(sql);
+    res.json(result);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Błąd serwera" });
+  }
+})
+
 // dodanie użytkowników
 
 // await axios.post("http://localhost:3000/users/adduser",{ login: "", email: "", pass: "", phone: "", discord_tag: "" });
@@ -598,6 +630,45 @@ app.put('/api/reviews', async (req, res) => {
     res.status(500).send(err);
   }
 });
+
+//Zatwierdzenie wniosku
+app.put('/applications/AcceptApp', async (req, res) => {
+  const {id, handler_id} = req.body;
+  try {
+    const sql = `UPDATE applications SET status = "accepted", handler_id = ${handler_id} WHERE id = ${id}`;
+    await db.pool.query(sql);
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+})
+
+//Zmiana statusu usera
+app.put("/users/PromoteToSeller", async (req, res) => {
+  const {id} = req.body;
+  try {
+    const sql = `UPDATE users SET type = "seller" WHERE id = ${id}`;
+    await db.pool.query(sql);
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+})
+
+//Odrzucenie wniosku
+app.put('/applications/DenialApp', async (req, res) => {
+  const {id, handler_id} = req.body;
+  try {
+    const sql = `UPDATE applications SET status = "dismissed", handler_id = ${handler_id} WHERE id = ${id}`;
+    await db.pool.query(sql);
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+})
 
 // Aktualizacja statusu konkretnej oferty
 app.patch('/key_offers/updateStatus', async (req, res) => {
