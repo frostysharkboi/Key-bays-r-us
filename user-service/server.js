@@ -498,6 +498,25 @@ app.post("/users/updateUser", async (req, res) => {
   }
 });
 
+//Dodawanie aplikacji
+
+app.post("/applications/addAplication", async (req, res) => {
+  const {sender_id, request} = req.body;
+
+  try{
+    const cols = ["sender_id", "request", "status"];
+    const status = "awaiting";
+
+    const sql = `INSERT INTO applications (${cols.join(", ")}) VALUES (${sender_id}, "${request}", "${status}")`;
+    const result = db.pool.query(sql);
+    res.json(result);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Błąd serwera" });
+  }
+})
+
 // dodanie użytkowników
 
 // await axios.post("http://localhost:3000/users/adduser",{ login: "", email: "", pass: "", phone: "", discord_tag: "" });

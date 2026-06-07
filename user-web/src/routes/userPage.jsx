@@ -17,11 +17,10 @@ export default function Root() {
   const [SelectedUser, SetMainUser] = useState(null);
   const [SelectedUserTrans, SetUsersTrans] = useState(null);
   const [SelectedUserReviews, SetUsersReviews] = useState(null);
+  const [whatToShow, changeShowing] = useState(0);
 
-  const [whatToShowText, changeShowingText] = useState("Pokaż Recenzje");
-  const [whatToShow, changeShowing] = useState(false);
-
-  const [RecieversLogins, getLogins] = useState(null);
+  const [AppTable, setTable] = useState(null);
+  const [reason, changeReason] = useState(null);
 
   // Stany dla komunikatów walidacji i sukcesu
   const [errorBoxText, setErrorBoxText] = useState("");
@@ -29,6 +28,7 @@ export default function Root() {
   const [Changed, setChanged] = useState(0);
   const [mainUser, GetMainUser] = useState(null);
   const { userData, logout } = useContext(UserContext);
+  const [MeinUsser, isUserLogged] = useState(false);
 
   // Zunifikowany obiekt danych nowego użytkownika
   const [newUser, changeUserData] = useState(null);
@@ -43,6 +43,7 @@ export default function Root() {
   React.useEffect(() => {
     LoadUsersData();
     console.log(location.state.uId);
+    axios.get("http://localhost:3000/applications").then((res) => {setTable(res.data)})
   }, []);
 
   useEffect(() => {
@@ -50,6 +51,9 @@ export default function Root() {
       Users.forEach(user => {
         if(user.id == location.state.uId){
           SetMainUser(user);
+          if(user.id == userData.id){
+            isUserLogged(true);
+          }
           console.log(user);
           axios.get(`${axiosPath}/transactions/getByUser`, {params: {id: user.id}} ).then((res) => {
             SetUsersTrans(res.data);
@@ -68,14 +72,37 @@ export default function Root() {
     navigate('/Game', { state: { GameId: gameId } });
   }
 
-  function changeWhatToShow(){
-    if(!whatToShow == false){
-      changeShowingText("Pokaż Recenzje");
-    } else {
-      changeShowingText("Pokaż Transkacje");
+  function BecomeSeller(){
+    let AppInBase = false;
+    if(SelectedUser.type == "normal"){
+      
+      if(AppTable != null){
+        AppTable.forEach(element => {
+          console.log(element);
+          if(element.sender_id == SelectedUser.id){
+            AppInBase = true;
+          }
+        });
+      }
+
+      if(AppInBase == false && reason != null){
+        axios.post(`${axiosPath}/applications/addAplication`, {sender_id: SelectedUser.id, request: reason})
+          .then(() => {
+            setSuccessBoxText("Twój wniosek został dodany.");
+            window.location.reload();
+          })
+          .catch((err) => {
+            setErrorBoxText("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
+            console.error(err);
+          });
+        alert("Twój wniosek został przesłany do rozpatrzenia");
+      } else {
+        if(reason == null){
+          alert("Proszę podać powód.");
+        }
+        alert("Twój wniosek został już wcześniej przesłany.\nProszę już ich więcej nie przesyłać.");
+      }
     }
-    changeShowing(!whatToShow);
-    console.log(whatToShow, "\n", whatToShowText);
   }
 
   return (
@@ -88,20 +115,27 @@ export default function Root() {
             {/* Header */}
             <div className='row'>
               <div className='col-4'>
-                <div>
+                <div className='d-flex flex-column mb-3 p-2'>
                   <h2>{SelectedUser.login}</h2>
                   <h3>{SelectedUser.type}</h3>
                   <h4>{SelectedUser.discord_tag}</h4>
                   <h4>{SelectedUser.phone}</h4>
-                  <button className='m-3' onClick={() => changeWhatToShow()}>{whatToShowText}</button>
+                  <button className='m-3' onClick={() => changeShowing(0)}>Pokaż transkacje</button>
+                  <button className='m-3' onClick={() => changeShowing(1)}>Pokaż Recenzje</button>
+                  {MeinUsser == true && SelectedUser.type == "normal" && (
+                    <button className='m-3' onClick={() => changeShowing(2)}>Aplikuj na sprzedawcę</button>
+                  )}
+                  {MeinUsser == true && (
+                    <button className='m-3' onClick={() => navigate("/Edit-Account")}>Edytuj Konto</button>
+                  )}
                 </div>
               </div>
               <div className='col-8'>
                 <div>
-                  {whatToShow == false && (
-                    <div>
+                  {whatToShow == 0 && (
+                    <div className="overflow-auto">
                       {SelectedUserTrans != null && SelectedUserTrans.length > 0 ? (
-                        <table>
+                        <table className='mw-90 mh-50'>
                           <thead>
                             <tr>
                               <th>Sprzedawca</th><th>Gra</th><th>Opis</th><th>Odbiorca</th><th>Status</th>
@@ -126,7 +160,7 @@ export default function Root() {
                   )}
                 </div>
                 <div>
-                  {whatToShow == true && (
+                  {whatToShow == 1 && (
                     <div>
                       {SelectedUserReviews != null && SelectedUserReviews.length > 0  ? (
                         <table>
@@ -148,6 +182,13 @@ export default function Root() {
                       ) : (
                         <p>użytkownik nie ma żadnej historii receznji</p>
                       )}
+                    </div>
+                  )}
+                  {whatToShow == 2 && (
+                    <div>
+                      <h3>Proszę podaj powód, dla którego chcesz zostać sprzedawcą?</h3>
+                      <input type="text" onChange={(e) => changeReason(e.target.value)}/>
+                      <button onClick={() => BecomeSeller()}>DODAJ WNIOSEK</button>
                     </div>
                   )}
                 </div>
