@@ -293,7 +293,7 @@ app.get("/key_offers/offersForGames", async (req, res) => {
   const { id } = req.query;
 
   try {
-    const sql = `SELECT ko.*, u.login, u.discord_tag FROM key_offers as ko JOIN users u ON ko.seller_id = u.id WHERE game_id LIKE ${id};`;
+    const sql = `SELECT ko.*, u.login, u.discord_tag, u.phone FROM key_offers as ko JOIN users u ON ko.seller_id = u.id WHERE game_id LIKE ${id};`;
     const result = await db.pool.query(sql);
     res.json(result);
   } catch (err) {
@@ -308,7 +308,7 @@ app.get("/key_offers/offersForGames", async (req, res) => {
 //Polecenia do UserPage.jsx
 app.get("/transactions/getByUser", async (req, res) => {
 
-  const { id } = req.query
+  const { id } = req.query;
 
   try {
     const sql = `SELECT o.id, o.seller_id, g.title, o.game_id, o.other, u.login, t.reciever_id, ( SELECT u2.login FROM users u2 WHERE u2.id = t.reciever_id ) AS receiver_login, t.status FROM key_offers AS o JOIN transactions AS t ON o.id = t.offer_id JOIN users AS u on o.seller_id = u.id JOIN games AS g ON o.game_id = g.id WHERE t.buyer_id = ${id};`
@@ -319,6 +319,23 @@ app.get("/transactions/getByUser", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 })
+
+//Czy user posiada tą grę.
+
+app.get("/transactions/byId", async (req, res) => {
+  const { userId, gameId } = req.query;
+
+  try {
+    const sql = `SELECT t.status FROM transactions AS t JOIN key_offers AS o on o.id = t.offer_id 
+    JOIN games AS g ON o.game_id = g.id JOIN users AS u ON t.reciever_id = u.id 
+    WHERE t.status = 'Success' AND u.id = ${userId} AND g.id = ${gameId};`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 app.get("/ratings/getByUser", async (req, res) => {
 
@@ -499,7 +516,7 @@ app.post("/transactions/add", async (req, res) => {
     const columns = ["offer_id", "buyer_id", "reciever_id", "status"];
     const values = [offerId, buyerId, receiverId, String(status)];
 
-    const sql = `INSERT INTO transactions (${columns.join(", ")}) VALUES (${values.join(", ")})`;
+    const sql = `INSERT INTO transactions (${columns.join(", ")}) VALUES (${offerId}, ${buyerId}, ${receiverId}, '${String(status)}')`;
 
     const result = db.pool.query(sql, values);
     res.json(result);

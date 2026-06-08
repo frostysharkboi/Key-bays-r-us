@@ -7,6 +7,7 @@ import { axiosPath } from "../App";
 import { UserContext } from '../components/user-context/UserContext';
 import { main } from '@popperjs/core';
 import Header from '../components/header/Header';
+import Footer from '../components/footer/Footer';
 
 export default function Root() {
   const navigate = useNavigate();
@@ -110,11 +111,20 @@ export default function Root() {
   function CheckIfDataIsGood() {
     if (Changed == 1) {
       console.log(Changed);
+      let duplicate = false;
+      allUsers.forEach(user => {
+        if(user.login.toLowerCase() == newUser.login.toLowerCase()){
+          duplicate = true;
+        }
+      });
       if (newUser.login.length < 5) {
         setErrorBoxText("Nick musi mieć co najmniej pięć znaków.");
         return false;
       } else if (newUser.login == mainUser.login) {
         setErrorBoxText("Nowy nick nie może być identyczny do starego.");
+        return false;
+      } else if (duplicate == true){
+        setErrorBoxText("Ktoś inny już używa tego nicku.");
         return false;
       }
       return true;
@@ -164,9 +174,18 @@ export default function Root() {
         ifMailIsGood.isItEmail = true;
       }
 
-      if (!ifMailIsGood.isItEmail) {
+      let duplicate = false;
+      allUsers.forEach(user => {
+        if(user.email == newUser.mail){
+          duplicate = true;
+        }
+      });
+
+      if (!ifMailIsGood.isItEmail || duplicate == true) {
         if (newUser.mail == mainUser.email) {
           setErrorBoxText("Nowy email nie może być identyczny do starego");
+        } else if (duplicate == true){
+          setErrorBoxText("Ktoś inny używa tego maila");
         } else {
           setErrorBoxText("Email jest nieprawidłowy");
         }
@@ -175,16 +194,34 @@ export default function Root() {
 
       return true;
     } else if (Changed == 4) {
-      if (newUser.phone != null && newUser.phone != mainUser.phone) {
+      let duplicate = false;
+      allUsers.forEach(user => {
+        if(user.phone == newUser.phone){
+          duplicate = true;
+        }
+      });
+      if (newUser.phone != null && newUser.phone != mainUser.phone && duplicate == false) {
         return true;
+      } else {
+        if(duplicate == true){
+          setErrorBoxText("Ktoś inny już używa tego numeru telefonu");
+        }
       }
       if (newUser.phone == mainUser.phone) {
         setErrorBoxText("Nowy numer telefonu nie może być identyczny do starego");
       }
       return false;
     } else if (Changed == 5) {
-      if (newUser.discord != null && newUser.discord != mainUser.discord_tag) {
+      let duplicate = false;
+      allUsers.forEach(user => {
+        if(user.discord_tag == newUser.discord){
+          duplicate = true;
+        }
+      });
+      if (newUser.discord != null && newUser.discord != mainUser.discord_tag && duplicate == false) {
         return true;
+      } else if (duplicate == true) {
+        setErrorBoxText("Ktoś inny już używa tego taga na discordzie")
       }
       if (newUser.discord == mainUser.discord_tag) {
         setErrorBoxText("Nowy tag na discordzie nie może być identyczny do starego");
@@ -264,13 +301,7 @@ export default function Root() {
           )}
         </div>
 
-        {/* Stopka */}
-        <div className="row m-3 p-3 text-center">
-          <div className='col'>
-            <p>Kontakt</p>
-            <p>Mail: biurokeysrus@gmail.com</p>
-          </div>
-        </div>
+        <Footer />
       </div>
     </>
   );

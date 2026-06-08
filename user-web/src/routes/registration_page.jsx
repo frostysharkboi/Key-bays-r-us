@@ -83,6 +83,42 @@ export default function Root() {
   // Funkcja walidująca poprawność wprowadzonych danych (E-mail, Login, Siła hasła)
   function CheckIfDataIsGood() {
     if (newUser.mail && newUser.pass && newUser.login) {
+      let duplicate = {
+        mail: false,
+        login: false,
+        phone: false,
+        discord: false
+      };
+      Users.forEach(user => {
+        if(user.login.toLowerCase() == newUser.login.toLowerCase()){
+          duplicate.login = true;
+        }
+        if(user.email == newUser.mail){
+          duplicate.mail = true;
+        }
+        if(user.phone == newUser.phone){
+          duplicate.phone = true;
+        }
+        if(user.discord_tag == newUser.discord){
+          duplicate.discord = true;
+        }
+      });
+      if(duplicate.mail == true || duplicate.login == true || duplicate.phone == true || duplicate.discord == true){
+        if(duplicate.mail == true){
+          setErrorBoxText("Ktoś inny korzysta z tego adresu email");
+        }
+        if(duplicate.login == true){
+          setErrorBoxText("Ktoś inny korzysta z tego nicku");
+        }
+        if(duplicate.phone == true){
+          setErrorBoxText("Ktoś inny korzysta z tego numeru telefonu");
+        }
+        if(duplicate.discord == true){
+          setErrorBoxText("Ktoś inny korzysta z tego tagu na discordzie");
+        }
+        return false;
+      }
+
       const mailArr = newUser.mail.split("");
       let ifMailIsGood = { itHasAt: false, itHasCom: false, isItEmail: false };
 

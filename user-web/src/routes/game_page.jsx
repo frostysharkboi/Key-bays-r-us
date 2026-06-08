@@ -31,6 +31,8 @@ export default function GamePage() {
   const location = useLocation();
   const GameId = location.state?.GameId;
 
+  const [isTheGameBought, changeStatus] = useState(false);
+
   // Pobieranie głównych danych gry
   const getGame = () => {
     if (!GameId) return;
@@ -70,6 +72,21 @@ export default function GamePage() {
     });
   };
 
+  const checkIfHeGotTheGame = () => {
+    if(userData != null && GameId != null){
+      axios.get(`${axiosPath}/transactions/byId`, {params: { userId: userData.id, gameId: GameId }}).then((res) => {
+        if(res.data != null && res.data.length > 0){
+          if(res.data[0].status == "Success"){
+            changeStatus(true);
+          }
+        }
+      }).catch((err) => {
+        alert("Wystąpił błąd przy pobieraniu danych z serwera");
+        console.error(err);
+      });
+    }
+  }
+
   // Ładowanie wszystkich danych po zmianie ID gry
   useEffect(() => {
     getGame();
@@ -77,6 +94,8 @@ export default function GamePage() {
     getAllTags();
     getSomeTags();
     getAllReviews();
+    checkIfHeGotTheGame();
+
   }, [GameId]);
 
   const gameData = game[0];
@@ -323,8 +342,8 @@ export default function GamePage() {
       </div>
 
       {/* Oferty sprzedaży kluczy */}
-      {userData.isLogged && gameData && (
-        <SaleOffers gameId={GameId} />
+      {userData.isLogged && gameData &&(
+        <SaleOffers gameId={GameId} DoesHeOwnIt={isTheGameBought} />
       )}
 
       {/* Recenzje i opinie użytkowników */}

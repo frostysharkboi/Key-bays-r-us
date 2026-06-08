@@ -4,7 +4,7 @@ import { axiosPath } from '../../App';
 import { UserContext } from '../user-context/UserContext';
 import OfferItem from './OfferItem';
 
-export default function SaleOffers({ gameId }) {
+export default function SaleOffers({ gameId, DoesHeOwnIt }) {
   const { userData } = useContext(UserContext);
 
   const [offersData, setOffersData] = useState([]);
@@ -87,7 +87,7 @@ export default function SaleOffers({ gameId }) {
       <div className="container-fluid">
         <div className="row flex-row flex-nowrap overflow-auto">
           {offersData.map((offer) => (
-            <OfferItem key={offer.id} offer={offer} gameId={gameId} openedOfferId={openedOfferId} setOpenedOfferId={setOpenedOfferId} />
+            <OfferItem key={offer.id} offer={offer} gameId={gameId} openedOfferId={openedOfferId} setOpenedOfferId={setOpenedOfferId} doesHeOwnIt={DoesHeOwnIt}/>
           ))}
         </div>
       </div>
