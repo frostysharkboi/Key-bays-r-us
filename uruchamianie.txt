@@ -8,16 +8,16 @@ https://keysrus.pl/
 dla potrzeb demonstracji pod spodem są przykłądowi użytkownicy:
 
   ADMIN
-    mail: admin@keybay.com
-    hasło: admin123
+    mail: cyberglitch_admin@kb.pl
+    hasło: adminpass
 
   SPRZEDAWCA
-    mail: seller01@mail.com
-    hasło: pass
+    mail: vaultdweller_keys@shop.com
+    hasło: sellerpass
 
   UŻYTKOWNIK
-    mail: p1@mail.com
-    hasło: pass
+    mail: gamer_nick_1@mail.pl
+    hasło: userpass
 ==============================================================================
 
 Biblioteki backend:
