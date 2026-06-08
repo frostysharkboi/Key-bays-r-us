@@ -7,7 +7,7 @@ import OfferItem from './OfferItem';
 export default function SaleOffers({ gameId, DoesHeOwnIt }) {
   const { userData } = useContext(UserContext);
 
-  const [offersData, setOffersData] = useState([]);
+  const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [openedOfferId, setOpenedOfferId] = useState(null);
@@ -42,13 +42,13 @@ export default function SaleOffers({ gameId, DoesHeOwnIt }) {
               });
               console.log("Dane po filtracji dla Seller:", filteredOffers);
             }
-            setOffersData(filteredOffers);
+            setOffers(filteredOffers);
 
           } else {
             setError(true);
           }
         } else {
-          setOffersData([]);
+          setOffers([]);
         }
 
         setLoading(false);
@@ -71,7 +71,7 @@ export default function SaleOffers({ gameId, DoesHeOwnIt }) {
   }
 
   // Widok błędu lub braku ofert
-  if (error || offersData.length === 0) {
+  if (error || offers.length === 0) {
     return (
       <div className='row m-3 p-3 text-center border border-3 offer'>
         <p className='font fw-bold'>Oferty sklepu</p>
@@ -86,8 +86,8 @@ export default function SaleOffers({ gameId, DoesHeOwnIt }) {
       <p className='font fw-bold'>Oferty sklepu</p>
       <div className="container-fluid">
         <div className="row flex-row flex-nowrap overflow-auto">
-          {offersData.map((offer) => (
-            <OfferItem key={offer.id} offer={offer} gameId={gameId} openedOfferId={openedOfferId} setOpenedOfferId={setOpenedOfferId} doesHeOwnIt={DoesHeOwnIt}/>
+          {offers.map((offer) => (
+            <OfferItem key={offer.id} offer={offer} gameId={gameId} openedOfferId={openedOfferId} setOpenedOfferId={setOpenedOfferId} doesHeOwnIt={DoesHeOwnIt} />
           ))}
         </div>
       </div>
