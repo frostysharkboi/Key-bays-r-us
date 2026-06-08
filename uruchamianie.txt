@@ -49,18 +49,9 @@ w zewnętrznym folderze (server-test):
       npm run dev
 
 By przygotować stronę do wrzucenia na serwer:
-  w root.css zmienic:
-    font-face {
-      font-family: akira;
-      src: url('src/assets/fonts/AODFont.otf');
-    }
-    na:
-    font-face {
-      font-family: akira;
-      src: url('./assets/fonts/AODFont.otf');
-    }
-  cd user-web
-  npm run build
+  nowy terminal:
+    cd user-web
+    npm run build
 
 By zaktualizować baze:
   wykonajcie w nowej konsoli kod python:
