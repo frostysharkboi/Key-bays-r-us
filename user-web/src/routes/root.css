@@ -168,6 +168,12 @@ select:focus {
     border:5px #C51515;
     color: #DDDDD5;
 }
+.headline{
+    color: #DDDDD5;
+}
+.tableBottom{
+    background-color: #373327;
+}
 .noaccount{
     color: #C51515;
     text-shadow:
@@ -186,6 +192,9 @@ select:focus {
 }
 .noRound{
     border-radius: 0%;
+}
+.bgMain{
+    background-color: #191009;
 }
 .cardText:hover{
     background-color: #d31717;

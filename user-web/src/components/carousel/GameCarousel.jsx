@@ -5,7 +5,7 @@ export default function GameCarousel({
     games = [],
     showArrows = true,
     onGameClick,
-    titleColorClass = "text-danger"
+    titleColorClass = "headline"
 }) {
     const [startIndex, setStartIndex] = useState(0);
     const itemsPerPage = 5;
@@ -61,7 +61,7 @@ export default function GameCarousel({
                                     <img src={game.cover_img} alt={game.title} className="w-100 h-100" style={{ objectFit: 'cover', display: 'block' }} onError={(e) => { e.target.style.display = 'none'; }} />
                                 </div>
                                 <div className="card-body cardText p-2 border-3 border-top text-center">
-                                    <p className="card-text text-truncate font fw-bold text-light m-0 small">
+                                    <p className="card-text text-truncate font fw-bold m-0 small">
                                         {game.title}
                                     </p>
                                 </div>

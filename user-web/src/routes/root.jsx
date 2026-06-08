@@ -107,8 +107,8 @@ export default function Root() {
 
         {/* GŁÓWNA KARUZELA BANEROWA */}
         <div className="row m-3 p-3 text-center justify-content-center">
-          <div className="col-12 col-lg-8 carousel slide carousel-fade shadow-lg bg-black rounded overflow-hidden">
-            <div className="carousel-inner" style={{ height: "400px" }}>
+          <div className="col-12 col-lg-6 carousel slide carousel-fade shadow-lg bgMain noRound overflow-hidden">
+            <div className="carousel-inner" style={{ height: "400px"}}>
               {formatedGames.map((e, index) => (
                 <div
                   key={e.id}
@@ -136,7 +136,7 @@ export default function Root() {
               games={wishlistGames}
               showArrows={true}
               onGameClick={RedirectToGamePage}
-              titleColorClass="text-danger"
+              titleColorClass="headline"
             />
             {/* NAPRAWIONE: Wyciągnięty styl inline z cudzysłowu klas Bootstrapa */}
             <div className="text-end mx-4 px-4" style={{ marginTop: '-20px' }}>
@@ -158,7 +158,7 @@ export default function Root() {
             games={genreBlock.games}
             showArrows={true}
             onGameClick={RedirectToGamePage}
-            titleColorClass="text-danger"
+            titleColorClass="headline"
           />
         ))}
 

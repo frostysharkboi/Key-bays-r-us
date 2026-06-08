@@ -190,13 +190,13 @@ export default function SearchPage() {
                   </tr>
                 ))}
                 {Array.from({ length: emptyRowCount }).map((_, idx) => (
-                  <tr key={`empty-${idx}`} className="empty-row">
+                  <tr key={`empty-${idx}`} className="empty-row tableBottom">
                     <td colSpan={columns.length} style={{ height: "48px", opacity: 0 }}></td>
                   </tr>
                 ))}
                 <tr>
                   <td colSpan={columns.length}>
-                    <div className="d-flex justify-content-between align-items-center">
+                    <div className="d-flex justify-content-between tableBottom align-items-center">
                       <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.firstPage()} disabled={!table.getCanPreviousPage()}> First </button>
                       <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}> Previous </button>
                       <span>Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount() || 1}</span>
