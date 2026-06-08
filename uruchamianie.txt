@@ -54,6 +54,10 @@ By przygotować stronę do wrzucenia na serwer:
     npm run build
 
 By zaktualizować baze:
+  w pliku sql:
+    DROP DATABASE IF EXISTS `41188776_keysrus`;
+    CREATE DATABASE `41188776_keysrus`;
+    USE `41188776_keysrus`;
   wykonajcie w nowej konsoli kod python:
     cd steamdb-connection
     pip install -r requirements.txt
