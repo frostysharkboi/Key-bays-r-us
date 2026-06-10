@@ -10,7 +10,7 @@ DB_CONFIG = {
 }
 
 RECENZJE_POOL = {
-'5': [
+  '5': [
     "Absolutne arcydzieło! Klimat powala, a mechanika gry jest bezbłędna.", 
     "Gra mojego dzieciństwa. Kod zadziałał od razu, polecam!", 
     "Wciąga jak bagno. Miałem grać godzinę, a wstałem o świcie.", 
@@ -19,7 +19,7 @@ RECENZJE_POOL = {
     "Ujdzie",
     "Przeszedłem 5 razy i na pewno wrócę po raz kolejny. Najlepiej wydane pieniądze.",
     "Muzyka z menu głównego do teraz leci u mnie na Spotify. Coś pięknego.",
-    "Fabularny majstersztyk, popłakałem się na zakończeniu. Polecam każdemu.",
+    "Fabularny majstersztyk, popłakałem się na zakończeniu. Polecam jedem.",
     "Kupiłem bratu na urodziny, teraz nie wychodzi z pokoju od tygodnia. Sukces!"
   ],
   '4': [
@@ -57,6 +57,18 @@ RECENZJE_POOL = {
     "Ilość bugów w tej grze przechodzi ludzkie pojęcie. Przenikanie przez ściany to standard.",
     "Mikrotransakcje na każdym kroku. Bez portfela rodziców nawet nie ma co podchodzić.",
     "Obiecywali gruszki na wierzbie, a wydali niedokończone demo. Tragedia."
+  ],
+  '1': [
+    "Dno i wodorosty. Gra nie chce się nawet uruchomić, wyskakuje tylko czarny ekran.",
+    "KOD NIE DZIAŁA!!! Złodzieje i oszuści, żądam natychmiastowego zwrotu pieniędzy!!!",
+    "Gorszej gry w życiu nie widziałem. Grafika jak z PlayStation 1, a optymalizacja leży.",
+    "Nie polecam",
+    "Ta gra uraziła moje uczucia religijne i sprawiła, że mój kot uciekł z domu.",
+    "Nawet za darmo bym tego nie chciał. Twórcy powinni dopłacać ludziom za granie w ten gniot.",
+    "Kupione przez przypadek, dziecko mi poklikało na telefonie. Da się to cofnąć?",
+    "Zagrałem 5 minut i rozbolały mnie oczy. Pokaz slajdów, 15 klatek na sekundę na potężnym PC.",
+    "Totalne nieporozumienie. Fabuła bez sensu, postacie irytujące, a muzyka to jakiś żart.",
+    "Jedna gwiazdka to i tak za dużo. Omijać szerokim łukiem!"
   ]
 }
 
@@ -197,7 +209,11 @@ def main():
                 
                 # ~80% szans na wystawienie recenzji po zakupie
                 if random.random() > 0.2:
-                    ocena = random.choice(['5', '4', '3', '2'])
+                    ocena = '1'
+                    for i in range(5,0,-1):
+                        if random.random() > 0.4:
+                            ocena = f'{i}'
+                            break
                     tekst = random.choice(RECENZJE_POOL[ocena])
                     cursor.execute(insert_rating_query, (g_id, buyer, ocena, tekst))
                 
