@@ -19,6 +19,7 @@ import EditAccountPage from "./routes/editAccount_page.jsx";
 import OffersPage from './routes/Offers_page.jsx';
 import TransactionsPage from './routes/Transactions_page.jsx';
 import UserPage from './routes/userPage.jsx';
+import { DbProvider } from './components/db-context/dbContext.jsx';
 
 const router = createBrowserRouter([
   { path: "/", element: <Root />, errorElement: <ErrorPage /> },
@@ -36,8 +37,10 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <UserProvider>
-      <RouterProvider router={router} />
-    </UserProvider>
+    <DbProvider>
+      <UserProvider>
+        <RouterProvider router={router} />
+      </UserProvider>
+    </DbProvider>
   </StrictMode>,
 );

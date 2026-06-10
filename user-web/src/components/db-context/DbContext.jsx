@@ -1,5 +1,4 @@
 import React, { createContext, useState, useEffect } from 'react';
-import Header from '../header/Header';
 import Footer from '../footer/Footer';
 
 export const DbStatusContext = createContext();
@@ -31,16 +30,21 @@ export function DbProvider({ children }) {
     // 1. GORĄCY EKRAN ŁADOWANIA (Wyświetla się dopóki baza się ładuje)
     if (isDbLoading) {
         return (
-            <div
-                className="position-fixed top-0 start-0 vw-100 vh-100 d-flex flex-column justify-content-center align-items-center bg-dark text-white"
-                style={{ zIndex: 99999 }}
-            >
-                <Header showAccountMenu={false} />
-                <div className="spinner-border text-primary mb-3" role="status" style={{ width: '4rem', height: '4rem' }}>
-                    <span className="visually-hidden">Ładowanie...</span>
+            <div className='container-fluid text-light min-vh-100 pb-5' style={{ backgroundColor: "#191009" }}>
+                <div className='row m-3 p-3 text-center align-items-center'>
+                    <div className='col-4' />
+                    <div className='col-4 fw-bolder logo'>
+                        <h1 style={{ cursor: 'pointer' }}>Keys &apos;R&apos; Us</h1>
+                    </div>
+                    <div className='col-4' />
                 </div>
-                <h4 className="fw-light">Uruchamianie usług sieciowych...</h4>
-                <p className="text-muted small">Trwa nawiązywanie połączenia z bazą danych</p>
+                <div className="position-fixed top-0 start-0 vw-100 vh-100 d-flex flex-column justify-content-center align-items-center" style={{ zIndex: 99999 }} >
+                    <div className="spinner-border text-danger mb-3" role="status" style={{ width: '4rem', height: '4rem' }}>
+                        <span className="visually-hidden">Ładowanie...</span>
+                    </div>
+                    <h4 className="fw-light">Uruchamianie usług sieciowych...</h4>
+                    <p className="text-muted small">Trwa nawiązywanie połączenia z bazą danych</p>
+                </div>
                 <Footer />
             </div>
         );
@@ -49,16 +53,24 @@ export function DbProvider({ children }) {
     // 2. EKRAN BŁĘDU (Jeśli baza danych całkowicie padnie i fetch zwróci błąd)
     if (dbError) {
         return (
-            <div className="container vh-100 d-flex flex-column justify-content-center align-items-center text-center">
-                <Header showAccountMenu={false} />
-                <div className="alert alert-danger p-5 shadow" style={{ maxWidth: '500px' }}>
-                    <h3 className="alert-heading mb-3">Błąd połączenia</h3>
-                    <p>Nie mogliśmy połączyć się z bazą danych serwisu <strong>KeysRUs</strong>.</p>
-                    <hr />
-                    <p className="mb-0 small text-muted">Spróbuj odświeżyć stronę za chwilę. Jeśli problem nadal występuje, skontaktuj się z administratorem.</p>
-                    <button className="btn btn-outline-danger mt-4" onClick={() => window.location.reload()}>
-                        Odśwież stronę
-                    </button>
+            <div className='container-fluid text-light min-vh-100 pb-5' style={{ backgroundColor: "#191009" }}>
+                <div className='row m-3 p-3 text-center align-items-center'>
+                    <div className='col-4' />
+                    <div className='col-4 fw-bolder logo'>
+                        <h1 style={{ cursor: 'pointer' }}>Keys &apos;R&apos; Us</h1>
+                    </div>
+                    <div className='col-4' />
+                </div>
+                <div className="container vh-100 d-flex flex-column justify-content-center align-items-center text-center" style={{ backgroundColor: "#191009" }}>
+                    <div className="alert alert-danger p-5 shadow" style={{ maxWidth: '500px' }}>
+                        <h3 className="alert-heading mb-3">Błąd połączenia</h3>
+                        <p>Nie mogliśmy połączyć się z bazą danych serwisu <strong>KeysRUs</strong>.</p>
+                        <hr />
+                        <p className="mb-0 small text-muted">Spróbuj odświeżyć stronę za chwilę. Jeśli problem nadal występuje, skontaktuj się z administratorem.</p>
+                        <button className="btn btn-outline-danger mt-4" onClick={() => window.location.reload()}>
+                            Odśwież stronę
+                        </button>
+                    </div>
                 </div>
                 <Footer />
             </div>

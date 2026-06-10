@@ -102,13 +102,13 @@ export default function Root() {
 
   return (
     <>
-      <div className="container-fluid text-light min-vh-100 pb-5">
+      <div className="container-fluid text-light min-vh-100 pb-5" style={{ backgroundColor: "#191009" }}>
         <Header />
 
         {/* GŁÓWNA KARUZELA BANEROWA */}
         <div className="row m-3 p-3 text-center justify-content-center">
           <div className="col-12 col-lg-6 carousel slide carousel-fade shadow-lg bgMain noRound overflow-hidden">
-            <div className="carousel-inner" style={{ height: "400px"}}>
+            <div className="carousel-inner" style={{ height: "400px" }}>
               {formatedGames.map((e, index) => (
                 <div
                   key={e.id}
