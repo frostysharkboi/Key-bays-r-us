@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import * as React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useReactTable, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from '@tanstack/react-table';
 import './root.css';
 import { axiosPath } from "../App";
@@ -43,7 +43,8 @@ export default function Root() {
   const location = useLocation();
   const { userData } = useContext(UserContext);
 
-  const currentUserId = location.state?.uId || null;
+  const { id } = useParams();
+  const currentUserId = id;
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedUserTrans, setSelectedUserTrans] = useState([]);
@@ -64,14 +65,10 @@ export default function Root() {
     if (!currentUserId) return;
     setLoading(true);
 
-    axios.get("http://localhost:3000/applications")
-      .then((res) => setApplicationsTable(res.data || []))
-      .catch((err) => console.error("Błąd pobierania wniosków użytkowników:", err));
-
-    axios.get("http://localhost:3000/applications/getAll")
+    axios.get(`${axiosPath}/applications`)
       .then((res) => {
-        const allApps = res.data || [];
-        const awaitingApps = allApps.filter(app => app.status === "awaiting");
+        setApplicationsTable(res.data || [])
+        const awaitingApps = applicationsTable.filter(app => app.status === "awaiting");
         setAdminTableFiltered(awaitingApps);
       })
       .catch((err) => console.error("Błąd pobierania wniosków dla admina:", err));
@@ -145,7 +142,7 @@ export default function Root() {
   function AcceptRequest(appId, senderId) {
     axios.put(`${axiosPath}/applications/AcceptApp`, { id: appId, handler_id: userData.id })
       .then(() => {
-        return axios.get("http://localhost:3000/applications/getAll");
+        return axios.get(`${axiosPath}/applications`);
       })
       .then((res) => {
         const awaitingApps = (res.data || []).filter(app => app.status === "awaiting");
@@ -165,7 +162,7 @@ export default function Root() {
     axios.put(`${axiosPath}/applications/DenialApp`, { id: appId, handler_id: userData.id })
       .then(() => {
         alert(`Wniosek #${appId} został odrzucony`);
-        return axios.get("http://localhost:3000/applications/getAll");
+        return axios.get(`${axiosPath}/applications`);
       })
       .then((res) => {
         const awaitingApps = (res.data || []).filter(app => app.status === "awaiting");

@@ -2,7 +2,7 @@ import { useState, useContext, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import * as React from 'react';
 import { UserContext } from '../components/user-context/UserContext';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './root.css';
 import { axiosPath } from "../App";
 
@@ -29,7 +29,9 @@ export default function GamePage() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const GameId = location.state?.GameId;
+
+  const { id } = useParams();
+  const GameId = id;
 
   const [isTheGameBought, changeStatus] = useState(false);
 

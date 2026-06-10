@@ -406,6 +406,18 @@ app.get("/transactions/transactionsByType", async (req, res) => {
   }
 });
 
+app.get("/applications", async (req, res) => {
+  try {
+    const sql = `SELECT u.login, a.* FROM applications a JOIN users u ON u.id = a.sender_id`;
+    const result = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+
+});
+
 //domyślny select * dowolnej tabeli
 
 // axios.get("http://localhost:3000/table").then((res) => {setTable(res.data)})

@@ -16,13 +16,7 @@ export default function Root() {
   const [successBoxText, setSuccessBoxText] = useState("");
 
   // Zunifikowany obiekt danych nowego użytkownika
-  const [newUser, changeUserData] = useState({
-    mail: '',
-    pass: '',
-    login: '',
-    phone: '',
-    discord: ''
-  });
+  const [newUser, changeUserData] = useState({ mail: '', pass: '', login: '', phone: '', discord: '' });
 
   // Pobranie danych użytkowników z bazy w celu lokalnej weryfikacji duplikatów
   const LoadUsersData = () => {
@@ -90,30 +84,30 @@ export default function Root() {
         discord: false
       };
       Users.forEach(user => {
-        if(user.login.toLowerCase() == newUser.login.toLowerCase()){
+        if (user.login.toLowerCase() == newUser.login.toLowerCase()) {
           duplicate.login = true;
         }
-        if(user.email == newUser.mail){
+        if (user.email == newUser.mail) {
           duplicate.mail = true;
         }
-        if(user.phone == newUser.phone){
+        if (user.phone == newUser.phone) {
           duplicate.phone = true;
         }
-        if(user.discord_tag == newUser.discord){
+        if (user.discord_tag == newUser.discord) {
           duplicate.discord = true;
         }
       });
-      if(duplicate.mail == true || duplicate.login == true || duplicate.phone == true || duplicate.discord == true){
-        if(duplicate.mail == true){
+      if (duplicate.mail == true || duplicate.login == true || duplicate.phone == true || duplicate.discord == true) {
+        if (duplicate.mail == true) {
           setErrorBoxText("Ktoś inny korzysta z tego adresu email");
         }
-        if(duplicate.login == true){
+        if (duplicate.login == true) {
           setErrorBoxText("Ktoś inny korzysta z tego nicku");
         }
-        if(duplicate.phone == true){
+        if (duplicate.phone == true) {
           setErrorBoxText("Ktoś inny korzysta z tego numeru telefonu");
         }
-        if(duplicate.discord == true){
+        if (duplicate.discord == true) {
           setErrorBoxText("Ktoś inny korzysta z tego tagu na discordzie");
         }
         return false;
