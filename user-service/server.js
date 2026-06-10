@@ -104,6 +104,7 @@ app.get('/key_offers/allOffers', async (req, res) => {
   const { userId, userRole, scope } = req.query;
   var sql = `SELECT ko.id, ko.game_id, g.title, ko.seller_id, u.login AS seller, ko.game_key, ko.other, ko.status, ko.suggested_price, u.login AS seller_login FROM key_offers ko LEFT JOIN games g ON ko.game_id = g.id LEFT JOIN users u ON ko.seller_id = u.id`;
   if (userRole == "seller" || (userRole == "admin" && scope == "my")) sql += ` WHERE ko.seller_id = ${userId}`;
+  sql += " ORDER BY suggested_price ASC;";
   try {
     const result = await db.pool.query(sql);
     res.json(result);
@@ -293,7 +294,7 @@ app.get("/key_offers/offersForGames", async (req, res) => {
   const { id } = req.query;
 
   try {
-    const sql = `SELECT ko.*, u.login, u.discord_tag, u.phone FROM key_offers as ko JOIN users u ON ko.seller_id = u.id WHERE game_id LIKE ${id};`;
+    const sql = `SELECT ko.*, u.login, u.discord_tag FROM key_offers as ko JOIN users u ON ko.seller_id = u.id WHERE game_id LIKE ${id};`;
     const result = await db.pool.query(sql);
     res.json(result);
   } catch (err) {
@@ -308,7 +309,7 @@ app.get("/key_offers/offersForGames", async (req, res) => {
 //Polecenia do UserPage.jsx
 app.get("/transactions/getByUser", async (req, res) => {
 
-  const { id } = req.query;
+  const { id } = req.query
 
   try {
     const sql = `SELECT o.id, o.seller_id, g.title, o.game_id, o.other, u.login, t.reciever_id, ( SELECT u2.login FROM users u2 WHERE u2.id = t.reciever_id ) AS receiver_login, t.status FROM key_offers AS o JOIN transactions AS t ON o.id = t.offer_id JOIN users AS u on o.seller_id = u.id JOIN games AS g ON o.game_id = g.id WHERE t.buyer_id = ${id};`
@@ -326,10 +327,8 @@ app.get("/transactions/byId", async (req, res) => {
   const { userId, gameId } = req.query;
 
   try {
-    const sql = `SELECT t.status FROM transactions AS t JOIN key_offers AS o on o.id = t.offer_id 
-    JOIN games AS g ON o.game_id = g.id JOIN users AS u ON t.reciever_id = u.id 
-    WHERE t.status = 'Success' AND u.id = ${userId} AND g.id = ${gameId};`;
-    const result = await db.pool.query(sql);
+    const sql = `SELECT t.status FROM transactions AS t JOIN key_offers AS o on o.id = t.offer_id JOIN games AS g ON o.game_id = g.id JOIN users AS u ON t.reciever_id = u.id WHERE t.status = 'Success' AND u.id = ${userId} AND g.id = ${gameId};`;
+    const [result] = await db.pool.query(sql);
     res.json(result);
   } catch (err) {
     console.error(err);
@@ -427,44 +426,40 @@ app.get("/:table", async (req, res) => {
 
 });
 
-//Do Admina dla wniosków j3g0 j3b4n4 m4c
-
-app.get("/applications/getAll", async (req, res) => {
-  try {
-    const sql = "Select u.login, a.id, a.request, a.status, a.sender_id FROM applications as a JOIN users AS u ON a.sender_id = u.id;";
-    const result = await db.pool.query(sql);
-    res.json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
-  }
-});
-
 // Create
 
 // Zatwierdzenie transakcji
 app.post("/transactions/confirm", async (req, res) => {
-  const { transactionId, enteredKey } = req.body;
+  const { transaction_id, entered_key } = req.body;
 
-  if (!transactionId || !enteredKey) return res.status(400).json({ error: "Brak wymaganych danych transakcji lub klucza." });
+  if (!transaction_id || !entered_key) return res.status(400).json({ error: "Brak wymaganych danych transakcji lub klucza." });
 
   try {
-    const verifySql = `SELECT ko.game_key, t.offer_id FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.id = ${transactionId} AND t.status = 'Pending'`;
-    const rows = await db.pool.query(verifySql);
+    await connection.beginTransaction();
+
+    const verifySql = `SELECT ko.game_key, ko.game_id, t.offer_id, t.buyer_id FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.id = ${transaction_id} AND t.status = 'Pending'`;
+
+    const [rows] = await connection.query(verifySql);
 
     if (rows.length === 0) {
+      connection.release();
       return res.status(404).json({ error: "Nie znaleziono aktywnej transakcji." });
     }
 
-    const { game_key, offer_id } = rows[0];
+    const { game_key, game_id, offer_id, buyer_id } = rows[0];
 
-    if (enteredKey !== game_key) {
+    if (entered_key !== game_key) {
+      connection.release();
       return res.status(400).json({ error: "Wprowadzony klucz gry jest niepoprawny!" });
     }
 
-    await db.pool.query(`UPDATE transactions SET status = 'Success' WHERE id = ${transactionId}`);
-    await db.pool.query(`UPDATE transactions SET status = 'Cancelled' WHERE offer_id = ${offer_id} AND id != ${transactionId}`);
-    await db.pool.query(`UPDATE key_offers SET status = 'Closed' WHERE id = ${offer_id}`);
+    await connection.query(`UPDATE transactions SET status = 'Success' WHERE id = ${transaction_id}`);
+    await connection.query(`UPDATE transactions SET status = 'Cancelled' WHERE offer_id = ${offer_id} AND id != ${transaction_id}`);
+    await connection.query(`UPDATE key_offers SET status = 'Closed' WHERE id = ${offer_id}`);
+    await connection.query(`DELETE FROM wishlist WHERE user_id = ${buyer_id} AND game_id = ${game_id}`);
+
+    await connection.commit();
+    connection.release();
 
     res.json({ success: true, message: "Transakcja została pomyślnie zatwierdzona!" });
 
@@ -495,7 +490,7 @@ app.post("/key_offers/add", async (req, res) => {
     const columns = ["seller_id", "game_id", "game_key", "other", "status", "suggested_price"];
     const values = [seller_id, game_id, key, other, String(status), price];
 
-    const sql = `INSERT INTO key_offers (${columns.join(", ")}) VALUES (${seller_id}, ${game_id}, "${key}", "${other}", '${status}', ${price})`;
+    const sql = `INSERT INTO key_offers (${columns.join(", ")}) VALUES (${values.join(", ")})`;
 
     const result = db.pool.query(sql, values);
     res.json(result);
@@ -516,7 +511,7 @@ app.post("/transactions/add", async (req, res) => {
     const columns = ["offer_id", "buyer_id", "reciever_id", "status"];
     const values = [offerId, buyerId, receiverId, String(status)];
 
-    const sql = `INSERT INTO transactions (${columns.join(", ")}) VALUES (${offerId}, ${buyerId}, ${receiverId}, '${String(status)}')`;
+    const sql = `INSERT INTO transactions (${columns.join(", ")}) VALUES (${values.join(", ")})`;
 
     const result = db.pool.query(sql, values);
     res.json(result);
@@ -556,25 +551,6 @@ app.post("/users/updateUser", async (req, res) => {
     res.status(500).json({ error: "Błąd serwera podczas przetwarzania transakcji." });
   }
 });
-
-//Dodawanie aplikacji
-
-app.post("/applications/addAplication", async (req, res) => {
-  const { sender_id, request } = req.body;
-
-  try {
-    const cols = ["sender_id", "request", "status"];
-    const status = "awaiting";
-
-    const sql = `INSERT INTO applications (${cols.join(", ")}) VALUES (${sender_id}, "${request}", "${status}")`;
-    const result = db.pool.query(sql);
-    res.json(result);
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Błąd serwera" });
-  }
-})
 
 // dodanie użytkowników
 
@@ -647,45 +623,6 @@ app.put('/api/reviews', async (req, res) => {
     res.status(500).send(err);
   }
 });
-
-//Zatwierdzenie wniosku
-app.put('/applications/AcceptApp', async (req, res) => {
-  const { id, handler_id } = req.body;
-  try {
-    const sql = `UPDATE applications SET status = "accepted", handler_id = ${handler_id} WHERE id = ${id}`;
-    await db.pool.query(sql);
-    res.sendStatus(200);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
-  }
-})
-
-//Zmiana statusu usera
-app.put("/users/PromoteToSeller", async (req, res) => {
-  const { id } = req.body;
-  try {
-    const sql = `UPDATE users SET type = "seller" WHERE id = ${id}`;
-    await db.pool.query(sql);
-    res.sendStatus(200);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
-  }
-})
-
-//Odrzucenie wniosku
-app.put('/applications/DenialApp', async (req, res) => {
-  const { id, handler_id } = req.body;
-  try {
-    const sql = `UPDATE applications SET status = "dismissed", handler_id = ${handler_id} WHERE id = ${id}`;
-    await db.pool.query(sql);
-    res.sendStatus(200);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
-  }
-})
 
 // Aktualizacja statusu konkretnej oferty
 app.patch('/key_offers/updateStatus', async (req, res) => {

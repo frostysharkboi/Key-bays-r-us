@@ -78,8 +78,7 @@ export default function TransactionsPage() {
                 } else if (res.data && Array.isArray(res.data.rows)) {
                     rawData = res.data.rows;
                 } else if (res.data && typeof res.data === 'object' && res.data.transaction_id) {
-                    // NOWOŚĆ: Jeśli serwer zwrócił pojedynczy obiekt transakcji, pakujemy go w tablicę jednoelementową!
-                    console.log("Wykryto pojedynczy obiekt transakcji. Pakuję go w tablicę.");
+                    console.log("👉 Wykryto pojedynczy obiekt transakcji. Pakuje go w tablice.");
                     rawData = [res.data];
                 }
                 console.log(rawData);
@@ -104,13 +103,13 @@ export default function TransactionsPage() {
         setActiveTransactionInput(null);
     }, [userData, viewMode]);
 
-    const handleConfirmSubmit = (transactionId, keyToSend) => {
+    const handleConfirmSubmit = (transaction_id, keyToSend) => {
         if (!keyToSend.trim()) {
             alert("Wpisz klucz gry przed zatwierdzeniem!");
             return;
         }
 
-        axios.post(`${axiosPath}/transactions/confirm`, { transactionId, enteredKey: keyToSend.trim() })
+        axios.post(`${axiosPath}/transactions/confirm`, { transaction_id, entered_key: keyToSend.trim() })
             .then((res) => {
                 if (res.data.success) {
                     alert(res.data.message);

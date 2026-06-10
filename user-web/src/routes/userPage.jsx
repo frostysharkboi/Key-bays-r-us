@@ -224,7 +224,7 @@ export default function Root() {
                 <div className="profile-sidebar p-3 border rounded d-flex flex-column">
                   <h2>{selectedUser.login}</h2>
                   <span className="badge bg-secondary mb-3 align-self-start">{selectedUser.type}</span>
-                  <p><strong>Discord:</strong> {selectedUser.discord_tag || 'Brak'}</p>
+                  <a href={`https://discord.com/users/${selectedUser.discord_tag || 'Brak'}`}><p><strong>Discord:</strong> {selectedUser.discord_tag || 'Brak'}</p></a>
                   <p><strong>Telefon:</strong> {selectedUser.phone || 'Brak'}</p>
 
                   {/* Przyciski nawigacji widoków */}

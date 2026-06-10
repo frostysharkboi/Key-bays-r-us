@@ -10,17 +10,73 @@ DB_CONFIG = {
 }
 
 RECENZJE_POOL = {
-    '5': ["Absolutne arcydzieło! Klimat powala, a mechanika gry jest bezbłędna.", "Gra mojego dzieciństwa. Kod zadziałał od razu, polecam!", "Wciąga jak bagno. Miałem grać godzinę, a wstałem o świcie.", "Złoty klasyk. Transakcja błyskawiczna, sprzedawca 10/10."],
-    '4': ["Świetna produkcja, chociaż grafika lekko trąci myszką.", "Bardzo dobry tytuł na długie wieczory ze znajomymi.", "Gameplay super, fabuła wciąga, jedynie optymalizacja mogłaby być ciut lepsza."],
-    '3': ["Gra poprawna, ale bez rewelacji. Szybko się nudzi.", "Fajny pomysł, gorzej z wykonaniem. Sterowanie momentami drewniane.", "Kupiłem na wyprzedaży i jest ok, ale pełnej ceny nie warta."],
-    '2': ["Spora zawód. Potencjał był enormny, ale serwery ciągle lagują.", "Męcząca rozgrywka. Mechaniki zamiast bawić – frustrują.", "Nuda. Gra zrobiona kompletnie bez pomysłu."]
+  '5': [
+    "Absolutne arcydzieło! Klimat powala, a mechanika gry jest bezbłędna.", 
+    "Gra mojego dzieciństwa. Kod zadziałał od razu, polecam!", 
+    "Wciąga jak bagno. Miałem grać godzinę, a wstałem o świcie.", 
+    "Złoty klasyk. Transakcja błyskawiczna, sprzedawca 10/10.", 
+    "Absolutne Kino: 10/10", 
+    "Ujdzie",
+    "Przeszedłem 5 razy i na pewno wrócę po raz kolejny. Najlepiej wydane pieniądze.",
+    "Muzyka z menu głównego do teraz leci u mnie na Spotify. Coś pięknego.",
+    "Fabularny majstersztyk, popłakałem się na zakończeniu. Polecam jedem.",
+    "Kupiłem bratu na urodziny, teraz nie wychodzi z pokoju od tygodnia. Sukces!"
+  ],
+  '4': [
+    "Świetna produkcja, chociaż grafika lekko trąci myszką.", 
+    "Bardzo dobry tytuł na długie wieczory ze znajomymi.", 
+    "Gameplay super, fabuła wciąga, jedynie optymalizacja mogłaby być ciut lepsza.", 
+    "Ewenement na skale światową, gra prawdopodobnie równie ważna co Biblia",
+    "Solidny sequel. Poprawili większość błędów z jedynki, bawiłem się świetnie.",
+    "Bardzo przyjemny gameplay loop, potrafi zassać syndromem 'jeszcze jednej tury'.",
+    "Gdyby nie te sporadyczne crashe do pulpitu, dałbym pełną piątkę. Warto kupić.",
+    "Super odskocznia od codzienności. Dużo humoru i ciekawe questy poboczne.",
+    "Klimat gęsty, że można go kroić nożem. Trochę powtarzalna pod koniec, ale i tak super.",
+    "Gra kupiona na promocji i przerosła moje oczekiwania. Naprawdę mocne 4/5."
+  ],
+  '3': [
+    "Gra poprawna, ale bez rewelacji. Szybko się nudzi.", 
+    "Fajny pomysł, gorzej z wykonaniem. Sterowanie momentami drewniane.", 
+    "Kupiłem na wyprzedaży i jest ok, ale pełnej ceny nie warta.", 
+    "Całkiem dobre szkoda że developer siedzi w więzieniu",
+    "Przeciętniak jakich mało. Można pograć z braku laku, ale szybko się zapomina.",
+    "Strasznie dużo grindu. Początek był obiecujący, ale potem robi się z tego druga praca.",
+    "Graficznie ładna, ale pusta w środku. AI przeciwników praktycznie nie istnieje.",
+    "Taki typowy symulator chodzenia z elementami walki. Bez szału.",
+    "Twórcy chyba sami nie wiedzieli, jaki gatunek chcą stworzyć. Niby ok, ale mess.",
+    "Można odpalić do podcastu w tle. Nic ambitnego, ot zwykły zapychacz czasu."
+  ],
+  '2': [
+    "Spora zawód. Potencjał był enormny, ale serwery ciągle lagują.", 
+    "Męcząca rozgrywka. Mechaniki zamiast bawić – frustrują.", 
+    "Nuda. Gra zrobiona kompletnie bez pomysłu.", 
+    "Pały nie urywa", 
+    "Nawet tej gry nie odpaliłem", 
+    "Okropne balansowane broni w tej grze sprawiło że rozwaliłem już 2 klawiatury i monitor",
+    "Zagrałem 30 minut i zażądałem zwrotu pieniędzy. Współczuję ludziom, którzy kupili preorder.",
+    "Ilość bugów w tej grze przechodzi ludzkie pojęcie. Przenikanie przez ściany to standard.",
+    "Mikrotransakcje na każdym kroku. Bez portfela rodziców nawet nie ma co podchodzić.",
+    "Obiecywali gruszki na wierzbie, a wydali niedokończone demo. Tragedia."
+  ],
+  '1': [
+    "Dno i wodorosty. Gra nie chce się nawet uruchomić, wyskakuje tylko czarny ekran.",
+    "KOD NIE DZIAŁA!!! Złodzieje i oszuści, żądam natychmiastowego zwrotu pieniędzy!!!",
+    "Gorszej gry w życiu nie widziałem. Grafika jak z PlayStation 1, a optymalizacja leży.",
+    "Nie polecam",
+    "Ta gra uraziła moje uczucia religijne i sprawiła, że mój kot uciekł z domu.",
+    "Nawet za darmo bym tego nie chciał. Twórcy powinni dopłacać ludziom za granie w ten gniot.",
+    "Kupione przez przypadek, dziecko mi poklikało na telefonie. Da się to cofnąć?",
+    "Zagrałem 5 minut i rozbolały mnie oczy. Pokaz slajdów, 15 klatek na sekundę na potężnym PC.",
+    "Totalne nieporozumienie. Fabuła bez sensu, postacie irytujące, a muzyka to jakiś żart.",
+    "Jedna gwiazdka to i tak za dużo. Omijać szerokim łukiem!"
+  ]
 }
 
 OPISY_OFERT = [
-    "Oficjalny klucz globalny. Wysyłka automatyczna 24/7.",
+    "Oficjalny klucz globalny.",
     "Promocja weekendowa! Ostatnie sztuki z legalnego źródła.",
     "Klucz z dystrybucji europejskiej, aktywacja na głównym koncie Steam.",
-    "Najniższa cena na rynku, błyskawiczna dostawa na e-mail."
+    "Najniższa cena na rynku, błyskawiczna dostawa."
 ]
 
 def main():
@@ -52,7 +108,7 @@ def main():
 
         # 3. GENEROWANIE UŻYTKOWNIKÓW (3 Adminów, 10 Sprzedawców, 30 Kupujących)
         print("[-] Tworzenie użytkowników...")
-        logins_admin = ['CyberGlitch_Admin', 'RootOverlord', 'KernelPanic_99']
+        logins_admin = ['FrsotyShrakBoi', 'Ziabba', 'VonKamino', 'CyberGlitch_Admin', 'RootOverlord', 'KernelPanic_99']
         logins_sellers = ['VaultDweller_Keys', 'GamerDen_Wholesale', 'PixelMerchant', 'Lootbox_Emperor', 'KeyKrypton', 'RetroReseller', 'SteamSmuggler', 'DiscountDragon', 'IndieBundle_King', 'Goblin_Market']
         logins_normals = [f'Gamer_Nick_{i}' for i in range(1, 31)]
         
@@ -68,7 +124,22 @@ def main():
         """
 
         for l in logins_admin:
-            cursor.execute(insert_user_query, (user_id, l, 'adminpass', '500100200', f'{l.lower()}@kb.pl', f'{l}#1111', 'Admin', 'admin'))
+            mail = f'{l.lower()}@kb.pl'
+            discord = f'{random.randint(100000000000000000, 999999999999999999)}f'
+            apass = 'adminpass'
+            if l == 'FrsotyShrakBoi':
+                mail = "jakubchmiel2007@gmail.com"
+                discord = "924407073503064165"
+                print("[-] Dodano a1...")
+            elif l == 'Ziabba':
+                mail = "biurokeysrus@gmail.com"
+                discord = "680409161334390828"
+                print("[-] Dodano a2...")
+            elif l == 'VonKamino':
+                mail = "ignacykaminski07@gmail.com"
+                discord = "581524526962180096"
+                print("[-] Dodano a3...")
+            cursor.execute(insert_user_query, (user_id, l, f'{apass}', '500100200', f'{mail}', f'{discord}', 'Admin', 'admin'))
             admin_ids.append(user_id)
             user_id += 1
         for l in logins_sellers:
@@ -103,7 +174,7 @@ def main():
             for _ in range(2):
                 seller = random.choice(seller_ids)
                 cena = random.randint(20, 250)
-                klucz = f"KEY-ACT-{g_id}-{random.randint(1000,9999)}"
+                klucz = f"-KEY---{g_id}---{random.randint(1000,9999)}"
                 opis = random.choice(OPISY_OFERT)
                 cursor.execute(insert_offer_query, (offer_id, seller, g_id, klucz, opis, 'Active', cena))
                 
@@ -112,8 +183,9 @@ def main():
                     # Wybieramy kupującego ze wspólnej puli (Kupujący, Admin lub inny Sprzedawca)
                     # Jeśli wylosuje się Sprzedawca, dbamy o to, aby nie kupił od samego siebie
                     dostepni_kupujacy = [u for u in wszyscy_kupujacy if u != seller]
-                    buyer = random.choice(dostepni_kupujacy)
-                    
+                    buyer = 1
+                    while buyer == 1 or buyer == 2 or buyer == 3:
+                        buyer = random.choice(dostepni_kupujacy)
                     cursor.execute(insert_trans_query, (trans_id, offer_id, buyer, buyer, 'Pending'))
                     trans_id += 1
                 offer_id += 1
@@ -129,36 +201,41 @@ def main():
         """
 
         for buyer in wszyscy_kupujacy:
-            liczba_zakupow = random.randint(5, 15)
-            wybrane_gry = random.sample(wszystkie_gry, min(liczba_zakupow, len(wszystkie_gry)))
-            
-            for g_id in wybrane_gry:
-                posiadane_gry_usera[buyer].add(g_id)
+            if buyer != 1 and buyer != 2 and buyer != 3:
+                liczba_zakupow = random.randint(5, 15)
+                wybrane_gry = random.sample(wszystkie_gry, min(liczba_zakupow, len(wszystkie_gry)))
                 
-                # ZABEZPIECZENIE: Sprzedawca nie może kupić od samego siebie!
-                # Odfiltrowujemy listę sprzedawców tak, aby wykluczyć aktualnego kupującego (jeśli jest sprzedawcą)
-                dostepni_sprzedawcy = [s for s in seller_ids if s != buyer]
-                
-                # Na wypadek gdyby lista była pusta (np. jest tylko 1 sprzedawca w bazie), 
-                # awaryjnie bierzemy kogokolwiek, ale przy 10 sprzedawcach zawsze ktoś zostanie
-                seller = random.choice(dostepni_sprzedawcy if dostepni_sprzedawcy else seller_ids)
-                
-                cena = random.randint(15, 200)
-                klucz_zuzyty = f"KEY-SOLD-{g_id}-{random.randint(10000,99999)}"
-                
-                # Tworzymy ofertę archiwalną
-                cursor.execute(insert_offer_query, (offer_id, seller, g_id, klucz_zuzyty, 'Archiwum', 'Closed', cena))
-                # Tworzymy transakcję sukcesu
-                cursor.execute(insert_trans_query, (trans_id, offer_id, buyer, buyer, 'Success'))
-                
-                # ~80% szans na wystawienie recenzji po zakupie
-                if random.random() > 0.2:
-                    ocena = random.choice(['5', '4', '3', '2'])
-                    tekst = random.choice(RECENZJE_POOL[ocena])
-                    cursor.execute(insert_rating_query, (g_id, buyer, ocena, tekst))
-                
-                offer_id += 1
-                trans_id += 1
+                for g_id in wybrane_gry:
+                    posiadane_gry_usera[buyer].add(g_id)
+                    
+                    # ZABEZPIECZENIE: Sprzedawca nie może kupić od samego siebie!
+                    # Odfiltrowujemy listę sprzedawców tak, aby wykluczyć aktualnego kupującego (jeśli jest sprzedawcą)
+                    dostepni_sprzedawcy = [s for s in seller_ids if s != buyer]
+                    
+                    # Na wypadek gdyby lista była pusta (np. jest tylko 1 sprzedawca w bazie), 
+                    # awaryjnie bierzemy kogokolwiek, ale przy 10 sprzedawcach zawsze ktoś zostanie
+                    seller = random.choice(dostepni_sprzedawcy if dostepni_sprzedawcy else seller_ids)
+                    
+                    cena = random.randint(15, 200)
+                    klucz_zuzyty = f"-KEY---{g_id}---{random.randint(10000,99999)}"
+                    
+                    # Tworzymy ofertę archiwalną
+                    cursor.execute(insert_offer_query, (offer_id, seller, g_id, klucz_zuzyty, 'Archiwum', 'Closed', cena))
+                    # Tworzymy transakcję sukcesu
+                    cursor.execute(insert_trans_query, (trans_id, offer_id, buyer, buyer, 'Success'))
+                    
+                    # ~80% szans na wystawienie recenzji po zakupie
+                    if random.random() > 0.2:
+                        ocena = '1'
+                        for i in range(5,0,-1):
+                            if random.random() > 0.4:
+                                ocena = f'{i}'
+                                break
+                        tekst = random.choice(RECENZJE_POOL[ocena])
+                        cursor.execute(insert_rating_query, (g_id, buyer, ocena, tekst))
+                    
+                    offer_id += 1
+                    trans_id += 1
 
         # 6. WARUNEK: OKOŁO 5 GIER NA WISHLIŚCIE (Dla każdego konta w bazie)
         print("[-] Generowanie wishlist dla wszystkich użytkowników...")
