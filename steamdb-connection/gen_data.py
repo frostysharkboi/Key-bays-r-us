@@ -126,8 +126,9 @@ def main():
         for l in logins_admin:
             mail = f'{l.lower()}@kb.pl'
             discord = f'{random.randint(100000000000000000, 999999999999999999)}f'
+            apass = 'adminpass'
             if l == 'FrsotyShrakBoi':
-                mail = "biurokeysrus@gmail.com"
+                mail = "jakubchmiel2007@gmail.com"
                 discord = "924407073503064165"
                 print("[-] Dodano a1...")
             elif l == 'Ziabba':
@@ -135,10 +136,10 @@ def main():
                 discord = "680409161334390828"
                 print("[-] Dodano a2...")
             elif l == 'VonKamino':
-                mail = "biurokeysrus@gmail.com"
+                mail = "ignacykaminski07@gmail.com"
                 discord = "581524526962180096"
                 print("[-] Dodano a3...")
-            cursor.execute(insert_user_query, (user_id, l, 'adminpass', '500100200', f'{mail}', f'{discord}', 'Admin', 'admin'))
+            cursor.execute(insert_user_query, (user_id, l, f'{apass}', '500100200', f'{mail}', f'{discord}', 'Admin', 'admin'))
             admin_ids.append(user_id)
             user_id += 1
         for l in logins_sellers:
