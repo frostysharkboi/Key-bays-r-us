@@ -54,11 +54,7 @@ export default function WishlistButton({ gameId, userId, isLogged }) {
 
   return (
     <button
-<<<<<<< Updated upstream
-      className={`btn border border-3 w-100 fw-bold transition-all ${isOnWishlist ? 'btn-danger border-danger' : 'btn-success border-success'}`}
-=======
       className={`border w-100 fw-bold transition-all ${isOnWishlist ? 'noWishlistBtn' : 'WishlistBtn'}`}
->>>>>>> Stashed changes
       onClick={handleToggle}
       disabled={loading}
     >
