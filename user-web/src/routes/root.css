@@ -1,13 +1,15 @@
-body{
+body {
     background-color: #191009;
     color: #DDDDD5;
     font-weight: bold;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
-a{
+
+a {
     text-decoration: none;
     color: #DDDDD5;
 }
+
 /* Dropdown Button */
 .dropbtn {
     background-color: #373327;
@@ -16,15 +18,18 @@ a{
     font-size: 16px;
     border: none;
 }
+
 #root {
     margin: 0;
     padding: 0;
 }
+
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
     position: relative;
     display: inline-block;
 }
+
 /* Dropdown Content (Hidden by Default) */
 .dropdown-content {
     display: none;
@@ -33,6 +38,7 @@ a{
     z-index: 1;
     font-family: akira;
 }
+
 /* Links inside the dropdown */
 .dropdown-content h5 {
     color: #DDDDD5;
@@ -40,168 +46,208 @@ a{
     text-decoration: none;
     display: block;
 }
+
 /* Change color of dropdown links on hover */
 .dropdown-content h5:hover {
     background-color: #1C120A;
 }
+
 /* Show the dropdown menu on hover */
 .dropdown:hover .dropdown-content {
     display: block;
 }
+
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .dropbtn {
     background-color: #403B2D;
 }
+
 /* Tu się zaczynają wypociny trzymające tą stronę w jako tako oglądalnym stanie*/
 @font-face {
-  font-family: 'akira';
-  src: url('src/assets/fonts/AODFont.otf')  format('opentype');
+    font-family: 'akira';
+    src: url('src/assets/fonts/AODFont.otf') format('opentype');
 }
+
 ::selection {
-  color: #191009;
-  background: #DDDDD5;
-}   
+    color: #191009;
+    background: #DDDDD5;
+}
+
 /* Code for Firefox */
-  ::-moz-selection { 
-  color: #191009;
-  background: #DDDDD5;
+::-moz-selection {
+    color: #191009;
+    background: #DDDDD5;
 }
-input{
+
+input {
     background-color: #373327;
     color: #DDDDD5;
     font-weight: bold;
 }
-select{
+
+select {
     background-color: #373327;
     color: #DDDDD5;
     font-weight: bold;
 }
-table{
+
+table {
     border: #DDDDD5;
     background-color: #191009;
     font-weight: bold;
 }
-thead{
+
+thead {
     font-family: 'akira';
     background-color: #191009;
 }
-thead{
+
+thead {
     background-color: #373327;
 }
-tbody{
+
+tbody {
     background-color: #373327;
 }
-textarea{
+
+textarea {
     background-color: #373327;
     color: #DDDDD5;
     font-weight: bold;
 }
+
 input:focus {
     outline: 3px solid #DDDDD5;
 }
+
 select:focus {
     outline: 3px solid #DDDDD5;
 }
-#Error_box{
-    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+#Error_box {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     color: #DDDDD5;
 }
-.border-3{
+
+.border-3 {
     border: #DDDDD5;
     background-color: #C51515;
     color: #DDDDD5;
 }
-.logo{
+
+.logo {
     background-color: #373327;
     font-family: 'akira';
 }
-.font{
+
+.font {
     font-family: 'akira';
 }
-.border-4{
+
+.border-4 {
     border: #DDDDD5;
 }
-.discount{
+
+.discount {
     font-weight: normal;
 }
-.table-part-top{
+
+.table-part-top {
     background-color: #373327;
 }
-.rating{
+
+.rating {
     color: #C51515;
 }
-.table{
+
+.table {
     background-color: #373327;
 }
-.btnsrch{
+
+.btnsrch {
     margin-left: 10px;
     border-width: 2px;
     font-family: 'akira';
 }
-.border-1{
+
+.border-1 {
     border: #DDDDD5;
     background-color: #373327;
     color: #DDDDD5;
 }
-.btn-zaz{
+
+.btn-zaz {
     background-color: #C51515;
 }
-.btn-odz{
+
+.btn-odz {
     background-color: #373327;
 }
-.btn-kirk{
+
+.btn-kirk {
     border-radius: 0%;
 }
 .border-8{
     border: #DDDDD5;
     border-width: 1px;
 }
-.box-idk{
+
+.box-idk {
     background-color: #373327;
 }
-.inp-srch{
+
+.inp-srch {
     margin-left: 15px;
 }
-.tbd{
+
+.tbd {
     font-weight: bold;
 }
-.noWishlistBtn{
+
+.noWishlistBtn {
     background-color: #C51515;
     border-color: #DDDDD5;
     color: #DDDDD5;
     border-width: 5px;
 }
-.WishlistBtn{
+
+.WishlistBtn {
     background-color: #C51515;
-    border:5px #C51515;
+    border: 5px #C51515;
     color: #DDDDD5;
 }
-.headline{
+
+.headline {
     color: #DDDDD5;
 }
-.tableElement{
+
+.tableElement {
     background-color: #373327;
 }
-.offer{
+
+.offer {
     background-color: #373327;
 }
-.noaccount{
+
+.noaccount {
     color: #C51515;
     text-shadow:
-                -2px -2px 0 #DDDDD5,
-                2px -2px 0 #DDDDD5,
-                -2px 2px 0 #DDDDD5,
-                2px 2px 0 #DDDDD5,
-                -3px 0px 0 #DDDDD5,
-                3px 0px 0 #DDDDD5,
-                0px -3px 0 #DDDDD5,
-                0px 3px 0 #DDDDD5;
+        -2px -2px 0 #DDDDD5,
+        2px -2px 0 #DDDDD5,
+        -2px 2px 0 #DDDDD5,
+        2px 2px 0 #DDDDD5,
+        -3px 0px 0 #DDDDD5,
+        3px 0px 0 #DDDDD5,
+        0px -3px 0 #DDDDD5,
+        0px 3px 0 #DDDDD5;
 }
-.noFont{
-    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+.noFont {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-weight: bold;
 }
-.noRound{
+
+.noRound {
     border-radius: 0%;
 }
 .btn-table{
@@ -215,19 +261,23 @@ select:focus {
 .bgMain{
     background-color: #191009;
 }
-.cardText:hover{
+
+.cardText:hover {
     background-color: #d31717;
 }
-.btnCarousel:hover{
+
+.btnCarousel:hover {
     background-color: #d31717;
 }
-.noaccount:hover{
+
+.noaccount:hover {
     color: #d31717;
 }
-.tag:hover{
+
+.tag:hover {
     background-color: #d31717;
 }
-.btn-tableL:hover{
+.btn-table:hover{
     background-color: #d31717;
 }
 .noWishlistBtn:hover{
@@ -236,26 +286,32 @@ select:focus {
     color: #DDDDD5;
     border-width: 5px;
 }
-.border-6:hover{
+
+.border-6:hover {
     background-color: #d31717;
 }
-.WishlistBtn:hover{
-    background-color:#d31717;
+
+.WishlistBtn:hover {
+    background-color: #d31717;
     border-color: #d31717;
 }
-.logo:hover{
-    background-color: #403B2D;
-}
-.btnsrch:hover{
-    background-color: #d31717;
-}
-.btn-odz:hover{ 
-    background-color: #403B2D;
-}
-.btn-zaz:hover{
-    background-color: #d31717;
-}
-.table:hover{
+
+.logo:hover {
     background-color: #403B2D;
 }
 
+.btnsrch:hover {
+    background-color: #d31717;
+}
+
+.btn-odz:hover {
+    background-color: #403B2D;
+}
+
+.btn-zaz:hover {
+    background-color: #d31717;
+}
+
+.table:hover {
+    background-color: #403B2D;
+}

@@ -25,7 +25,7 @@ def get_global_top_apps():
         1659040,  # HITMAN World of Assassination
         3768760,  # 007 First Light (James Bond)
         433340,   # Slime Rancher
-        988630,   # Slime Rancher 2
+        1657630,   # Slime Rancher 2
         220200,   # Kerbal Space Program
         391540,   # Undertale
         1671210,  # DELTARUNE
@@ -43,13 +43,14 @@ def get_global_top_apps():
         753640,   # Outer Wilds
         352400,   # LEGO Jurassic World
         21000,    # LEGO Batman: The Videogame
-        2215200   # LEGO Batman: Legacy of the Dark Knight
+        2215200,  # LEGO Batman: Legacy of the Dark Knight
+        3784760,  # Elfie: A Sand Plan
+        632470    # Disco Elysium
     ]
     
     # Identyfikatory gier podlegające bezwzględnemu odrzuceniu na etapie selekcji (Czarna lista)
     # UWAGA: Tytuły z serii Half-Life zostały usunięte z tej listy, ponieważ system filtruje je automatycznie po nazwie.
     banned_hits = [
-        632470    # Disco Elysium
     ]
     # ================================================================================
 
