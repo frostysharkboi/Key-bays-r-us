@@ -130,10 +130,12 @@ def main():
             if l == 'FrsotyShrakBoi':
                 mail = "jakubchmiel2007@gmail.com"
                 discord = "924407073503064165"
+                apass = 'Frosty123'
                 print("[-] Dodano a1...")
             elif l == 'Ziabba':
                 mail = "biurokeysrus@gmail.com"
                 discord = "680409161334390828"
+                apass = "ZiabbaPass"
                 print("[-] Dodano a2...")
             elif l == 'VonKamino':
                 mail = "ignacykaminski07@gmail.com"
@@ -245,15 +247,16 @@ def main():
         """
 
         for buyer in wszyscy_kupujacy:
-            # Filtrujemy pełną listę gier, usuwając te, które użytkownik już posiada/kupił
-            dostepne_do_wishlisty = [g for g in wszystkie_gry if g not in posiadane_gry_usera[buyer]]
-            
-            # Pobieramy maksymalnie 5 sztuk
-            liczba_na_wishlist = min(5, len(dostepne_do_wishlisty))
-            if liczba_na_wishlist > 0:
-                wybrane_do_wl = random.sample(dostepne_do_wishlisty, liczba_na_wishlist)
-                for w_g_id in wybrane_do_wl:
-                    cursor.execute(insert_wishlist_query, (buyer, w_g_id))
+            if buyer != 1 and buyer != 2 and buyer != 3:
+                # Filtrujemy pełną listę gier, usuwając te, które użytkownik już posiada/kupił
+                dostepne_do_wishlisty = [g for g in wszystkie_gry if g not in posiadane_gry_usera[buyer]]
+                
+                # Pobieramy maksymalnie 5 sztuk
+                liczba_na_wishlist = min(5, len(dostepne_do_wishlisty))
+                if liczba_na_wishlist > 0:
+                    wybrane_do_wl = random.sample(dostepne_do_wishlisty, liczba_na_wishlist)
+                    for w_g_id in wybrane_do_wl:
+                        cursor.execute(insert_wishlist_query, (buyer, w_g_id))
 
         conn.commit()
         print("[+] Sukces! Baza została kompletnie i poprawnie uzupełniona danymi dla wszystkich kont (w tym adminów i sprzedawców).")
