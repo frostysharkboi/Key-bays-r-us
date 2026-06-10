@@ -103,13 +103,13 @@ export default function TransactionsPage() {
         setActiveTransactionInput(null);
     }, [userData, viewMode]);
 
-    const handleConfirmSubmit = (transactionId, keyToSend) => {
+    const handleConfirmSubmit = (transaction_id, keyToSend) => {
         if (!keyToSend.trim()) {
             alert("Wpisz klucz gry przed zatwierdzeniem!");
             return;
         }
 
-        axios.post(`${axiosPath}/transactions/confirm`, { transactionId, enteredKey: keyToSend.trim() })
+        axios.post(`${axiosPath}/transactions/confirm`, { transaction_id, entered_key: keyToSend.trim() })
             .then((res) => {
                 if (res.data.success) {
                     alert(res.data.message);

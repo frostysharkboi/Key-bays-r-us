@@ -291,6 +291,24 @@ app.get("/transactions/getByUser", async (req, res) => {
   }
 })
 
+<<<<<<< Updated upstream
+=======
+//Czy user posiada tą grę.
+
+app.get("/transactions/byId", async (req, res) => {
+  const { userId, gameId } = req.query;
+
+  try {
+    const sql = `SELECT t.status FROM transactions AS t JOIN key_offers AS o on o.id = t.offer_id JOIN games AS g ON o.game_id = g.id JOIN users AS u ON t.reciever_id = u.id WHERE t.status = 'Success' AND u.id = ${userId} AND g.id = ${gameId};`;
+    const [result] = await db.pool.query(sql);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+>>>>>>> Stashed changes
 app.get("/ratings/getByUser", async (req, res) => {
 
   const { id } = req.query
@@ -385,27 +403,36 @@ app.get("/:table", async (req, res) => {
 
 // Zatwierdzenie transakcji
 app.post("/transactions/confirm", async (req, res) => {
-  const { transactionId, enteredKey } = req.body;
+  const { transaction_id, entered_key } = req.body;
 
-  if (!transactionId || !enteredKey) return res.status(400).json({ error: "Brak wymaganych danych transakcji lub klucza." });
+  if (!transaction_id || !entered_key) return res.status(400).json({ error: "Brak wymaganych danych transakcji lub klucza." });
 
   try {
-    const verifySql = `SELECT ko.game_key, t.offer_id FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.id = ${transactionId} AND t.status = 'Pending'`;
-    const rows = await db.pool.query(verifySql);
+    await connection.beginTransaction();
+
+    const verifySql = `SELECT ko.game_key, ko.game_id, t.offer_id, t.buyer_id FROM transactions t JOIN key_offers ko ON t.offer_id = ko.id WHERE t.id = ${transaction_id} AND t.status = 'Pending'`;
+
+    const [rows] = await connection.query(verifySql);
 
     if (rows.length === 0) {
+      connection.release();
       return res.status(404).json({ error: "Nie znaleziono aktywnej transakcji." });
     }
 
-    const { game_key, offer_id } = rows[0];
+    const { game_key, game_id, offer_id, buyer_id } = rows[0];
 
-    if (enteredKey !== game_key) {
+    if (entered_key !== game_key) {
+      connection.release();
       return res.status(400).json({ error: "Wprowadzony klucz gry jest niepoprawny!" });
     }
 
-    await db.pool.query(`UPDATE transactions SET status = 'Success' WHERE id = ${transactionId}`);
-    await db.pool.query(`UPDATE transactions SET status = 'Cancelled' WHERE offer_id = ${offer_id} AND id != ${transactionId}`);
-    await db.pool.query(`UPDATE key_offers SET status = 'Closed' WHERE id = ${offer_id}`);
+    await connection.query(`UPDATE transactions SET status = 'Success' WHERE id = ${transaction_id}`);
+    await connection.query(`UPDATE transactions SET status = 'Cancelled' WHERE offer_id = ${offer_id} AND id != ${transaction_id}`);
+    await connection.query(`UPDATE key_offers SET status = 'Closed' WHERE id = ${offer_id}`);
+    await connection.query(`DELETE FROM wishlist WHERE user_id = ${buyer_id} AND game_id = ${game_id}`);
+
+    await connection.commit();
+    connection.release();
 
     res.json({ success: true, message: "Transakcja została pomyślnie zatwierdzona!" });
 
