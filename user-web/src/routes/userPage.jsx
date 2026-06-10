@@ -330,7 +330,7 @@ export default function Root() {
                 {(activeView === 0 || activeView === 1) && (
                   <div>
                     <h3>{activeView === 1 ? "Historia recenzji" : "Historia transakcji"}</h3>
-                    <table className="table table-striped table-hover mb-2">
+                    <table className="w-100 table-sm ms-3">
                       <thead>
                         {activeTable.getHeaderGroups().map(headerGroup => (
                           <tr key={headerGroup.id}>
@@ -380,7 +380,7 @@ export default function Root() {
                         {emptyRowsCount > 0 && Array.from({ length: emptyRowsCount }).map((_, index) => (
                           <tr key={`empty-${index}`} style={{ height: '49px' }}>
                             {Array.from({ length: activeColumnsLength }).map((_, colIndex) => (
-                              <td key={`empty-cell-${colIndex}`} className="align-middle text-muted">&nbsp;</td>
+                              <td key={`empty-cell-${colIndex}`} className="align-middle">&nbsp;</td>
                             ))}
                           </tr>
                         ))}
@@ -388,11 +388,11 @@ export default function Root() {
                         <tr className="table-light border-top">
                           <td colSpan={activeColumnsLength}>
                             <div className="d-flex justify-content-between align-items-center p-1">
-                              <button className="btn btn-secondary rounded-0 border border-3 fw-bold" onClick={() => activeTable.setPageIndex(0)} disabled={!activeTable.getCanPreviousPage()}>First</button>
-                              <button className="btn btn-secondary rounded-0 border border-3 fw-bold" onClick={() => activeTable.previousPage()} disabled={!activeTable.getCanPreviousPage()}>Previous</button>
-                              <span className="text-muted small">Page <strong>{activeTable.getState().pagination.pageIndex + 1}</strong> of <strong>{Math.max(activeTable.getPageCount(), 1)}</strong></span>
-                              <button className="btn btn-secondary rounded-0 border border-3 fw-bold" onClick={() => activeTable.nextPage()} disabled={!activeTable.getCanNextPage()}>Next</button>
-                              <button className="btn btn-secondary rounded-0 border border-3 fw-bold" onClick={() => activeTable.setPageIndex(activeTable.getPageCount() - 1)} disabled={!activeTable.getCanNextPage()}>Last</button>
+                              <button className="rounded-0 border border-3 fw-bold" onClick={() => activeTable.setPageIndex(0)} disabled={!activeTable.getCanPreviousPage()}>First</button>
+                              <button className="rounded-0 border border-3 fw-bold" onClick={() => activeTable.previousPage()} disabled={!activeTable.getCanPreviousPage()}>Previous</button>
+                              <span className=" small">Page <strong>{activeTable.getState().pagination.pageIndex + 1}</strong> of <strong>{Math.max(activeTable.getPageCount(), 1)}</strong></span>
+                              <button className="rounded-0 border border-3 fw-bold" onClick={() => activeTable.nextPage()} disabled={!activeTable.getCanNextPage()}>Next</button>
+                              <button className="rounded-0 border border-3 fw-bold" onClick={() => activeTable.setPageIndex(activeTable.getPageCount() - 1)} disabled={!activeTable.getCanNextPage()}>Last</button>
                             </div>
                           </td>
                         </tr>

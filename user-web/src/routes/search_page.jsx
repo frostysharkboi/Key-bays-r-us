@@ -131,7 +131,7 @@ export default function SearchPage() {
         {/* Główna sekcja z tabelą i panelami bocznymi */}
         < h3 className='mx-4 mt-4 p-4 font' > Wyniki Wyszukiwania</h3 >
         <div className="row px-4 pb-4">
-          <div className="col-12 col-lg-4 custom-border border-dark">
+          <div className="col-12 col-lg-4">
             <h3 className='mx-4 mt-4 p-3 text-center font'>Filtry:</h3>
             <div className="addpanel box-idk">
               <div className="addpaneldiv row p-2 pe-4">
@@ -156,7 +156,7 @@ export default function SearchPage() {
                       }}
                     />
                     <label htmlFor={`Gat_${t.id}`}
-                      className={`p-2 m-1 btn-kirk border border-6 ${t.isSelected || !anySelected ? "btn-zaz" : "btn-odz"}`}
+                      className={`p-2 m-1 btn-kirk border border-8 ${t.isSelected || !anySelected ? "btn-zaz" : "btn-odz"}`}
                     >{t.tag}</label>
                   </div>
                 ))}
@@ -164,10 +164,10 @@ export default function SearchPage() {
             </div>
           </div>
           <div className="col">
-            <table className='table border border-3 table-sm table-striped table-hover ms-3'>
+            <table className='w-100 table-sm ms-3'>
               <thead>
                 {table.getHeaderGroups().map(hg => (
-                  <tr className='table-part-top border border-3' key={hg.id}>
+                  <tr className='table-part-top' key={hg.id}>
                     {hg.headers.map(header => (
                       <th key={header.id} onClick={header.column.getToggleSortingHandler()} style={{ cursor: header.column.getCanSort() ? "pointer" : "default" }}>
                         {header.column.getIsSorted() === "desc" ? "↑ " : (header.column.getIsSorted() === "asc" ? "↓ " : "")}
@@ -181,7 +181,7 @@ export default function SearchPage() {
               <tbody>
                 {rows.map((row) => (
                   /* MODYFIKACJA: id wyciągamy bezpośrednio z surowego obiektu row.original, a nie z widoku HTML */
-                  <tr key={row.id} onClick={() => RedirectToGamePage(row.original.id)} style={{ cursor: 'pointer' }}>
+                  <tr className='table border-top border-bottom' key={row.id} onClick={() => RedirectToGamePage(row.original.id)} style={{ cursor: 'pointer' }}>
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -197,11 +197,11 @@ export default function SearchPage() {
                 <tr>
                   <td colSpan={columns.length}>
                     <div className="d-flex justify-content-between tableBottom align-items-center">
-                      <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.firstPage()} disabled={!table.getCanPreviousPage()}> First </button>
-                      <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}> Previous </button>
+                      <button className="btn-table rounded-0 border border-3" onClick={() => table.firstPage()} disabled={!table.getCanPreviousPage()}> First </button>
+                      <button className="btn-table rounded-0 border border-3" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}> Previous </button>
                       <span>Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount() || 1}</span>
-                      <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>Next</button>
-                      <button className="btn btn-secondary rounded-0 border border-3" onClick={() => table.lastPage()} disabled={!table.getCanNextPage()}>Last</button>
+                      <button className="btn-table rounded-0 border border-3" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>Next</button>
+                      <button className="btn-table rounded-0 border border-3" onClick={() => table.lastPage()} disabled={!table.getCanNextPage()}>Last</button>
                     </div>
                   </td>
                 </tr>

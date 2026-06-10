@@ -152,7 +152,7 @@ select:focus {
 .btn-kirk{
     border-radius: 0%;
 }
-.border-6{
+.border-8{
     border: #DDDDD5;
     border-width: 1px;
 }
@@ -204,6 +204,9 @@ select:focus {
 .noRound{
     border-radius: 0%;
 }
+.btn-table{
+    background-color: #C51515;
+}
 .border-6{
     background-color: #C51515;
     border: 1px #DDDDD5;
@@ -222,6 +225,9 @@ select:focus {
     color: #d31717;
 }
 .tag:hover{
+    background-color: #d31717;
+}
+.btn-tableL:hover{
     background-color: #d31717;
 }
 .noWishlistBtn:hover{
