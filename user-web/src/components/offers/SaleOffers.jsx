@@ -63,7 +63,7 @@ export default function SaleOffers({ gameId, DoesHeOwnIt }) {
   // Widok ładowania
   if (loading) {
     return (
-      <div className='row m-3 p-3 text-center border border-3 offer'>
+      <div className='row m-3 p-3 text-center'>
         <p className='font fw-bold'>Oferty sklepu</p>
         <span className="text-muted" style={{ fontSize: '0.85rem' }}>Ładowanie ofert...</span>
       </div>
@@ -73,16 +73,16 @@ export default function SaleOffers({ gameId, DoesHeOwnIt }) {
   // Widok błędu lub braku ofert
   if (error || offersData.length === 0) {
     return (
-      <div className='row m-3 p-3 text-center border border-3 offer'>
+      <div className='row m-3 p-3 text-center'>
         <p className='font fw-bold'>Oferty sklepu</p>
-        <span className="text-danger" style={{ fontSize: '0.85rem' }}>brak ofert</span>
+        <span className="offer font" style={{ fontSize: '0.85rem' }}>brak ofert</span>
       </div>
     );
   }
 
   // Widok poprawnie wyrenderowanych ofert
   return (
-    <div className='row m-3 p-3 text-center border border-3 offer'>
+    <div className='row m-3 p-3 text-center offer'>
       <p className='font fw-bold'>Oferty sklepu</p>
       <div className="container-fluid">
         <div className="row flex-row flex-nowrap overflow-auto">

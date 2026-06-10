@@ -91,6 +91,11 @@ thead{
 tbody{
     background-color: #373327;
 }
+textarea{
+    background-color: #373327;
+    color: #DDDDD5;
+    font-weight: bold;
+}
 input:focus {
     outline: 3px solid #DDDDD5;
 }
@@ -121,6 +126,9 @@ select:focus {
 }
 .table-part-top{
     background-color: #373327;
+}
+.rating{
+    color: #C51515;
 }
 .table{
     background-color: #373327;
@@ -171,7 +179,10 @@ select:focus {
 .headline{
     color: #DDDDD5;
 }
-.tableBottom{
+.tableElement{
+    background-color: #373327;
+}
+.offer{
     background-color: #373327;
 }
 .noaccount{
@@ -192,6 +203,11 @@ select:focus {
 }
 .noRound{
     border-radius: 0%;
+}
+.border-6{
+    background-color: #C51515;
+    border: 1px #DDDDD5;
+    color: #DDDDD5;
 }
 .bgMain{
     background-color: #191009;
@@ -214,6 +230,9 @@ select:focus {
     color: #DDDDD5;
     border-width: 5px;
 }
+.border-6:hover{
+    background-color: #d31717;
+}
 .WishlistBtn:hover{
     background-color:#d31717;
     border-color: #d31717;
@@ -233,6 +252,4 @@ select:focus {
 .table:hover{
     background-color: #403B2D;
 }
-.offer:hover {
-    background-color: #d31717;
-}
+

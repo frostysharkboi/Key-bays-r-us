@@ -32,18 +32,18 @@ export default function SiteRating({ gameId }) {
 
   return (
     <div className="rating-box mb-2">
-      <small className="d-block text-uppercase fw-bold text-muted" style={{ fontSize: '0.7rem' }}>
+      <small className="d-block font" style={{ fontSize: '0.7rem' }}>
         Ocena Serwisu
       </small>
       <div className="d-flex align-items-center justify-content-center gap-2">
-        <span className="text-warning fs-4">
+        <span className="rating fs-4">
           {average ? renderStars(average) : "☆☆☆☆☆"}
         </span>
         <span className="fw-bold fs-5">
-          {average ? `${average}/5` : "0.0"}
+          {average ? `${average}` : "0.0"}
         </span>
       </div>
-      <small className="text-muted d-block" style={{ fontSize: '0.75rem', marginTop: '-4px' }}>
+      <small className=" d-block" style={{ fontSize: '0.75rem', marginTop: '-4px' }}>
         {count} opinii
       </small>
     </div>

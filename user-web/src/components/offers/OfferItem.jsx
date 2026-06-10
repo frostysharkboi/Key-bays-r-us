@@ -102,9 +102,9 @@ export default function OfferItem({ offer, gameId, openedOfferId, setOpenedOffer
         <h5>Cena: {offer.suggested_price} zł.</h5>
         <h5>Status: {offer.status}</h5>
       </div>
-      <button onClick={() => showButton()}>Wiecej</button>
+      <button className='border border-6 fw-bold' onClick={() => showButton()}>WIECEJ</button>
       {(doesHeOwnIt == false) ? (
-        <div>
+        <div className='mt-2'>
           {offer != null && isVisible && (
             <div id={offer.id}>
               <select onChange={() => changeWho(!forWhoButBetter)}>
@@ -113,20 +113,20 @@ export default function OfferItem({ offer, gameId, openedOfferId, setOpenedOffer
               </select>
 
               {forWhoButBetter == false && (
-                <div>
+                <div className='mt-2'>
                   <input list="allUsers" type="text" onChange={(e) => changePerson(e.target.value)} />
                   <datalist id="allUsers">
                     {AllUsers.map((user) => (
                       <option key={user.id} value={user.login}>{user.login}</option>
                     ))}
                   </datalist>
-                  <h5><button onClick={() => GetInContact()}>Zgiftuj</button></h5>
+                  <h5><button className='border border-6 fw-bold mt-2' onClick={() => GetInContact()}>PODARUJ</button></h5>
                 </div>
               )}
 
               {forWhoButBetter == true && (
                 <div>
-                  <h5><button onClick={() => GetInContact()}>Kup</button></h5>
+                  <h5><button className='border border-6 fw-bold mt-2' onClick={() => GetInContact()}>KUP</button></h5>
                 </div>
               )}
 

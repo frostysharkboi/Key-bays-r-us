@@ -165,7 +165,7 @@ export default function GamePage() {
 
       {/* Tytuł gry */}
       <div className='row m-3 p-3 text-center'>
-        <div className='col box-idk border p-3'>
+        <div className='col box-idk p-3'>
           <h2 className='font m-0'>{gameData ? gameData.title : "Ładowanie..."}</h2>
         </div>
       </div>
@@ -174,10 +174,10 @@ export default function GamePage() {
       <div className='row m-3 p-3 text-center justify-content-center'>
 
         {/* Lewa kolumna - Karuzela multimediów */}
-        <div className='col-7 border'>
+        <div className='col-7'>
           {allMediaItems.length > 0 ? (
             /* Główny kontener izolujący pozycjonowanie */
-            <div className="position-relative w-100 overflow-hidden rounded shadow bg-black">
+            <div className="position-relative w-100 overflow-hidden noRound bgMain">
 
               {/* Kontener proporcji 16:9 - zawiera wyłącznie slajdy */}
               <div className="ratio ratio-16x9">
@@ -229,13 +229,13 @@ export default function GamePage() {
                     <div
                       key={`thumb-media-${idx}`}
                       onClick={() => setActiveIndex(idx)}
-                      className="position-relative flex-shrink-0 rounded overflow-hidden border border-2"
+                      className="position-relative flex-shrink-0 noRound overflow-hidden border border-2"
                       style={{
                         width: '120px',
                         height: '70px',
                         cursor: 'pointer',
                         transition: 'all 0.2s',
-                        borderColor: idx === activeIndex ? '#1a9fff' : '#333',
+                        borderColor: idx === activeIndex ? '#d31717' : '#373327',
                         opacity: idx === activeIndex ? 1 : 0.6
                       }}
                     >
@@ -252,17 +252,17 @@ export default function GamePage() {
             </div>
           ) : (
             /* Fallback, gdyby gra nie miała jeszcze pobranych danych */
-            <div className="ratio ratio-16x9 bg-secondary rounded animate-pulse"></div>
+            <div className="ratio ratio-16x9 noRound animate-pulse"></div>
           )}
         </div>
 
         {/* Prawa kolumna - Statystyki i metadane gry */}
         <div className='col-5 px-3 justify-content-between'>
-          <div className='box-idk border h-100'>
+          <div className='box-idk h-100'>
             <div className='p-3'>
               {/* Sekcja ocen */}
               <div className="row align-items-center g-0">
-                <div className="col-6 border-end">
+                <div className="col-6">
                   <SiteRating gameId={GameId} />
                 </div>
                 <div className="col-6">
@@ -289,14 +289,14 @@ export default function GamePage() {
 
               {/* Blok przycisku listy życzeń */}
               {userData.isLogged && gameData && (
-                <div className="mt-3 text-center">
+                <div className="mt-4 text-center">
                   <WishlistButton
                     gameId={gameData.id}
                     userId={userData.id}
                     isLogged={userData.isLogged}
                   />
                   {(userData.type === 'seller' || userData.type === 'admin') && (
-                    <button className="btn border mt-2 border-3 w-100 fw-bold transition-all btn-danger border-danger" onClick={() => navigate("/Create-Offer", { state: { initialTitle: gameData.title } })}                >
+                    <button className="border w-100 fw-bold mt-4 transition-all noWishlistBtn" onClick={() => navigate("/Create-Offer", { state: { initialTitle: gameData.title } })}                >
                       DODAJ OFERTE
                     </button>
                   )}
@@ -314,7 +314,7 @@ export default function GamePage() {
           {gameData && (
             <>
               {/* Minimalne Wymagania */}
-              <div className='box-idk p-3 me-3 border flex-fill text-start'>
+              <div className='box-idk p-3 me-3 flex-fill text-start'>
                 <h3 className='font fs-5 text-center mb-3'>Minimalne Wymagania:</h3>
                 <p>
                   {gameData.min_os && <><b>System:</b> {gameData.min_os}<br /></>}
@@ -326,7 +326,7 @@ export default function GamePage() {
               </div>
 
               {/* Zalecane Wymagania */}
-              <div className='box-idk p-3 ms-3 border flex-fill text-start'>
+              <div className='box-idk p-3 ms-3 flex-fill text-start'>
                 <h3 className='font fs-5 text-center mb-3'>Zalecane Wymagania:</h3>
                 <p>
                   {gameData.opt_os && <><b>System:</b> {gameData.opt_os}<br /></>}

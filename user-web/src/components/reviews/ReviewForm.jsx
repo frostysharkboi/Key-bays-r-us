@@ -58,13 +58,13 @@ export default function ReviewForm({ onSubmit, initialReview, onCancel }) {
                         );
                     })}
                 </div>
-                <div className="text-muted small font">Kliknij gwiazdke, aby wybrac ({rating}/5)</div>
+                <div className="fw-bold">Kliknij gwiazdke, aby wybrac ({rating}/5)</div>
             </div>
 
             <div className="mb-3">
                 <label className="form-label fw-bold font">Tresc opinii:</label>
                 <textarea
-                    className="form-control border border-2 border-dark font"
+                    className="form-control"
                     rows="3"
                     placeholder="Co sadzisz o tej produkcji?..."
                     value={other}

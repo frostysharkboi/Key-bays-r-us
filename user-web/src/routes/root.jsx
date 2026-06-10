@@ -164,7 +164,7 @@ export default function Root() {
 
         {/* SEKCJA GATUNKI */}
         <div className='row m-1 mt-5 text-center font'>
-          <h2>WSZYSTKIE GATUNKI</h2>
+          <h2 className='headline'>WSZYSTKIE GATUNKI</h2>
         </div>
         <div className="row row-cols-2 row-cols-md-4 justify-content-center mx-4 my-3 p-3 text-center">
           {tags.map((row) => (

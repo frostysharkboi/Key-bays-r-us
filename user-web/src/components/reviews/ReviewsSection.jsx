@@ -86,8 +86,8 @@ export default function ReviewsSection({ gameId }) {
     };
 
     return (
-        <div className='box-idk row m-3 p-3 text-center border'>
-            <p className='font fw-bold fs-4'>Szczegółowe Recenzje</p>
+        <div className='box-idk row m-3 p-3 text-center'>
+            <p className='font fw-bold fs-4'>Szczegolowe Recenzje</p>
             <div className="p-2">
 
                 {/* Warunek wejścia: zalogowany i (kupił grę LUB jest adminem) */}

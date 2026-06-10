@@ -40,7 +40,7 @@ export default function SteamRating({ gameId }) {
   if (loading) {
     return (
       <div className="rating-box mb-2">
-        <small className="d-block text-uppercase fw-bold text-muted" style={{ fontSize: '0.7rem' }}>Ocena Steam</small>
+        <small className="d-block fw-bold font" style={{ fontSize: '0.7rem' }}>Ocena Steam</small>
         <span className="text-muted" style={{ fontSize: '0.85rem' }}>Ładowanie live...</span>
       </div>
     );
@@ -49,7 +49,7 @@ export default function SteamRating({ gameId }) {
   if (error || !steamData) {
     return (
       <div className="rating-box mb-2">
-        <small className="d-block text-uppercase fw-bold text-muted" style={{ fontSize: '0.7rem' }}>Ocena Steam</small>
+        <small className="d-block fw-bold font" style={{ fontSize: '0.7rem' }}>Ocena Steam</small>
         <span className="text-danger" style={{ fontSize: '0.85rem' }}>brak danych</span>
       </div>
     );
@@ -57,18 +57,18 @@ export default function SteamRating({ gameId }) {
 
   return (
     <div className="rating-box mb-2">
-      <small className="d-block text-uppercase fw-bold text-muted" style={{ fontSize: '0.7rem' }}>
+      <small className="d-block fw-bold font" style={{ fontSize: '0.7rem' }}>
         Ocena Steam (Live)
       </small>
       <div className="d-flex align-items-center justify-content-center gap-2" title={`Opis: ${steamData.review_score_desc}`}>
-        <span className="text-info fs-4">
+        <span className="rating fs-4">
           {renderStars(steamData.score)}
         </span>
         <span className="fw-bold fs-5">
           {steamData.score}
         </span>
       </div>
-      <small className="text-muted d-block" style={{ fontSize: '0.75rem', marginTop: '-4px' }}>
+      <small className=" d-block" style={{ fontSize: '0.75rem', marginTop: '-4px' }}>
         {steamData.percent}% pozytywnych opinii
       </small>
     </div>
