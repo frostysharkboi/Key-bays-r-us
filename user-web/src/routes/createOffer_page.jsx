@@ -32,9 +32,13 @@ export default function Root() {
   const [errorBoxText, setErrorBoxText] = useState("");
   const [offerAsObject, getOffer] = useState(null);
 
+  const [allOffers, setTable] = useState(null);
+  const [disabled, setDisabled] = useState(false);
+
   useEffect(() => {
     getFilteredGames();
     console.log(userData);
+    axios.get("http://localhost:3000/key_offers").then((res) => {setTable(res.data)})
   }, []);
 
   useEffect(() => {
@@ -112,7 +116,16 @@ export default function Root() {
         }
       });
 
-      (offerAsObject.key.length > 14 && offerAsObject.key.length < 51) ? offerChekcs.key = true : setErrorBoxText("Klucz jest nieprawidłowy");
+      let duplicate2 = false;
+      if(allOffers != null){
+        allOffers.forEach(off => {
+          if(off.game_key == offerAsObject.key){
+            duplicate2 = true;
+          }
+        });
+      }
+      (offerAsObject.key.length > 14 && offerAsObject.key.length < 51 && duplicate2 == false) ? offerChekcs.key = true : setErrorBoxText("Klucz jest nieprawidłowy");
+      (duplicate2 == true) ? setErrorBoxText("Oferta z tym kluczem jest już wystawiona") : null;
       (offerPrice != null) ? null : setErrorBoxText("Oferta musi być wycieniona");
       (offerOther != null) ? null : setErrorBoxText("Oferta musi zawierać opis");
 
@@ -125,6 +138,7 @@ export default function Root() {
   }
 
   function AddOfferToDb() {
+    setDisabled(true);
     if (CheckIfDataIsGood() == true) {
       if (confirm("Czy na pewno chcesz wystawić tą ofertę?\nWciśnij ok, by wystawić.") == true) {
         axios.post(`${axiosPath}/key_offers/add`, { key: offerAsObject.key, price: offerAsObject.price, other: offerAsObject.other, game_id: offerAsObject.gameId, seller_id: userData.id, status: "Active" })
@@ -140,8 +154,11 @@ export default function Root() {
         setPrice("");
         setOther("");
         setKey("");
-      }
-    }
+      };
+    };
+    setTimeout(() => {
+        setDisabled(false);
+    }, 1800);
   }
 
   return (
@@ -220,7 +237,7 @@ export default function Root() {
             <textarea rows="4" cols="50" onChange={(e) => setOther(e.target.value)} value={offerOther || ""} />
           </div>
           <div className="mt-3 text-center d-flex flex-column align-items-center">
-            <button className="btn btn-primary" style={{ width: '200px' }} onClick={() => AddOfferToDb()}>Dodaj Oferte</button>
+            <button className="btn btn-primary" disabled={disabled} style={{ width: '200px' }} onClick={() => AddOfferToDb()}>Dodaj Oferte</button>
             {errorBoxText && <p id="Error_box" className='text-center fs-3 text-danger mt-2'>{errorBoxText}</p>}
           </div>
         </div>

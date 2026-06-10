@@ -2,16 +2,25 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { axiosPath } from '../../App';
 import { UserContext } from '../user-context/UserContext';
+import { useDebounce } from '../../hooks/UseDebounce';
 
 export default function OfferItem({ offer, gameId, openedOfferId, setOpenedOfferId, doesHeOwnIt }) {
   const { userData } = useContext(UserContext);
-  const [forWho, changePerson] = useState(userData.id);
-  const [showPurchase, changeVisibility] = useState([]);
-  const [AllUsers, getAllUsers] = useState(null);
-  const [forWhoButBetter, changeWho] = useState(true);
-  const [allTrans, getTrans] = useState(null);
 
-  const [allOffers, setTable] = useState(null);
+  const [reciever, setReciever] = useState(userData?.login || "");
+  const debouncedReciever = useDebounce(reciever, 400);
+
+  const [users, setUsers] = useState([]);
+  const [loggedInIsReciever, setLoggedInIsReciever] = useState(true);
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    if (loggedInIsReciever) {
+      setReciever(userData?.login || "");
+    } else {
+      setReciever("");
+    }
+  }, [loggedInIsReciever, userData]);
 
   function showButton() {
     setOpenedOfferId(
@@ -22,74 +31,75 @@ export default function OfferItem({ offer, gameId, openedOfferId, setOpenedOffer
   function GetInContact() {
     let str1 = "";
     let str2 = "";
-    if(offer.discord_tag != null){
+    if (offer.discord_tag != null) {
       str1 = `\nTag discord: ${offer.discord_tag}\n`;
     }
-    if(offer.phone != null){
+    if (offer.phone != null) {
       str2 = `\nNumer telefonu: ${offer.phone}\n`;
     }
-    let popup = confirm(`Źródła komunikacji z sprzedawcą\n${str1}${str2}\nCzy będziesz negocjować o tą ofertę?`);
-    if (popup == true) {
+
+    let popup = confirm(`Źródła komunikacji z sprzedawcą\n${str1}${str2}\nCzy będziesz negocjować o tę ofertę?`);
+    if (popup === true) {
       let receiverId = userData.id;
-      let receiverLogin = forWho;
+
+      let receiverLogin = debouncedReciever;
+
       let hesAlreadyBuying = false;
       let hesBuyingFromHimself = false;
-      AllUsers.forEach(user => {
-        if(user.login == forWho){
-          if(user.type == "normal"){
-            console.log(user.login, " | ", user.type, " | ", user.id, " | ");
+
+      if (users && users.length > 0) {
+        users.forEach(user => {
+          if (user.login === receiverLogin) {
             receiverId = user.id;
           }
-        }
-      });
-      
-      if(receiverId == userData.id && userData.type == "seller"){
-        hesBuyingFromHimself = true;
-      }
-      
-      allTrans.forEach(tran => {
-        if(tran.buyer_id == userData.id && tran.offer_id == offer.id){
-          console.log(userData.id, " == ", tran.buyer_id);
-          hesAlreadyBuying = true;
-        }
-      });
-
-      if(hesAlreadyBuying == true){
-        alert("Jesteś w trakcie negocjacji z tej ofercie");
-      }
-      if(hesBuyingFromHimself == true){
-        alert("Nie możesz kupić kluczy od samego siebie");
-      }
-
-      console.log("Dane do trans\n", `${userData} | ${receiverId} | ${offer.id} | ${forWho}`);
-      if (hesAlreadyBuying == false && hesBuyingFromHimself == false) {
-        axios.post(`${axiosPath}/transactions/add`, {
-          offerId: offer.id,
-          buyerId: userData.id,
-          receiverId: receiverId,
-          status: 'Pending'
-        }).then(() => {
-          console.log("Chyba przeszło?");
-          alert("Transakcja została dodana");
-        }).catch((err) => {
-          alert("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
-          console.error(err);
         });
       }
+
+      if (receiverId === userData.id && userData.type === "seller") {
+        hesBuyingFromHimself = true;
+      }
+
+      if (transactions && transactions.length > 0) {
+        transactions.forEach(tran => {
+          if (tran.buyer_id === userData.id && tran.offer_id === offer.id) {
+            hesAlreadyBuying = true;
+          }
+        });
+      }
+
+      if (hesAlreadyBuying === true) {
+        alert("Jesteś w trakcie negocjacji w tej ofercie");
+        return;
+      }
+      if (hesBuyingFromHimself === true) {
+        alert("Nie możesz kupić kluczy od samego siebie");
+        return;
+      }
+
+      console.log("Dane do transakcji:\n", `${userData.login} | Odbiorca ID: ${receiverId} | Oferta: ${offer.id} | Login odbiorcy: ${receiverLogin}`);
+
+      axios.post(`${axiosPath}/transactions/add`, {
+        offerId: offer.id,
+        buyerId: userData.id,
+        receiverId: receiverId,
+        status: 'Pending'
+      }).then(() => {
+        alert("Transakcja została dodana");
+      }).catch((err) => {
+        alert("Wystąpił błąd serwera podczas rejestracji. Spróbuj ponownie później.");
+        console.error(err);
+      });
     }
   }
 
   useEffect(() => {
-    axios.get(`${axiosPath}/users`).then((res) => {
-      getAllUsers(res.data);
-      console.log("Dane userów\n", res.data);
-    });
-    axios.get(`${axiosPath}/transactions`).then((res) => {
-      getTrans(res.data);
-      console.log("Transakcje\n", res.data);
-    })
-    axios.get("http://localhost:3000/key_offers").then((res) => {setTable(res.data)})
-    console.log(userData);
+    axios.get(`${axiosPath}/users`)
+      .then((res) => setUsers(res.data || []))
+      .catch(err => console.error(err));
+
+    axios.get(`${axiosPath}/transactions`)
+      .then((res) => setTransactions(res.data || []))
+      .catch(err => console.error(err));
   }, []);
 
   const isVisible = openedOfferId === offer.id;
@@ -103,11 +113,11 @@ export default function OfferItem({ offer, gameId, openedOfferId, setOpenedOffer
         <h5>Status: {offer.status}</h5>
       </div>
       <button className='border border-6 fw-bold' onClick={() => showButton()}>WIECEJ</button>
-      {(doesHeOwnIt == false) ? (
+      {(doesHeOwnIt === false) ? (
         <div className='mt-2'>
           {offer != null && isVisible && (
             <div id={offer.id}>
-              <select onChange={() => changeWho(!forWhoButBetter)}>
+              <select value={loggedInIsReciever} onChange={(e) => setLoggedInIsReciever(e.target.value === 'true')}>
                 <option value={true}>Dla mnie</option>
                 <option value={false}>Dla kogoś innego</option>
               </select>
@@ -124,27 +134,31 @@ export default function OfferItem({ offer, gameId, openedOfferId, setOpenedOffer
                 </div>
               )}
 
-              {forWhoButBetter == true && (
+              {loggedInIsReciever === true && (
                 <div>
                   <h5><button className='border border-6 fw-bold mt-2' onClick={() => GetInContact()}>KUP</button></h5>
                 </div>
               )}
-
             </div>
           )}
         </div>
       ) : (
-        <div>
+        <div className='my-2'>
           {offer != null && isVisible && (
             <div id={offer.id}>
               <div>
-                <input list="allUsers" type="text" onChange={(e) => changePerson(e.target.value)} />
-                  <datalist id="allUsers">
-                    {AllUsers.map((user) => (
-                      <option key={user.id} value={user.login}>{user.login}</option>
-                    ))}
-                  </datalist>
-                <h5><button onClick={() => GetInContact()}>Zgiftuj</button></h5>
+                <input
+                  list={`users-list-own-${offer.id}`}
+                  type="text"
+                  placeholder="Wpisz login..."
+                  onChange={(e) => setReciever(e.target.value)}
+                />
+                <datalist id={`users-list-own-${offer.id}`}>
+                  {users.map((user) => (
+                    <option key={user.id} value={user.login}>{user.login}</option>
+                  ))}
+                </datalist>
+                <h5><button className='mt-2' onClick={() => GetInContact()}>Zgiftuj</button></h5>
               </div>
             </div>
           )}

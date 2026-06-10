@@ -6,8 +6,8 @@ const pool = mariadb.createPool({
     host: "localhost",
     user: "root",
     password: "",
-    //database: "41188776_keysrus", //BAZA DANYCH
-    database: "keybay",           //BAZA DANYCH
+    database: "41188776_keysrus", //BAZA DANYCH
+    //database: "keybay",           //BAZA DANYCH
     port: 3306
 });
 

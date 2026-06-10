@@ -73,10 +73,10 @@ export default function GamePage() {
   };
 
   const checkIfHeGotTheGame = () => {
-    if(userData != null && GameId != null){
-      axios.get(`${axiosPath}/transactions/byId`, {params: { userId: userData.id, gameId: GameId }}).then((res) => {
-        if(res.data != null && res.data.length > 0){
-          if(res.data[0].status == "Success"){
+    if (userData.id && GameId) {
+      axios.get(`${axiosPath}/transactions/byId`, { params: { userId: userData.id, gameId: GameId } }).then((res) => {
+        if (res.data != null && res.data.length > 0) {
+          if (res.data[0].status == "Success") {
             changeStatus(true);
           }
         }
@@ -342,7 +342,7 @@ export default function GamePage() {
       </div>
 
       {/* Oferty sprzedaży kluczy */}
-      {userData.isLogged && gameData &&(
+      {userData.isLogged && gameData && (
         <SaleOffers gameId={GameId} DoesHeOwnIt={isTheGameBought} />
       )}
 

@@ -495,7 +495,7 @@ app.post("/key_offers/add", async (req, res) => {
     const columns = ["seller_id", "game_id", "game_key", "other", "status", "suggested_price"];
     const values = [seller_id, game_id, key, other, String(status), price];
 
-    const sql = `INSERT INTO key_offers (${columns.join(", ")}) VALUES (${values.join(", ")})`;
+    const sql = `INSERT INTO key_offers (${columns.join(", ")}) VALUES (${seller_id}, ${game_id}, "${key}", "${other}", '${status}', ${price})`;
 
     const result = db.pool.query(sql, values);
     res.json(result);
