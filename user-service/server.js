@@ -320,8 +320,6 @@ app.get("/transactions/getByUser", async (req, res) => {
   }
 })
 
-<<<<<<< Updated upstream
-=======
 //Czy user posiada tą grę.
 
 app.get("/transactions/byId", async (req, res) => {
@@ -337,7 +335,6 @@ app.get("/transactions/byId", async (req, res) => {
   }
 });
 
->>>>>>> Stashed changes
 app.get("/ratings/getByUser", async (req, res) => {
 
   const { id } = req.query
