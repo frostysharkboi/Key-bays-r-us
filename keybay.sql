@@ -4246,7 +4246,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `login`, `pass`, `phone`, `email`, `discord_tag`, `other`, `type`) VALUES
-(1, 'FrsotyShrakBoi', 'Frosty123', '500100200', 'jakubchmiel2007@gmail.com', '924407073503064165', 'Admin', 'admin'),
+(1, 'FrsotyShrakBoi', 'Frosty123', '500100200', 'frostysharkboi@gmail.com', '924407073503064165', 'Admin', 'admin'),
 (2, 'Ziabba', 'ZiabbaPass', '500100200', 'biurokeysrus@gmail.com', '680409161334390828', 'Admin', 'admin'),
 (3, 'VonKamino', 'adminpass', '500100200', 'ignacykaminski07@gmail.com', '581524526962180096', 'Admin', 'admin'),
 (4, 'CyberGlitch_Admin', 'adminpass', '500100200', 'cyberglitch_admin@kb.pl', '725099439857958765f', 'Admin', 'admin'),

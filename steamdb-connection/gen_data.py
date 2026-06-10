@@ -130,12 +130,10 @@ def main():
             if l == 'FrsotyShrakBoi':
                 mail = "jakubchmiel2007@gmail.com"
                 discord = "924407073503064165"
-                apass = 'Frosty123'
                 print("[-] Dodano a1...")
             elif l == 'Ziabba':
                 mail = "biurokeysrus@gmail.com"
                 discord = "680409161334390828"
-                apass = "ZiabbaPass"
                 print("[-] Dodano a2...")
             elif l == 'VonKamino':
                 mail = "ignacykaminski07@gmail.com"
