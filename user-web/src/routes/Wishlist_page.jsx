@@ -93,10 +93,10 @@ export default function WishlistPage() {
           </div>
 
           <div className="col">
-            <table className='table border border-3 table-sm table-striped table-hover ms-3'>
+            <table className='w-100 table-sm ms-3'>
               <thead>
                 {table.getHeaderGroups().map(hg => (
-                  <tr className='table-part-top border border-3' key={hg.id}>
+                  <tr className='table-part-top' key={hg.id}>
                     {hg.headers.map(header => (
                       <th key={header.id} onClick={header.column.getToggleSortingHandler()} style={{ cursor: header.column.getCanSort() ? "pointer" : "default" }}>
                         {header.column.getIsSorted() === "desc" ? "↑ " : (header.column.getIsSorted() === "asc" ? "↓ " : "")}
@@ -109,7 +109,7 @@ export default function WishlistPage() {
               </thead>
               <tbody>
                 {rows.map((row) => (
-                  <tr key={row.id} onClick={() => RedirectToGamePage(row.original.id)} style={{ cursor: 'pointer' }}>
+                  <tr className='table border-top border-bottom'  key={row.id} onClick={() => RedirectToGamePage(row.original.id)} style={{ cursor: 'pointer' }}>
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

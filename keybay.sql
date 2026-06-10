@@ -21,9 +21,9 @@ SET time_zone = "+00:00";
 -- Database: `keybay`
 --
 
-DROP DATABASE IF EXISTS 41188776_keysrus
-CREATE DATABASE 41188776_keysrus
-USE 41188776_keysrus
+  DROP DATABASE IF EXISTS `41188776_keysrus`;
+  CREATE DATABASE `41188776_keysrus`;
+  USE `41188776_keysrus`;
 
 -- --------------------------------------------------------
 

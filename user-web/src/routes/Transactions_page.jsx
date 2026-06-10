@@ -333,7 +333,7 @@ export default function TransactionsPage() {
                             {statusFilters.map((sf) => (
                                 <div className='row' key={sf.id}>
                                     <input className='btn-check col' type="checkbox" name={`Stat_${sf.id}`} id={`Stat_${sf.id}`} checked={sf.isSelected} onChange={(e) => { setStatusFilters(prev => prev.map(item => item.id === sf.id ? { ...item, isSelected: e.target.checked } : item)); }} />
-                                    <label htmlFor={`Stat_${sf.id}`} className={`p-2 m-1 btn-kirk border border-6 ${sf.isSelected || !anyStatusSelected ? "btn-zaz" : "btn-odz"}`} style={{ cursor: 'pointer' }} >
+                                    <label htmlFor={`Stat_${sf.id}`} className={`p-2 m-1 btn-kirk border border-8 ${sf.isSelected || !anyStatusSelected ? "btn-zaz" : "btn-odz"}`} style={{ cursor: 'pointer' }} >
                                         {sf.label}
                                     </label>
                                 </div>
@@ -343,10 +343,10 @@ export default function TransactionsPage() {
                 </div>
 
                 <div className="col">
-                    <table className='table border border-3 table-sm table-striped table-hover ms-3'>
+                    <table className='w-100 table-sm ms-3'>
                         <thead>
                             {table.getHeaderGroups().map(hg => (
-                                <tr className='table-part-top border border-3' key={hg.id}>
+                                <tr className='table-part-top' key={hg.id}>
                                     {hg.headers.map(header => (
                                         <th
                                             key={header.id}
@@ -364,7 +364,7 @@ export default function TransactionsPage() {
                         <tbody>
                             {rows.length > 0 ? (
                                 rows.map((row) => (
-                                    <tr key={row.id} onClick={() => RedirectToGamePage(row.original.game_id)} style={{ cursor: 'pointer' }}>
+                                    <tr className='table border-top border-bottom' key={row.id} onClick={() => RedirectToGamePage(row.original.game_id)} style={{ cursor: 'pointer' }}>
                                         {row.getVisibleCells().map((cell) => {
                                             // 1. Sprawdzamy ID kolumny, aby przypisać odpowiednie zachowanie i ID użytkownika
                                             const columnId = cell.column.id;
@@ -403,7 +403,7 @@ export default function TransactionsPage() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={columns.length} className="text-center py-4 text-muted">
+                                    <td colSpan={columns.length} className="text-center py-4">
                                         Brak transakcji spelniajacych kryteria w wybranym widoku.
                                     </td>
                                 </tr>

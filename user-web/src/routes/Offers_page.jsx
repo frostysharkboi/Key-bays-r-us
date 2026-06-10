@@ -200,10 +200,10 @@ export default function OffersPage() {
                 </div>
 
                 <div className="col">
-                    <table className='table border border-3 table-sm table-striped table-hover ms-3'>
+                    <table className='w-100 table-sm ms-3'>
                         <thead>
                             {table.getHeaderGroups().map(hg => (
-                                <tr className='table-part-top border border-3' key={hg.id}>
+                                <tr className='table-part-top' key={hg.id}>
                                     {hg.headers.map(header => (
                                         <th
                                             key={header.id}
@@ -222,6 +222,7 @@ export default function OffersPage() {
                             {rows.length > 0 ? (
                                 rows.map((row) => (
                                     <tr
+                                        className='table border-top border-bottom' 
                                         key={row.id}
                                         onClick={() => RedirectToGamePage(parseInt(row.original.game_id))}
                                         style={{ cursor: 'pointer' }}
@@ -235,7 +236,7 @@ export default function OffersPage() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={columns.length} className="text-center py-4 text-muted">
+                                    <td colSpan={columns.length} className="text-center py-4">
                                         Brak dostępnych ofert do wyświetlenia.
                                     </td>
                                 </tr>

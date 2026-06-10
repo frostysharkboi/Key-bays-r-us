@@ -187,10 +187,9 @@ select:focus {
 .btn-kirk {
     border-radius: 0%;
 }
-
-.border-6 {
-    border: 1px #DDDDD5;
-    color: #DDDDD5;
+.border-8{
+    border: #DDDDD5;
+    border-width: 1px;
 }
 
 .box-idk {
@@ -251,8 +250,15 @@ select:focus {
 .noRound {
     border-radius: 0%;
 }
-
-.bgMain {
+.btn-table{
+    background-color: #C51515;
+}
+.border-6{
+    background-color: #C51515;
+    border: 1px #DDDDD5;
+    color: #DDDDD5;
+}
+.bgMain{
     background-color: #191009;
 }
 
@@ -271,9 +277,11 @@ select:focus {
 .tag:hover {
     background-color: #d31717;
 }
-
-.noWishlistBtn:hover {
+.btn-table:hover{
     background-color: #d31717;
+}
+.noWishlistBtn:hover{
+    background-color:#d31717;
     border-color: #DDDDD5;
     color: #DDDDD5;
     border-width: 5px;
