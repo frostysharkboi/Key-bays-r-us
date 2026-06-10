@@ -108,7 +108,7 @@ def main():
 
         # 3. GENEROWANIE UŻYTKOWNIKÓW (3 Adminów, 10 Sprzedawców, 30 Kupujących)
         print("[-] Tworzenie użytkowników...")
-        logins_admin = ['CyberGlitch_Admin', 'RootOverlord', 'KernelPanic_99']
+        logins_admin = ['FrsotyShrakBoi', 'Ziabba', 'VonKamino', 'CyberGlitch_Admin', 'RootOverlord', 'KernelPanic_99']
         logins_sellers = ['VaultDweller_Keys', 'GamerDen_Wholesale', 'PixelMerchant', 'Lootbox_Emperor', 'KeyKrypton', 'RetroReseller', 'SteamSmuggler', 'DiscountDragon', 'IndieBundle_King', 'Goblin_Market']
         logins_normals = [f'Gamer_Nick_{i}' for i in range(1, 31)]
         
@@ -124,7 +124,21 @@ def main():
         """
 
         for l in logins_admin:
-            cursor.execute(insert_user_query, (user_id, l, 'adminpass', '500100200', f'{l.lower()}@kb.pl', f'{l}#1111', 'Admin', 'admin'))
+            mail = f'{l.lower()}@kb.pl'
+            discord = f'{random.randint(100000000000000000, 999999999999999999)}f'
+            if l == 'FrsotyShrakBoi':
+                mail = "biurokeysrus@gmail.com"
+                discord = "924407073503064165"
+                print("[-] Dodano a1...")
+            elif l == 'Ziabba':
+                mail = "biurokeysrus@gmail.com"
+                discord = "680409161334390828"
+                print("[-] Dodano a2...")
+            elif l == 'VonKamino':
+                mail = "biurokeysrus@gmail.com"
+                discord = "581524526962180096"
+                print("[-] Dodano a3...")
+            cursor.execute(insert_user_query, (user_id, l, 'adminpass', '500100200', f'{mail}', f'{discord}', 'Admin', 'admin'))
             admin_ids.append(user_id)
             user_id += 1
         for l in logins_sellers:
@@ -159,7 +173,7 @@ def main():
             for _ in range(2):
                 seller = random.choice(seller_ids)
                 cena = random.randint(20, 250)
-                klucz = f"KEY-ACT-{g_id}-{random.randint(1000,9999)}"
+                klucz = f"-KEY---{g_id}---{random.randint(1000,9999)}"
                 opis = random.choice(OPISY_OFERT)
                 cursor.execute(insert_offer_query, (offer_id, seller, g_id, klucz, opis, 'Active', cena))
                 
@@ -168,8 +182,9 @@ def main():
                     # Wybieramy kupującego ze wspólnej puli (Kupujący, Admin lub inny Sprzedawca)
                     # Jeśli wylosuje się Sprzedawca, dbamy o to, aby nie kupił od samego siebie
                     dostepni_kupujacy = [u for u in wszyscy_kupujacy if u != seller]
-                    buyer = random.choice(dostepni_kupujacy)
-                    
+                    buyer = 1
+                    while buyer == 1 or buyer == 2 or buyer == 3:
+                        buyer = random.choice(dostepni_kupujacy)
                     cursor.execute(insert_trans_query, (trans_id, offer_id, buyer, buyer, 'Pending'))
                     trans_id += 1
                 offer_id += 1
@@ -185,40 +200,41 @@ def main():
         """
 
         for buyer in wszyscy_kupujacy:
-            liczba_zakupow = random.randint(5, 15)
-            wybrane_gry = random.sample(wszystkie_gry, min(liczba_zakupow, len(wszystkie_gry)))
-            
-            for g_id in wybrane_gry:
-                posiadane_gry_usera[buyer].add(g_id)
+            if buyer != 1 and buyer != 2 and buyer != 3:
+                liczba_zakupow = random.randint(5, 15)
+                wybrane_gry = random.sample(wszystkie_gry, min(liczba_zakupow, len(wszystkie_gry)))
                 
-                # ZABEZPIECZENIE: Sprzedawca nie może kupić od samego siebie!
-                # Odfiltrowujemy listę sprzedawców tak, aby wykluczyć aktualnego kupującego (jeśli jest sprzedawcą)
-                dostepni_sprzedawcy = [s for s in seller_ids if s != buyer]
-                
-                # Na wypadek gdyby lista była pusta (np. jest tylko 1 sprzedawca w bazie), 
-                # awaryjnie bierzemy kogokolwiek, ale przy 10 sprzedawcach zawsze ktoś zostanie
-                seller = random.choice(dostepni_sprzedawcy if dostepni_sprzedawcy else seller_ids)
-                
-                cena = random.randint(15, 200)
-                klucz_zuzyty = f"KEY-SOLD-{g_id}-{random.randint(10000,99999)}"
-                
-                # Tworzymy ofertę archiwalną
-                cursor.execute(insert_offer_query, (offer_id, seller, g_id, klucz_zuzyty, 'Archiwum', 'Closed', cena))
-                # Tworzymy transakcję sukcesu
-                cursor.execute(insert_trans_query, (trans_id, offer_id, buyer, buyer, 'Success'))
-                
-                # ~80% szans na wystawienie recenzji po zakupie
-                if random.random() > 0.2:
-                    ocena = '1'
-                    for i in range(5,0,-1):
-                        if random.random() > 0.4:
-                            ocena = f'{i}'
-                            break
-                    tekst = random.choice(RECENZJE_POOL[ocena])
-                    cursor.execute(insert_rating_query, (g_id, buyer, ocena, tekst))
-                
-                offer_id += 1
-                trans_id += 1
+                for g_id in wybrane_gry:
+                    posiadane_gry_usera[buyer].add(g_id)
+                    
+                    # ZABEZPIECZENIE: Sprzedawca nie może kupić od samego siebie!
+                    # Odfiltrowujemy listę sprzedawców tak, aby wykluczyć aktualnego kupującego (jeśli jest sprzedawcą)
+                    dostepni_sprzedawcy = [s for s in seller_ids if s != buyer]
+                    
+                    # Na wypadek gdyby lista była pusta (np. jest tylko 1 sprzedawca w bazie), 
+                    # awaryjnie bierzemy kogokolwiek, ale przy 10 sprzedawcach zawsze ktoś zostanie
+                    seller = random.choice(dostepni_sprzedawcy if dostepni_sprzedawcy else seller_ids)
+                    
+                    cena = random.randint(15, 200)
+                    klucz_zuzyty = f"-KEY---{g_id}---{random.randint(10000,99999)}"
+                    
+                    # Tworzymy ofertę archiwalną
+                    cursor.execute(insert_offer_query, (offer_id, seller, g_id, klucz_zuzyty, 'Archiwum', 'Closed', cena))
+                    # Tworzymy transakcję sukcesu
+                    cursor.execute(insert_trans_query, (trans_id, offer_id, buyer, buyer, 'Success'))
+                    
+                    # ~80% szans na wystawienie recenzji po zakupie
+                    if random.random() > 0.2:
+                        ocena = '1'
+                        for i in range(5,0,-1):
+                            if random.random() > 0.4:
+                                ocena = f'{i}'
+                                break
+                        tekst = random.choice(RECENZJE_POOL[ocena])
+                        cursor.execute(insert_rating_query, (g_id, buyer, ocena, tekst))
+                    
+                    offer_id += 1
+                    trans_id += 1
 
         # 6. WARUNEK: OKOŁO 5 GIER NA WISHLIŚCIE (Dla każdego konta w bazie)
         print("[-] Generowanie wishlist dla wszystkich użytkowników...")
