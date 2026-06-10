@@ -10,17 +10,61 @@ DB_CONFIG = {
 }
 
 RECENZJE_POOL = {
-    '5': ["Absolutne arcydzieło! Klimat powala, a mechanika gry jest bezbłędna.", "Gra mojego dzieciństwa. Kod zadziałał od razu, polecam!", "Wciąga jak bagno. Miałem grać godzinę, a wstałem o świcie.", "Złoty klasyk. Transakcja błyskawiczna, sprzedawca 10/10."],
-    '4': ["Świetna produkcja, chociaż grafika lekko trąci myszką.", "Bardzo dobry tytuł na długie wieczory ze znajomymi.", "Gameplay super, fabuła wciąga, jedynie optymalizacja mogłaby być ciut lepsza."],
-    '3': ["Gra poprawna, ale bez rewelacji. Szybko się nudzi.", "Fajny pomysł, gorzej z wykonaniem. Sterowanie momentami drewniane.", "Kupiłem na wyprzedaży i jest ok, ale pełnej ceny nie warta."],
-    '2': ["Spora zawód. Potencjał był enormny, ale serwery ciągle lagują.", "Męcząca rozgrywka. Mechaniki zamiast bawić – frustrują.", "Nuda. Gra zrobiona kompletnie bez pomysłu."]
+'5': [
+    "Absolutne arcydzieło! Klimat powala, a mechanika gry jest bezbłędna.", 
+    "Gra mojego dzieciństwa. Kod zadziałał od razu, polecam!", 
+    "Wciąga jak bagno. Miałem grać godzinę, a wstałem o świcie.", 
+    "Złoty klasyk. Transakcja błyskawiczna, sprzedawca 10/10.", 
+    "Absolutne Kino: 10/10", 
+    "Ujdzie",
+    "Przeszedłem 5 razy i na pewno wrócę po raz kolejny. Najlepiej wydane pieniądze.",
+    "Muzyka z menu głównego do teraz leci u mnie na Spotify. Coś pięknego.",
+    "Fabularny majstersztyk, popłakałem się na zakończeniu. Polecam każdemu.",
+    "Kupiłem bratu na urodziny, teraz nie wychodzi z pokoju od tygodnia. Sukces!"
+  ],
+  '4': [
+    "Świetna produkcja, chociaż grafika lekko trąci myszką.", 
+    "Bardzo dobry tytuł na długie wieczory ze znajomymi.", 
+    "Gameplay super, fabuła wciąga, jedynie optymalizacja mogłaby być ciut lepsza.", 
+    "Ewenement na skale światową, gra prawdopodobnie równie ważna co Biblia",
+    "Solidny sequel. Poprawili większość błędów z jedynki, bawiłem się świetnie.",
+    "Bardzo przyjemny gameplay loop, potrafi zassać syndromem 'jeszcze jednej tury'.",
+    "Gdyby nie te sporadyczne crashe do pulpitu, dałbym pełną piątkę. Warto kupić.",
+    "Super odskocznia od codzienności. Dużo humoru i ciekawe questy poboczne.",
+    "Klimat gęsty, że można go kroić nożem. Trochę powtarzalna pod koniec, ale i tak super.",
+    "Gra kupiona na promocji i przerosła moje oczekiwania. Naprawdę mocne 4/5."
+  ],
+  '3': [
+    "Gra poprawna, ale bez rewelacji. Szybko się nudzi.", 
+    "Fajny pomysł, gorzej z wykonaniem. Sterowanie momentami drewniane.", 
+    "Kupiłem na wyprzedaży i jest ok, ale pełnej ceny nie warta.", 
+    "Całkiem dobre szkoda że developer siedzi w więzieniu",
+    "Przeciętniak jakich mało. Można pograć z braku laku, ale szybko się zapomina.",
+    "Strasznie dużo grindu. Początek był obiecujący, ale potem robi się z tego druga praca.",
+    "Graficznie ładna, ale pusta w środku. AI przeciwników praktycznie nie istnieje.",
+    "Taki typowy symulator chodzenia z elementami walki. Bez szału.",
+    "Twórcy chyba sami nie wiedzieli, jaki gatunek chcą stworzyć. Niby ok, ale mess.",
+    "Można odpalić do podcastu w tle. Nic ambitnego, ot zwykły zapychacz czasu."
+  ],
+  '2': [
+    "Spora zawód. Potencjał był enormny, ale serwery ciągle lagują.", 
+    "Męcząca rozgrywka. Mechaniki zamiast bawić – frustrują.", 
+    "Nuda. Gra zrobiona kompletnie bez pomysłu.", 
+    "Pały nie urywa", 
+    "Nawet tej gry nie odpaliłem", 
+    "Okropne balansowane broni w tej grze sprawiło że rozwaliłem już 2 klawiatury i monitor",
+    "Zagrałem 30 minut i zażądałem zwrotu pieniędzy. Współczuję ludziom, którzy kupili preorder.",
+    "Ilość bugów w tej grze przechodzi ludzkie pojęcie. Przenikanie przez ściany to standard.",
+    "Mikrotransakcje na każdym kroku. Bez portfela rodziców nawet nie ma co podchodzić.",
+    "Obiecywali gruszki na wierzbie, a wydali niedokończone demo. Tragedia."
+  ]
 }
 
 OPISY_OFERT = [
-    "Oficjalny klucz globalny. Wysyłka automatyczna 24/7.",
+    "Oficjalny klucz globalny.",
     "Promocja weekendowa! Ostatnie sztuki z legalnego źródła.",
     "Klucz z dystrybucji europejskiej, aktywacja na głównym koncie Steam.",
-    "Najniższa cena na rynku, błyskawiczna dostawa na e-mail."
+    "Najniższa cena na rynku, błyskawiczna dostawa."
 ]
 
 def main():

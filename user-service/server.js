@@ -104,6 +104,7 @@ app.get('/key_offers/allOffers', async (req, res) => {
   const { userId, userRole, scope } = req.query;
   var sql = `SELECT ko.id, ko.game_id, g.title, ko.seller_id, u.login AS seller, ko.game_key, ko.other, ko.status, ko.suggested_price, u.login AS seller_login FROM key_offers ko LEFT JOIN games g ON ko.game_id = g.id LEFT JOIN users u ON ko.seller_id = u.id`;
   if (userRole == "seller" || (userRole == "admin" && scope == "my")) sql += ` WHERE ko.seller_id = ${userId}`;
+  sql += " ORDER BY suggested_price ASC;";
   try {
     const result = await db.pool.query(sql);
     res.json(result);

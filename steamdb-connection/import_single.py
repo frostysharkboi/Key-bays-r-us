@@ -15,7 +15,7 @@ from db import get_connection, save_full_game_transaction, get_total_games_count
 from media import extract_media
 
 # Definicja docelowego identyfikatora AppID dla operacji
-TARGET_APPID = 2483190
+TARGET_APPID = 3784760 #632470
 
 
 def import_or_supplement_tags(appid):
@@ -32,8 +32,7 @@ def import_or_supplement_tags(appid):
     print(f"🔎 Tagi wykryte przez aplikację dla tego AppID: {matched}")
 
     if not matched:
-        print("⚠ Brak pasujących tagów systemowych dla tej gry. Przerywam.")
-        return False
+        print("⚠ Brak pasujących tagów systemowych dla tej gry. Prosze dodać ręcznie.")
 
     # Krok 2: Nawiązanie połączenia z bazą w celu sprawdzenia obecności gry
     conn = get_connection()

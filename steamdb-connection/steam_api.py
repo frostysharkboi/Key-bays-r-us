@@ -43,13 +43,14 @@ def get_global_top_apps():
         753640,   # Outer Wilds
         352400,   # LEGO Jurassic World
         21000,    # LEGO Batman: The Videogame
-        2215200   # LEGO Batman: Legacy of the Dark Knight
+        2215200,  # LEGO Batman: Legacy of the Dark Knight
+        3784760,  # Elfie: A Sand Plan
+        632470    # Disco Elysium: The Final Cut
     ]
     
     # Identyfikatory gier podlegające bezwzględnemu odrzuceniu na etapie selekcji (Czarna lista)
     # UWAGA: Tytuły z serii Half-Life zostały usunięte z tej listy, ponieważ system filtruje je automatycznie po nazwie.
     banned_hits = [
-        632470    # Disco Elysium
     ]
     # ================================================================================
 
