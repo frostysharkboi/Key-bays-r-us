@@ -298,20 +298,20 @@ export default function TransactionsPage() {
                             <h2 className='font mb-2'>Widok</h2>
                             <div className="d-flex flex-column gap-2">
                                 <button
-                                    className={`btn rounded-0 text-start border ${viewMode === 'buyer' ? 'btn-primary fw-bold' : 'btn-dark'}`}
+                                    className={`p-2 m-1 btn-kirk border border-8 fw-bold ${viewMode === 'buyer' ? 'btn-zaz' : 'btn-odz'}`}
                                     onClick={() => setViewMode('buyer')}
                                 >
                                     Zamowione
                                 </button>
                                 <button
-                                    className={`btn rounded-0 text-start border ${viewMode === 'reciever' ? 'btn-primary fw-bold' : 'btn-dark'}`}
+                                    className={`p-2 m-1 btn-kirk border border-8 fw-bold ${viewMode === 'reciever' ? 'btn-zaz' : 'btn-odz'}`}
                                     onClick={() => setViewMode('reciever')}
                                 >
                                     Otrzymane
                                 </button>
                                 {(userData && userData.type !== 'normal') && (
                                     <button
-                                        className={`btn rounded-0 text-start border ${viewMode === 'seller' ? 'btn-primary fw-bold' : 'btn-dark'}`}
+                                        className={`p-2 m-1 btn-kirk border border-8 fw-bold ${viewMode === 'seller' ? 'btn-zaz' : 'btn-odz'}`}
                                         onClick={() => setViewMode('seller')}
                                     >
                                         Sprzedaz
@@ -319,7 +319,7 @@ export default function TransactionsPage() {
                                 )}
                                 {(userData && userData.type === 'admin') && (
                                     <button
-                                        className={`btn rounded-0 text-start border ${viewMode === 'admin' ? 'btn-danger fw-bold' : 'btn-dark'}`}
+                                        className={`p-2 m-1 btn-kirk border border-8 fw-bold ${viewMode === 'admin' ? 'btn-zaz' : 'btn-odz'}`}
                                         onClick={() => setViewMode('admin')}
                                     >
                                         Wszystkie (Admin)

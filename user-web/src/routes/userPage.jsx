@@ -218,36 +218,36 @@ export default function Root() {
             <div className='row my-4'>
               {/* LEWY PANEL SIDEBAR */}
               <div className='col-4'>
-                <div className="profile-sidebar p-3 border rounded d-flex flex-column">
+                <div className="p-3 box-idk noRound d-flex flex-column">
                   <h2>{selectedUser.login}</h2>
-                  <span className="badge bg-secondary mb-3 align-self-start">{selectedUser.type}</span>
+                  <span className="border border-3 mb-3 w-25">{selectedUser.type}</span>
                   <a href={`https://discord.com/users/${selectedUser.discord_tag || 'Brak'}`}><p><strong>Discord:</strong> {selectedUser.discord_tag || 'Brak'}</p></a>
                   <p><strong>Telefon:</strong> {selectedUser.phone || 'Brak'}</p>
 
                   {/* Przyciski nawigacji widoków */}
-                  <button className={`btn w-100 mt-2 mb-2 ${activeView === 0 ? 'btn-dark' : 'btn-outline-dark'}`} onClick={() => { setActiveView(0); setGlobalFilter(""); }}>
+                  <button className={`w-100 mb-2 btn-kirk border border-8 fw-bold ${activeView === 0 ? 'btn-zaz' : 'btn-odz'}`} onClick={() => { setActiveView(0); setGlobalFilter(""); }}>
                     Pokaż Transakcje
                   </button>
-                  <button className={`btn w-100 mb-2 ${activeView === 1 ? 'btn-dark' : 'btn-outline-dark'}`} onClick={() => { setActiveView(1); setGlobalFilter(""); }}>
+                  <button className={`w-100 mb-2 btn-kirk border border-8 fw-bold ${activeView === 1 ? 'btn-zaz' : 'btn-odz'}`} onClick={() => { setActiveView(1); setGlobalFilter(""); }}>
                     Pokaż Recenzje
                   </button>
 
                   {/* Widoczne tylko dla zwykłych użytkownikóww */}
                   {isOwnProfile && selectedUser.type === "normal" && (
-                    <button className={`btn w-100 mb-2 ${activeView === 2 ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveView(2)}>
+                    <button className={`w-100 mb-2 btn-kirk border border-8 fw-bold ${activeView === 2 ? 'btn-zaz' : 'btn-odz'}`} onClick={() => setActiveView(2)}>
                       Aplikuj na sprzedawcę
                     </button>
                   )}
 
                   {/* Widoczne dla Admina */}
                   {selectedUser.type === "admin" && (
-                    <button className={`btn w-100 mb-2 ${activeView === 3 ? 'btn-warning fw-bold' : 'btn-outline-warning fw-bold'}`} onClick={() => setActiveView(3)}>
+                    <button className={`w-100 mb-2 btn-kirk border border-8 fw-bold ${activeView === 3 ? 'btn-zaz' : 'btn-odz'}`} onClick={() => setActiveView(3)}>
                       Zarządzaj Wnioskami
                     </button>
                   )}
 
                   {isOwnProfile && (
-                    <button className='btn btn-outline-secondary w-100 mb-4 mt-2' onClick={() => navigate("/Edit-Account")}>
+                    <button className='w-100 mb-4 mt-2 btn-kirk border border-8 fw-bold btn-odz' onClick={() => navigate("/Edit-Account")}>
                       Edytuj Konto
                     </button>
                   )}
@@ -258,7 +258,7 @@ export default function Root() {
                       <h5 className="mb-2">Wyszukaj w tabeli</h5>
                       <input
                         type="text"
-                        className="form-control rounded-0"
+                        className="w-100 rounded-0"
                         placeholder="Wpisz frazę..."
                         value={globalFilter}
                         onChange={(e) => setGlobalFilter(e.target.value)}
@@ -275,7 +275,7 @@ export default function Root() {
                 {activeView === 2 && (
                   <div>
                     <h3>Aplikacja na sprzedawcę</h3>
-                    <div className="p-4 border rounded bg-light mt-3">
+                    <div className="p-4 border noRound box-idk mt-3">
                       <h5 className="mb-3">Proszę podaj powód, dla którego chcesz zostać sprzedawcą?</h5>
                       <textarea
                         className="form-control mb-3"
@@ -284,7 +284,7 @@ export default function Root() {
                         value={reason}
                         onChange={(e) => changeReason(e.target.value)}
                       />
-                      <button className="btn btn-success fw-bold px-4" onClick={BecomeSeller}>DODAJ WNIOSEK</button>
+                      <button className="border border-6 fw-bold px-4" onClick={BecomeSeller}>DODAJ WNIOSEK</button>
                     </div>
                   </div>
                 )}
@@ -294,8 +294,8 @@ export default function Root() {
                   <div>
                     <h3 className="mb-3">Wnioski oczekujące na rozpatrzenie</h3>
                     {adminTableFiltered.length > 0 ? (
-                      <table className="table table-bordered table-striped align-middle">
-                        <thead className="table-dark">
+                      <table className="w-100 table-sm ms-3">
+                        <thead>
                           <tr>
                             <th>Użytkownik</th>
                             <th>Wniosek / Uzasadnienie</th>
@@ -308,7 +308,7 @@ export default function Root() {
                             <tr key={app.id}>
                               <td className="fw-bold">{app.login}</td>
                               <td>{app.request}</td>
-                              <td><span className="badge bg-warning text-dark">{app.status}</span></td>
+                              <td><span className="badge">{app.status}</span></td>
                               <td>
                                 <button className="btn btn-sm btn-success me-2 fw-bold" onClick={() => AcceptRequest(app.id, app.sender_id)}>Zatwierdź</button>
                                 <button className="btn btn-sm btn-danger fw-bold" onClick={() => DenialRequest(app.id)}>Odrzuć</button>
@@ -318,7 +318,7 @@ export default function Root() {
                         </tbody>
                       </table>
                     ) : (
-                      <div className="alert alert-info">Brak oczekujących wniosków w systemie.</div>
+                      <div className="font large">Brak oczekujacych wnioskow w systemie.</div>
                     )}
                   </div>
                 )}
@@ -387,7 +387,7 @@ export default function Root() {
                             <div className="d-flex justify-content-between align-items-center p-1">
                               <button className="rounded-0 border border-3 fw-bold" onClick={() => activeTable.setPageIndex(0)} disabled={!activeTable.getCanPreviousPage()}>First</button>
                               <button className="rounded-0 border border-3 fw-bold" onClick={() => activeTable.previousPage()} disabled={!activeTable.getCanPreviousPage()}>Previous</button>
-                              <span className=" small">Page <strong>{activeTable.getState().pagination.pageIndex + 1}</strong> of <strong>{Math.max(activeTable.getPageCount(), 1)}</strong></span>
+                              <span className="textColor small">Page <strong>{activeTable.getState().pagination.pageIndex + 1}</strong> of <strong>{Math.max(activeTable.getPageCount(), 1)}</strong></span>
                               <button className="rounded-0 border border-3 fw-bold" onClick={() => activeTable.nextPage()} disabled={!activeTable.getCanNextPage()}>Next</button>
                               <button className="rounded-0 border border-3 fw-bold" onClick={() => activeTable.setPageIndex(activeTable.getPageCount() - 1)} disabled={!activeTable.getCanNextPage()}>Last</button>
                             </div>

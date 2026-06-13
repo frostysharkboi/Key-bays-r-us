@@ -21,14 +21,14 @@ export default function ReviewItem({ review, currentUserId, isAdmin, onEdit, onD
     };
 
     return (
-        <div className="card p-3 mb-2 border border-dark text-start bg-light" onClick={(e) => handleUserClick(e, review.user_id)}>
-            <div className="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+        <div className="p-3 mb-2 border noRound text-start review" onClick={(e) => handleUserClick(e, review.user_id)}>
+            <div className="d-flex justify-content-between align-items-center pb-2 mb-2">
                 <div>
-                    <span className="fs-5 text-primary fw-bold text-decoration-underline" style={{ cursor: 'pointer' }}>
+                    <span className="fs-5 fw-bold rating text-decoration-underline" style={{ cursor: 'pointer' }}>
                         @{review.login || "Użytkownik"}
                     </span>
-                    <span className="ms-3 text-warning fw-bold fs-5">{renderStars(review.rating)}</span>
-                    <span className="ms-2 text-muted">({review.rating}/5)</span>
+                    <span className="ms-3 rating fw-bold fs-5">{renderStars(review.rating)}</span>
+                    <span className="ms-2 fw-bold">({review.rating}/5)</span>
                 </div>
 
                 {/* Przyciski akcji */}
@@ -36,20 +36,20 @@ export default function ReviewItem({ review, currentUserId, isAdmin, onEdit, onD
                     {/* Edycja i usuwanie własnej recenzji */}
                     {isOwnReview && (
                         <>
-                            <button className="btn btn-sm btn-outline-secondary" onClick={() => onEdit(review)}>Edytuj</button>
-                            <button className="btn btn-sm btn-outline-danger" onClick={() => onDelete(review.user_id)}>Usuń</button>
+                            <button className="border border-6 noRound fw-bold" onClick={() => onEdit(review)}>Edytuj</button>
+                            <button className="border border-6 noRound fw-bold" onClick={() => onDelete(review.user_id)}>Usuń</button>
                         </>
                     )}
 
                     {/* Moderacja administratorska dla cudzych recenzji */}
                     {!isOwnReview && isAdmin && (
-                        <button className="btn btn-sm btn-danger fw-bold" onClick={() => onDelete(review.user_id)}>
+                        <button className="border border-6 noRound fw-bold" onClick={() => onDelete(review.user_id)}>
                             Usuń (Admin)
                         </button>
                     )}
                 </div>
             </div>
-            <p className="mb-0 text-dark font" style={{ whiteSpace: 'pre-line' }}>{review.other}</p>
+            <p className="mb-0 fw-bold" style={{ whiteSpace: 'pre-line' }}>{review.other}</p>
         </div>
     );
 }

@@ -178,13 +178,13 @@ export default function OffersPage() {
                                 <h2 className='font mb-2'>Zakres wyswietlania</h2>
                                 <div className="d-flex flex-column gap-2">
                                     <button
-                                        className={`btn rounded-0 text-start border ${viewScope === 'my' ? 'btn-primary fw-bold' : 'btn-dark'}`}
+                                        className={`p-2 m-1 btn-kirk border border-8 fw-bold ${viewScope === 'my' ? 'btn-zaz' : 'btn-odz'}`}
                                         onClick={() => setViewScope('my')}
                                     >
                                         Moje oferty
                                     </button>
                                     <button
-                                        className={`btn rounded-0 text-start border ${viewScope === 'all' ? 'btn-danger fw-bold' : 'btn-dark'}`}
+                                        className={`p-2 m-1 btn-kirk border border-8 fw-bold ${viewScope === 'all' ? 'btn-zaz' : 'btn-odz'}`}
                                         onClick={() => setViewScope('all')}
                                     >
                                         Wszystkie oferty (Globalnie)
@@ -194,7 +194,7 @@ export default function OffersPage() {
                         )}
                     </div>
 
-                    <button className="btn btn-success rounded-0 w-100 mt-3 border border-3 border-dark fw-bold" onClick={() => navigate("/Create-Offer")}>
+                    <button className="rounded-0 w-100 mt-3 border border-6 fw-bold" onClick={() => navigate("/Create-Offer")}>
                         DODAJ OFERTĘ
                     </button>
                 </div>

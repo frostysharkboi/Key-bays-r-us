@@ -23,7 +23,7 @@ export default function ReviewForm({ onSubmit, initialReview, onCancel }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="p-3 border border-3 mb-4 text-start">
+        <form onSubmit={handleSubmit} className="p-3 mb-4 text-start">
             <h4 className="font text-center">{initialReview ? "Edytuj swoją recenzje" : "Napisz recenzje gry"}</h4>
 
             {/* SEKCJA KLIKALNYCH GWIAZDEK */}
@@ -47,7 +47,7 @@ export default function ReviewForm({ onSubmit, initialReview, onCancel }) {
                                 />
                                 <label
                                     htmlFor={`star-${num}`}
-                                    className={`star-label fs-2 ${isFilled ? 'text-warning' : 'text-muted'}`}
+                                    className={`star-label fs-2 ${isFilled ? 'rating' : 'text-muted'}`}
                                     style={{ cursor: 'pointer', transition: 'color 0.15s ease' }}
                                     onMouseEnter={() => setHoverRating(num)}
                                     onMouseLeave={() => setHoverRating(0)}
@@ -64,7 +64,7 @@ export default function ReviewForm({ onSubmit, initialReview, onCancel }) {
             <div className="mb-3">
                 <label className="form-label fw-bold font">Tresc opinii:</label>
                 <textarea
-                    className="form-control"
+                    className="w-100"
                     rows="3"
                     placeholder="Co sadzisz o tej produkcji?..."
                     value={other}
@@ -73,9 +73,9 @@ export default function ReviewForm({ onSubmit, initialReview, onCancel }) {
             </div>
             <div className="d-flex gap-2 justify-content-end">
                 {initialReview && (
-                    <button type="button" className="btn btn-secondary font" onClick={onCancel}>Anuluj</button>
+                    <button type="button" className="btn font" onClick={onCancel}>Anuluj</button>
                 )}
-                <button type="submit" className="btn btn-success font fw-bold">
+                <button type="submit" className="border border-6 noRound font fw-bold">
                     {initialReview ? "Zapisz zmiany" : "Wyslij recenzje"}
                 </button>
             </div>
